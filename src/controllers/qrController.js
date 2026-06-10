@@ -2,6 +2,26 @@ import * as qrService from "../services/qrService.js";
 import { success, error } from "../utils/apiResponse.js";
 
 /**
+ * GET /api/qr/:patientId — ANM generates patient QR card
+ */
+export const generateQr = async (req, res) => {
+  try {
+    const { patientId } = req.params;
+
+    const result = await qrService.generatePatientQr(patientId);
+
+    if (result.error) {
+      return error(res, result.error, 404);
+    }
+
+    return success(res, result);
+  } catch (err) {
+    console.error("Generate QR error:", err.message);
+    return error(res, "Failed to generate QR card", 500);
+  }
+};
+
+/**
  * POST /api/qr/scan — Doctor scans patient QR at hospital intake
  */
 export const scanQr = async (req, res) => {
