@@ -3,6 +3,12 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import patientRoutes from "./routes/patientRoutes.js";
 import visitRoutes from "./routes/visitRoutes.js";
+import referralRoutes from "./routes/referralRoutes.js";
+import hospitalRoutes from "./routes/hospitalRoutes.js";
+import qrRoutes from "./routes/qrRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
+import followupRoutes from "./routes/followupRoutes.js";
+import syncRoutes from "./routes/syncRoutes.js";
 
 const app = express();
 
@@ -20,6 +26,12 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/visits", visitRoutes);
+app.use("/api/referrals", referralRoutes);
+app.use("/api/hospitals", hospitalRoutes);
+app.use("/api/qr", qrRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/followups", followupRoutes);
+app.use("/api/sync", syncRoutes);
 
 // 404 handler
 app.use((req, res) => {

@@ -29,7 +29,7 @@ export const login = async (req, res) => {
 };
 
 /**
- * POST /api/auth/register — Admin-only: create ANM or Admin accounts.
+ * POST /api/auth/register — Doctor-only: create ANM or Doctor accounts.
  */
 export const register = async (req, res) => {
   try {
@@ -39,8 +39,8 @@ export const register = async (req, res) => {
       return error(res, "email, password, name, and role are required", 400);
     }
 
-    if (!["admin", "anm"].includes(role)) {
-      return error(res, "role must be 'admin' or 'anm'", 400);
+    if (!["anm", "doctor"].includes(role)) {
+      return error(res, "role must be 'anm' or 'doctor'", 400);
     }
 
     if (password.length < 6) {

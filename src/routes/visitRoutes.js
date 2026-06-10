@@ -6,16 +6,16 @@ import {
   updateVisit,
   deleteVisit,
 } from "../controllers/visitController.js";
-import { authenticate } from "../middleware/authMiddleware.js";
+import { authenticate, requireRole } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.use(authenticate);
 
-router.get("/patient/:patientId", getVisitsByPatient);
-router.get("/:id", getVisitById);
-router.post("/", createVisit);
-router.put("/:id", updateVisit);
-router.delete("/:id", deleteVisit);
+router.get("/patient/:patientId", requireRole("anm", "doctor"), getVisitsByPatient);
+router.get("/:id", requireRole("anm", "doctor"), getVisitById);
+router.post("/", requireRole("anm"), createVisit);
+router.put("/:id", requireRole("anm"), updateVisit);
+router.delete("/:id", requireRole("anm"), deleteVisit);
 
 export default router;

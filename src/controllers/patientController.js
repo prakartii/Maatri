@@ -1,4 +1,5 @@
 import * as patientService from "../services/patientService.js";
+import * as qrService from "../services/qrService.js";
 import { success, created, error } from "../utils/apiResponse.js";
 
 /**
@@ -11,6 +12,24 @@ export const getPatients = async (req, res) => {
   } catch (err) {
     console.error("Get patients error:", err.message);
     return error(res, "Failed to fetch patients", 500);
+  }
+};
+
+/**
+ * GET /api/patients/:id/qr — ANM generates patient QR card
+ */
+export const getPatientQr = async (req, res) => {
+  try {
+    const result = await qrService.generatePatientQr(req.params.id);
+
+    if (result.error) {
+      return error(res, result.error, 404);
+    }
+
+    return success(res, result);
+  } catch (err) {
+    console.error("Generate patient QR error:", err.message);
+    return error(res, "Failed to generate QR card", 500);
   }
 };
 
