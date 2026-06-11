@@ -9,6 +9,8 @@ import qrRoutes from "./routes/qrRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import followupRoutes from "./routes/followupRoutes.js";
 import syncRoutes from "./routes/syncRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 const app = express();
 
@@ -32,6 +34,8 @@ app.use("/api/qr", qrRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/followups", followupRoutes);
 app.use("/api/sync", syncRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/ai", aiRoutes);
 
 // 404 handler
 app.use((req, res) => {
