@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maatri — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #F0EBE3;
+    --white:        #ffffff;
+    --teal-dark:    #3a5454;
+    --teal-mid:     #7E9595;
+    --teal-light:   #AFC9BF;
+    --teal-pale:    #D1DCDC;
+    --blush:        #EEB2A9;
+    --sand:         #F7D0AB;
+    --text-dark:    #2d3d3d;
+    --text-mid:     #6a8080;
+    --text-soft:    #9fb5b5;
+    --border:       rgba(175,201,191,0.35);
+    --input-bg:     rgba(255,255,255,0.7);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 52px 56px;
+    background: var(--bg);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1.5px solid var(--teal-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+  }
+
+  .brand-logo svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .brand-devanagari {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--teal-dark);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .brand-latin {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    margin-top: 2px;
+  }
+
+  /* hero copy */
+  .hero-copy {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0 32px;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    border: 1.5px solid var(--teal-light);
+    border-radius: 100px;
+    padding: 5px 14px;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal-light);
+  }
+
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(38px, 4.5vw, 56px);
+    font-weight: 400;
+    line-height: 1.12;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--teal-mid);
+  }
+
+  .hero-headline .blush {
+    font-style: italic;
+    color: var(--blush);
+  }
+
+  .hero-body {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 40px;
+  }
+
+  /* trust pills */
+  .trust-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .trust-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .trust-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .trust-text {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+  }
+
+  /* stat chips */
+  .stat-chips {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .chip-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-dark);
+    line-height: 1;
+  }
+
+  .chip-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+
+  /* footer */
+  .left-footer {
+    font-size: 11px;
+    color: var(--text-soft);
+    font-weight: 400;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 48px;
+    background: var(--white);
+    border-left: 1px solid var(--border);
+  }
+
+  .form-shell {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .form-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-mid);
+    margin-bottom: 10px;
+  }
+
+  .form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .form-title em {
+    font-style: italic;
+    color: var(--blush);
+  }
+
+  .form-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-mid);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* role selector */
+  .role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .role-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 10px;
+    border-radius: 12px;
+    border: 1.5px solid var(--teal-pale);
+    background: transparent;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+
+  .role-btn .role-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal-pale);
+    transition: background 0.18s;
+  }
+
+  .role-btn.active {
+    background: var(--teal-dark);
+    border-color: var(--teal-dark);
+    color: var(--white);
+  }
+
+  .role-btn.active .role-dot {
+    background: var(--teal-light);
+  }
+
+  .role-btn:hover:not(.active) {
+    border-color: var(--teal-light);
+    color: var(--teal-mid);
+  }
+
+  /* form fields */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .field label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+
+  .field input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-dark);
+    background: #fafaf8;
+    border: 1.5px solid var(--teal-pale);
+    border-radius: 12px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    width: 100%;
+  }
+
+  .field input::placeholder {
+    color: var(--text-soft);
+    font-weight: 300;
+  }
+
+  .field input:focus {
+    border-color: var(--teal-mid);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(175,201,191,0.2);
+  }
+
+  /* password row */
+  .password-wrap {
+    position: relative;
+  }
+
+  .password-wrap input {
+    padding-right: 48px;
+  }
+
+  .toggle-pw {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--text-soft);
+    transition: color 0.15s;
+  }
+
+  .toggle-pw:hover { color: var(--teal-mid); }
+
+  .toggle-pw svg { width: 18px; height: 18px; display: block; }
+
+  /* forgot */
+  .forgot-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+    margin-top: 4px;
+  }
+
+  .forgot-link {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--teal-mid);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .forgot-link:hover { color: var(--teal-dark); text-decoration: underline; }
+
+  /* sign in button */
+  .btn-signin {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    background: var(--teal-dark);
+    border: none;
+    border-radius: 14px;
+    padding: 16px 24px;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    margin-bottom: 20px;
+  }
+
+  .btn-signin:hover {
+    background: #2a4040;
+    box-shadow: 0 6px 20px rgba(58,84,84,0.25);
+    transform: translateY(-1px);
+  }
+
+  /* divider */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--teal-pale);
+  }
+
+  .divider-text {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-soft);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* OTP button */
+  .btn-otp {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal-dark);
+    background: transparent;
+    border: 1.5px solid var(--teal-light);
+    border-radius: 14px;
+    padding: 14px 24px;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .btn-otp:hover {
+    background: rgba(175,201,191,0.12);
+    transform: translateY(-1px);
+  }
+
+  .btn-otp svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+  /* footer note */
+  .form-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-soft);
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .form-footer a {
+    color: var(--teal-mid);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .form-footer a:hover { text-decoration: underline; }
+
+  /* error state (hidden by default) */
+  .field-error {
+    font-size: 11px;
+    color: #c4756a;
+    font-weight: 500;
+    display: none;
+    margin-top: -4px;
+  }
+
+  .field.has-error input {
+    border-color: var(--blush);
+    box-shadow: 0 0 0 3px rgba(238,178,169,0.2);
+  }
+
+  .field.has-error .field-error { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    body { grid-template-columns: 1fr; }
+    .left-panel { display: none; }
+    .right-panel {
+      padding: 48px 28px;
+      border-left: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ LEFT PANEL ══ -->
+<div class="left-panel">
+
+  <!-- brand -->
+  <a href="#" class="brand">
+    <div class="brand-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" stroke="#7E9595" stroke-width="1.5"/>
+        <circle cx="12" cy="12" r="4" fill="#AFC9BF" opacity="0.5"/>
+        <circle cx="12" cy="12" r="2" fill="#7E9595"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-devanagari">माँत्री</span>
+      <span class="brand-latin">Maatri</span>
+    </div>
+  </a>
+
+  <!-- hero copy -->
+  <div class="hero-copy">
+    <div class="eyebrow">AI-Powered Maternal Health</div>
+
+    <h1 class="hero-headline">
+      Welcome<br>
+      back to <em>safe</em><br>
+      <span class="blush">care.</span>
+    </h1>
+
+    <p class="hero-body">
+      Detect high-risk pregnancies in under 3 minutes — using voice input, OCR lab scanning, and real clinical data.
+    </p>
+
+    <div class="trust-row">
+      <div class="trust-dots">
+        <div class="trust-dot" style="background:#EEB2A9;"></div>
+        <div class="trust-dot" style="background:#F7D0AB;"></div>
+        <div class="trust-dot" style="background:#AFC9BF;"></div>
+      </div>
+      <span class="trust-text">Trusted by 12,000+ ANMs across India</span>
+    </div>
+
+    <div class="stat-chips">
+      <div class="chip">
+        <span class="chip-val">12K+</span>
+        <span class="chip-label">ANMs Active</span>
+      </div>
+      <div class="chip">
+        <span class="chip-val">3 min</span>
+        <span class="chip-label">Avg. Screening</span>
+      </div>
+      <div class="chip">
+        <span class="chip-val">94%</span>
+        <span class="chip-label">Risk Accuracy</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="left-footer">&copy; 2026 Maatri Health Pvt. Ltd. &middot; All rights reserved.</div>
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="right-panel">
+  <div class="form-shell">
+
+    <p class="form-eyebrow">Secure Sign-In</p>
+    <h2 class="form-title">Sign in to <em>Maatri</em></h2>
+    <p class="form-sub">Enter your credentials to access your dashboard and patient records.</p>
+
+    <!-- role selector -->
+    <div class="role-selector">
+      <button class="role-btn active" onclick="setRole(this)">
+        <span class="role-dot"></span> ANM / ASHA
+      </button>
+      <button class="role-btn" onclick="setRole(this)">
+        <span class="role-dot"></span> Doctor
+      </button>
+    </div>
+
+    <!-- fields -->
+    <div class="field-group">
+      <div class="field" id="field-phone">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX" maxlength="14" autocomplete="tel">
+        <span class="field-error">Please enter a valid 10-digit number.</span>
+      </div>
+
+      <div class="field" id="field-pass">
+        <label for="password">Password</label>
+        <div class="password-wrap">
+          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+          <button class="toggle-pw" type="button" onclick="togglePassword()" aria-label="Show/hide password">
+            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-error">Password must be at least 8 characters.</span>
+      </div>
+    </div>
+
+    <div class="forgot-row">
+      <a href="#" class="forgot-link">Forgot password?</a>
+    </div>
+
+    <button class="btn-signin" onclick="handleSignIn()">Sign in &rarr;</button>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">or</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="btn-otp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.86 12 19.79 19.79 0 0 1 1.8 3.4 2 2 0 0 1 3.78 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.04 6.04l1.18-1.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+      Sign in with OTP instead
+    </button>
+
+    <p class="form-footer">
+      New to Maatri? <a href="#">Request access &rarr;</a><br>
+      <span style="margin-top:6px; display:inline-block;">Having trouble? <a href="#">Contact your district coordinator</a></span>
+    </p>
+
+  </div>
+</div>
+
+<script>
+  function setRole(btn) {
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function togglePassword() {
+    const input = document.getElementById('password');
+    const icon  = document.getElementById('eye-icon');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      input.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  }
+
+  function handleSignIn() {
+    const phone = document.getElementById('phone').value.trim();
+    const pass  = document.getElementById('password').value;
+    let valid = true;
+
+    const phoneField = document.getElementById('field-phone');
+    const passField  = document.getElementById('field-pass');
+
+    phoneField.classList.remove('has-error');
+    passField.classList.remove('has-error');
+
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 10) {
+      phoneField.classList.add('has-error');
+      valid = false;
+    }
+    if (pass.length < 8) {
+      passField.classList.add('has-error');
+      valid = false;
+    }
+
+    if (valid) {
+      const btn = document.querySelector('.btn-signin');
+      btn.textContent = 'Signing in…';
+      btn.style.opacity = '0.75';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = 'Sign in \u2192';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+      }, 2000);
+    }
+  }
+</script>
+
+</body>
+</html>

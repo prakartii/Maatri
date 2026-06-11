@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maatri App — Clinical Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --cream: #F5EDE3;   --sky:   #B8CCCC;   --rug:   #8FB5A8;
+      --cover: #5C7E7E;   --desk:  #E8B882;   --eraser:#D4907F;
+      --blush: #C96B5A;   --dark:  #2E3030;   --mid:   #5A4A42;
+    }
+    body { font-family: 'DM Sans', sans-serif; background-color: #FDFBF7; color: var(--dark); }
+    .font-hindi { font-family: 'Tiro Devanagari Hindi', serif; }
+    .font-serif-brand { font-family: 'Cormorant Garamond', serif; }
+    .bg-cream { background-color: var(--cream); }
+    .text-cover { color: var(--cover); }
+    .bg-cover { background-color: var(--cover); }
+    .bg-rug { background-color: var(--rug); }
+    .border-rug { border-color: var(--rug); }
+    .bg-eraser { background-color: var(--eraser); }
+    .bg-blush { background-color: var(--blush); }
+    .sidebar-link.active { background: linear-gradient(90deg, rgba(92,126,126,0.12), rgba(92,126,126,0.04)); color: var(--cover); font-weight: 600; border-left: 3px solid var(--cover); }
+    .sidebar-link:not(.active):hover { background: rgba(92,126,126,0.05); }
+    .app-view { animation: fadeSlide 0.22s ease; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .stat-card { transition: box-shadow 0.15s, transform 0.15s; }
+    .stat-card:hover { box-shadow: 0 4px 20px rgba(92,126,126,0.13); transform: translateY(-1px); }
+    input:focus, select:focus { box-shadow: 0 0 0 3px rgba(92,126,126,0.15); }
+    .ref-detail-section { transition: box-shadow 0.15s; }
+    .ref-detail-section:hover { box-shadow: 0 4px 16px rgba(92,126,126,0.10); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <div id="offline-banner" class="hidden bg-amber-500 text-white px-4 py-2 text-center text-sm font-medium sticky top-0 z-50 animate-pulse">
+    ⚠️ Operating in Offline Mode. <span id="queued-count">0</span> records queued for synchronization.
+  </div>
+
+  <div id="view-login" class="flex-1 flex items-center justify-center bg-cream px-4">
+    <div class="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border border-emerald-100">
+      <div class="text-center mb-8">
+        <span class="font-hindi text-4xl text-cover block">माँत्री</span>
+        <span class="font-serif-brand text-xs tracking-widest text-orange-400 uppercase font-semibold">Maatri Portal</span>
+        <h2 class="text-xl font-bold mt-4 text-gray-800">Maternal Risk Engine Login</h2>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Select Security Role</label>
+          <select id="login-role" class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+            <option value="ANM">ANM / ASHA Worker Dashboard</option>
+            <option value="DOCTOR">Medical Officer / Doctor Dashboard</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Email / Mobile Number</label>
+          <input type="text" value="admin@maatri.org" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Security Password</label>
+          <input type="password" value="••••••••" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+        </div>
+        <button type="submit" class="w-full bg-cover text-white py-3 rounded-xl font-semibold hover:opacity-90 transition shadow-md">
+          Authenticate & Enter Dashboard
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="main-app" class="hidden flex-1 flex flex-col md:flex-row min-h-screen">
+    
+    <aside class="w-full md:w-64 bg-white border-r border-gray-100 flex flex-col shrink-0">
+      <div class="p-4 border-b border-gray-50 flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-cover flex items-center justify-center text-white font-bold font-hindi text-xl">माँ</div>
+        <div>
+          <h1 class="font-hindi text-2xl text-cover leading-none">माँत्री</h1>
+          <span id="user-role-badge" class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">ANM Portal</span>
+        </div>
+      </div>
+      
+      <nav id="nav-anm" class="flex-1 p-4 space-y-1">
+        <button onclick="switchView('anm-dashboard')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">📊</span> <span>Dashboard Overview</span></button>
+        <button onclick="switchView('anm-registry')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">🤰</span> <span>Mother Registry</span></button>
+        <button onclick="switchView('anm-visit-form')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">🩺</span> <span>Record New Visit</span></button>
+        <button onclick="switchView('anm-followups')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">📅</span> <span>Followup Schedule</span></button>
+        <button onclick="switchView('anm-heatmap')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">📍</span> <span>Village Risk Heatmap</span></button>
+        <button onclick="switchView('offline-sync')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">🔄</span> <span>Offline Center</span></button>
+      </nav>
+
+      <nav id="nav-doctor" class="hidden flex-1 p-4 space-y-1">
+        <button onclick="switchView('doc-dashboard')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">📈</span> <span>Hospital Analytics</span></button>
+        <button onclick="switchView('doc-referrals')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">🚨</span> <span>Referral Triage Queue</span></button>
+        <button onclick="switchView('doc-qr-scanner')" class="sidebar-link w-full text-left px-4 py-2.5 rounded-xl text-sm flex items-center space-x-3 text-gray-600 hover:bg-gray-50 transition"><span class="text-lg">📷</span> <span>Scan Patient QR</span></button>
+      </nav>
+
+      <div class="p-4 border-t border-gray-100">
+        <button onclick="logout()" class="w-full border border-gray-200 text-gray-600 text-xs font-semibold py-2 rounded-lg hover:bg-red-50 hover:text-red-600 transition">Logout Account</button>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-x-hidden">
+      
+      <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0">
+        <div class="flex items-center space-x-4 w-1/3">
+          <span class="text-gray-400">🔍</span>
+          <input type="text" id="global-search" placeholder="Search parameters, names, or IDs..." class="w-full bg-gray-50 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
+        </div>
+        <div class="flex items-center space-x-4">
+          <button onclick="toggleMockNetwork()" id="network-toggle-btn" class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg">Online Mode</button>
+          
+          <select class="text-xs border rounded-lg px-2 py-1.5 bg-white">
+            <option>English</option>
+            <option>தமிழ் (Tamil)</option>
+            <option>हिन्दी (Hindi)</option>
+            <option>తెలుగు (Telugu)</option>
+          </select>
+          <div class="relative cursor-pointer">
+            <span class="text-xl">🔔</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+          </div>
+        </div>
+      </header>
+
+      <div id="view-canvas" class="p-6 flex-1 bg-[#FAF8F5] overflow-y-auto">
+        
+        <div id="anm-dashboard" class="app-view hidden space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">Primary Care Overview</h2>
+              <p class="text-sm text-gray-500">PHC Sector Clinical Intelligence Tracker</p>
+            </div>
+            <button onclick="switchView('anm-visit-form')" class="bg-cover text-white px-4 py-2 rounded-xl text-sm font-medium shadow">+ New Pregnancy Checkup</button>
+          </div>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Total Registered</span>
+              <span class="text-3xl font-bold text-gray-800 block mt-1" id="stat-total-mothers">142</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">High Risk (RED)</span>
+              <span class="text-3xl font-bold text-red-600 block mt-1" id="stat-red-mothers">12</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-400">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Moderate Risk</span>
+              <span class="text-3xl font-bold text-amber-600 block mt-1">28</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Pending Sync</span>
+              <span class="text-3xl font-bold text-cover block mt-1" id="stat-queued-count">0</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
+              <h3 class="font-bold text-gray-800 mb-4 flex items-center justify-between">
+                <span>Critical Alerts List</span>
+                <span class="text-xs text-red-600 font-semibold bg-red-50 px-2 py-0.5 rounded-md">Urgent Action Required</span>
+              </h3>
+              <div class="space-y-3" id="dashboard-alerts-list">
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 class="font-bold text-gray-800 mb-3">Quick Navigation</h3>
+              <div class="space-y-2">
+                <button onclick="openRegistrationModal()" class="w-full text-left p-3 text-xs font-semibold bg-gray-50 hover:bg-cream rounded-xl transition flex items-center justify-between">
+                  <span>📝 Register New Mother</span> <span>→</span>
+                </button>
+                <button onclick="switchView('anm-followups')" class="w-full text-left p-3 text-xs font-semibold bg-gray-50 hover:bg-cream rounded-xl transition flex items-center justify-between">
+                  <span>📅 Missed Followup Audits</span> <span>→</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="anm-registry" class="app-view hidden space-y-4">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">Maternal Cohort Health Registry</h2>
+              <p class="text-sm text-gray-500">Cohort screening management, sorting, and historical drill-down profiles.</p>
+            </div>
+            <button onclick="openRegistrationModal()" class="bg-cover text-white px-4 py-2 rounded-xl text-sm font-medium shadow">+ Register Patient Form</button>
+          </div>
+
+          <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-wrap gap-4 items-center">
+            <div class="flex flex-col">
+              <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Filter by Village</label>
+              <select id="filter-village" onchange="applyRegistryFilters()" class="border rounded-lg text-xs p-2 bg-gray-50">
+                <option value="ALL">All Villages</option>
+                <option value="Vellore PHC">Vellore PHC</option>
+                <option value="Salem Sub-centre">Salem Sub-centre</option>
+                <option value="Namakkal PHC">Namakkal PHC</option>
+              </select>
+            </div>
+            <div class="flex flex-col">
+              <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Risk Stratification</label>
+              <select id="filter-risk" onchange="applyRegistryFilters()" class="border rounded-lg text-xs p-2 bg-gray-50">
+                <option value="ALL">All Clinical Risks</option>
+                <option value="RED">High Risk Only (RED)</option>
+                <option value="AMBER">Moderate Watch (AMBER)</option>
+                <option value="GREEN">Low Clinical Escalation</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-gray-100">
+                  <th class="p-4">Patient Parameters</th>
+                  <th class="p-4">Location Sector</th>
+                  <th class="p-4">Clinical Stratification</th>
+                  <th class="p-4">Gestation Progress</th>
+                  <th class="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="registry-table-body" class="text-sm divide-y divide-gray-50">
+                </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="anm-patient-profile" class="app-view hidden space-y-6">
+          <div class="flex items-center space-x-3">
+            <button onclick="switchView('anm-registry')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium">← Back to Cohort</button>
+            <h2 class="text-xl font-bold text-gray-800" id="profile-patient-name">Patient Profile</h2>
+            <div id="profile-risk-badge"></div>
+          </div>
+
+          <div class="border-b border-gray-200 flex space-x-6 text-sm font-medium">
+            <button onclick="switchProfileTab('overview')" class="profile-tab-btn border-b-2 border-emerald-700 text-cover pb-2 font-bold px-1" id="tab-btn-overview">Clinical Overview</button>
+            <button onclick="switchProfileTab('history')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-history">Visit Longitudinal Trends</button>
+            <button onclick="switchProfileTab('careplan')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-careplan">AI Generated Care Plan</button>
+            <button onclick="switchProfileTab('qr')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-qr">Digital Identity QR</button>
+          </div>
+
+          <div id="profile-tab-overview" class="profile-tab-content space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Biodata Summary</h4>
+                <p class="text-xs text-gray-600"><strong>Age Parameter:</strong> <span id="prof-meta-age">24</span> years</p>
+                <p class="text-xs text-gray-600"><strong>Village Node:</strong> <span id="prof-meta-village">Vellore PHC</span></p>
+                <p class="text-xs text-gray-600"><strong>Gestational Metric:</strong> Week <span id="prof-meta-week">32</span></p>
+              </div>
+              <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm md:col-span-2 space-y-3">
+                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Active Referral & Clinical Status</h4>
+                <div id="profile-clinical-status-block" class="text-xs space-y-2">
+                  </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-tab-history" class="profile-tab-content hidden space-y-6">
+            <!-- Clinical Trend Alert Box -->
+            <div id="trend-alert-box" class="rounded-2xl border overflow-hidden shadow-sm">
+              <div class="px-5 py-3 bg-gradient-to-r from-red-50 to-amber-50 border-b border-red-100 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="text-base">⚠️</span>
+                  <span class="text-xs font-bold text-red-800 uppercase tracking-wider">Clinical Trend Alerts</span>
+                </div>
+                <span class="text-[10px] text-red-600 font-bold bg-red-100 px-2 py-0.5 rounded-full uppercase">Action Required</span>
+              </div>
+              <div id="trend-alerts-list" class="bg-white divide-y divide-red-50 px-5 py-2">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Hemoglobin Tracking (g/dL)</h4>
+                <div class="h-48 relative">
+                  <canvas id="chart-hb"></canvas>
+                </div>
+              </div>
+              <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
+                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Blood Pressure Stratification</h4>
+                <div class="h-48 relative">
+                  <canvas id="chart-bp"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-tab-careplan" class="profile-tab-content hidden space-y-4">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+              <div class="flex justify-between items-center">
+                <h3 class="font-bold text-gray-800">Dynamic Decision Support Care Plan</h3>
+                <div class="flex items-center space-x-2">
+                  <select id="careplan-lang" class="text-xs border rounded px-2 py-1 bg-gray-50">
+                    <option value="en">English AI Output</option>
+                    <option value="ta">தமிழ் Summary</option>
+                    <option value="hi">हिन्दी Context</option>
+                  </select>
+                  <button onclick="triggerCarePlanGeneration()" class="bg-cover text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow hover:opacity-90">
+                    🪄 Generate Care Plan
+                  </button>
+                </div>
+              </div>
+
+              <div id="careplan-loading" class="hidden flex flex-col items-center justify-center py-12 space-y-3">
+                <div class="w-8 h-8 border-4 border-emerald-700 border-t-transparent rounded-full animate-spin"></div>
+                <p class="text-xs text-gray-400 font-medium">Invoking /ai/careplan LLM Pipeline (Target Language Translation Active)...</p>
+              </div>
+
+              <div id="careplan-results" class="hidden space-y-4">
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Clinical Guidance Summary</h4>
+                      <p id="careplan-txt-guidance" class="text-sm text-emerald-900 mt-1">Counseling active values.</p>
+                    </div>
+                    <button onclick="playTTS('careplan-txt-guidance')" class="text-sm bg-white p-1.5 rounded-lg border border-emerald-200 hover:bg-emerald-100">🔊 Play Audio</button>
+                  </div>
+                </div>
+                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <h4 class="text-xs font-bold text-red-800 uppercase tracking-wider">Emergency Red Flags (Symptom Trigger Alert)</h4>
+                      <p id="careplan-txt-redflags" class="text-sm text-red-900 mt-1">Danger limits.</p>
+                    </div>
+                    <button onclick="playTTS('careplan-txt-redflags')" class="text-sm bg-white p-1.5 rounded-lg border border-red-200 hover:bg-red-100">🔊 Play Audio</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-tab-qr" class="profile-tab-content hidden flex flex-col items-center justify-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div class="border-2 border-emerald-800 p-4 rounded-2xl bg-white shadow-md text-center max-w-xs space-y-3">
+              <span class="font-hindi text-xl text-cover tracking-wide block">माँत्री HEALTH IDENTITY</span>
+              <svg class="w-48 h-48 mx-auto text-gray-800" viewBox="0 0 100 100" fill="currentColor">
+                <path d="M5 5h30v30H5V5zm5 5v20h20V10H10zM5 65h30v30H5V65zm5 5v20h20V70H10zM65 5h30v30H65V5zm5 5v20h20V10H70zM45 15h10v10H45v-10zM45 45h10v10H45v-10zM15 45h10v10H15v-10zM75 45h10v10H75v-10zM45 75h10v10H45v-10zM75 75h15v15H75v-15z"/>
+              </svg>
+              <span id="qr-card-token" class="text-xs font-mono tracking-widest text-gray-500 font-bold uppercase block">MTR-992381</span>
+              <p class="text-[10px] text-gray-400">Scan this code at PHC triage or referral desks to immediately populate clinical records.</p>
+            </div>
+            <button class="mt-4 bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">Download Token Identifier Image</button>
+          </div>
+        </div>
+
+        <div id="anm-visit-form" class="app-view hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Record Ante-Natal Care (ANC) Metrics</h2>
+            <p class="text-sm text-gray-500">Multimodal Input Layer: Manual, Computer Vision OCR Scanning, or Local Language Voice Synthesis</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 space-y-6">
+              
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">OCR Computer Vision Extraction Matrix</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Upload lab diagnostic printouts. Values extract directly into fields with manual nurse override.</p>
+                </div>
+                <button type="button" onclick="simulateOCRExtraction()" class="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition flex items-center space-x-2 shrink-0">
+                  <span>📷</span> <span>Scan printed Report</span>
+                </button>
+              </div>
+
+              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">ASR Vocal Processing Component</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Speak clinical complications aloud in regional vernacular languages to auto-toggle structured logic fields.</p>
+                </div>
+                <button type="button" id="btn-voice-input" onclick="simulateVoiceTranscription()" class="bg-rose-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-rose-700 transition flex items-center space-x-2 shrink-0">
+                  <span id="voice-mic-icon">🎙️</span> <span id="voice-btn-text">Stream Complications Speech</span>
+                </button>
+              </div>
+
+              <form id="anc-visit-form" onsubmit="handleVisitSubmit(event)" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Cohort Patient</label>
+                  <select id="visit-patient-id" class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-1 focus:ring-emerald-700 text-sm">
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Hemoglobin Level (g/dL)</label>
+                    <input type="number" step="0.1" id="input-hb" required placeholder="e.g. 11.5" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Systolic Blood Pressure (mmHg)</label>
+                    <input type="number" id="input-systolic" required placeholder="e.g. 120" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+                  </div>
+                  <div>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Random Blood Sugar (mg/dL)</label>
+                    <input type="number" id="input-sugar" required placeholder="e.g. 100" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="block text-xs font-semibold text-gray-600 uppercase">Documented Subjective Complications</label>
+                  <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
+                      <input type="checkbox" id="symptom-headache" class="rounded text-emerald-700 focus:ring-0">
+                      <span>Severe Chronic Headache</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
+                      <input type="checkbox" id="symptom-vision" class="rounded text-emerald-700 focus:ring-0">
+                      <span>Blurred Vision Matrix</span>
+                    </label>
+                    <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
+                      <input type="checkbox" id="symptom-swelling" class="rounded text-emerald-700 focus:ring-0">
+                      <span>Pedal Edema / Swelling</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="pt-4 border-t">
+                  <button type="submit" class="bg-cover text-white font-semibold px-6 py-3 rounded-xl shadow w-full hover:opacity-90 transition">
+                    Run Risk Classification Engine & Save Visit
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="space-y-4">
+              <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm sticky top-24">
+                <h3 class="font-bold text-gray-800 mb-3">Real-time AI Diagnostic Result</h3>
+                
+                <div id="ai-analysis-empty" class="text-center py-8 text-xs text-gray-400">
+                  Enter patient vital metrics or invoke multimodal OCR tools to process clinical stratification flags.
+                </div>
+
+                <div id="ai-analysis-loading" class="hidden text-center py-8 space-y-2">
+                  <div class="w-6 h-6 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                  <p class="text-xs text-gray-400">Processing Clinical Logic Rule Engine (/ai/analyze)...</p>
+                </div>
+
+                <div id="ai-analysis-output" class="hidden space-y-4">
+                  <div class="text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm shadow-inner" id="analysis-badge-target">
+                    </div>
+                  <div class="text-xs space-y-2 text-gray-600 bg-gray-50 p-3 rounded-xl border">
+                    <h4 class="font-bold text-gray-700">Algorithmic Explanations:</h4>
+                    <ul id="analysis-reasons-list" class="list-disc list-inside space-y-1 text-gray-600">
+                      </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="anm-followups" class="app-view hidden space-y-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Operational Followup Scheduling</h2>
+            <p class="text-sm text-gray-500">Prioritized screening targets requiring immediate regional intervention nodes.</p>
+          </div>
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="p-4 bg-gray-50 font-semibold text-xs text-gray-500 uppercase tracking-wider">High Priority Action Queue</div>
+            <div class="divide-y divide-gray-100" id="followups-container-element">
+              </div>
+          </div>
+        </div>
+
+        <div id="anm-heatmap" class="app-view hidden space-y-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Spatiotemporal Village Risk Heatmap</h2>
+            <p class="text-sm text-gray-500">Visual epidemiology indicators showing geographic patient cluster vectors for risk targeting.</p>
+          </div>
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden flex flex-col justify-between" style="min-height: 400px;">
+            <div class="absolute inset-0 bg-emerald-50 bg-opacity-30 flex flex-col items-center justify-center p-4 text-center">
+              <div class="w-full max-w-lg h-64 border border-dashed border-gray-300 rounded-xl bg-white p-4 relative overflow-hidden shadow-inner">
+                <div class="absolute top-1/4 left-1/3 w-16 h-16 bg-red-500 bg-opacity-20 rounded-full flex items-center justify-center animate-ping"></div>
+                <div class="absolute top-1/4 left-1/3 w-4 h-4 bg-red-600 rounded-full border-2 border-white shadow flex items-center justify-center"><span class="text-[8px] text-white font-bold">!</span></div>
+                <span class="absolute top-12 left-28 text-[10px] font-bold text-gray-700 bg-white px-1.5 py-0.5 rounded shadow">Namakkal Sector Center (4 RED Alerts)</span>
+
+                <div class="absolute bottom-1/3 right-1/4 w-12 h-12 bg-amber-500 bg-opacity-20 rounded-full flex items-center justify-center animate-pulse"></div>
+                <div class="absolute bottom-1/3 right-1/4 w-4 h-4 bg-amber-500 rounded-full border-2 border-white shadow"></div>
+                <span class="absolute bottom-12 right-12 text-[10px] font-bold text-gray-700 bg-white px-1.5 py-0.5 rounded shadow">Salem Sub-centre Cluster</span>
+              </div>
+            </div>
+            <div class="z-10 bg-white bg-opacity-95 p-4 rounded-xl shadow border max-w-sm mt-auto text-xs space-y-1">
+              <h4 class="font-bold text-gray-800">Pulsing Cluster Map Node Engine</h4>
+              <p class="text-gray-500">Pulsing visual heat maps isolate critical localized regions needing triage equipment allocation or doctor deployment support.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="offline-sync" class="app-view hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">IndexedDB Local Cache & Synchronization Core</h2>
+            <p class="text-sm text-gray-500">System management terminal tracking edge computing storage performance metrics.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+              <h3 class="font-bold text-gray-800">Queue Operational Telemetry</h3>
+              <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="bg-gray-50 p-4 rounded-xl border">
+                  <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Unsynced Records</span>
+                  <span id="sync-telemetry-queued" class="text-4xl font-extrabold text-orange-600 block mt-1">0</span>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border">
+                  <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Database Health Status</span>
+                  <span class="text-sm font-bold text-emerald-700 block mt-3">OK (SQLite/IndexedDB Edge)</span>
+                </div>
+              </div>
+              <button onclick="triggerManualSyncProcessing()" class="w-full bg-cover text-white font-semibold py-3 rounded-xl shadow-md hover:opacity-90 transition">
+                Force Transmission Synchronization Pipeline
+              </button>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-xs space-y-2 text-gray-500">
+              <h4 class="font-bold text-gray-800 text-sm mb-1">Architecture Pipeline Logic Specs:</h4>
+              <p>1. When <code class="bg-gray-100 px-1 text-rose-600 font-mono">navigator.onLine === false</code>, the API switch toggles local query execution targets seamlessly.</p>
+              <p>2. Laboratory Scan OCR queries redirect automatically to highly optimized offline endpoints (<code class="bg-gray-100 px-1 text-rose-600 font-mono">/ai/ocr?offline=true</code>).</p>
+              <p>3. Dynamic records automatically log into IndexedDB local transaction tables, queued until safe cloud gateway authentication returns.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="doc-dashboard" class="app-view hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Medical Officer District Command System</h2>
+            <p class="text-sm text-gray-500">Macro Level Overview: Referral distribution metrics and triage load tracking.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Active Triage Referrals</span>
+              <span class="text-3xl font-bold text-gray-800 mt-1 block" id="doc-stat-active-referrals">2</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Admitted Status Tracker</span>
+              <span class="text-3xl font-bold text-emerald-700 mt-1 block">48</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Referral Acceptance Rate</span>
+              <span class="text-3xl font-bold text-indigo-700 mt-1 block">94%</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Monitored PHC Sectors</span>
+              <span class="text-3xl font-bold text-gray-800 mt-1 block">8 States</span>
+            </div>
+          </div>
+          
+          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-4">Risk Categorization Epidemiology</h3>
+            <div class="h-64 relative">
+              <canvas id="chart-doc-macro-distribution"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div id="doc-referrals" class="app-view hidden space-y-4">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Referral Triage Admission Control</h2>
+            <p class="text-sm text-gray-500">Incoming clinical escalations in SOAP diagnostic presentation syntax.</p>
+          </div>
+          <div class="space-y-4" id="doc-referrals-container">
+            </div>
+        </div>
+
+        <!-- ===== REFERRAL DETAILS PAGE /referrals/:id ===== -->
+        <div id="doc-referral-detail" class="app-view hidden space-y-6">
+          <div class="flex items-center space-x-3">
+            <button onclick="switchView('doc-referrals')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium flex items-center space-x-1">
+              <span>←</span><span>Back to Referrals</span>
+            </button>
+            <h2 class="text-xl font-bold text-gray-800">Referral Details</h2>
+            <span id="ref-detail-status-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wider">PENDING</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- LEFT: Patient + Hospital + Reason + Status -->
+            <div class="lg:col-span-2 space-y-4">
+              <!-- Patient Card -->
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                  <span class="text-base">🤰</span>
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Patient</span>
+                </div>
+                <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Name</span>
+                    <span id="ref-patient-name" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Age</span>
+                    <span id="ref-patient-age" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Gestation</span>
+                    <span id="ref-patient-week" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
+                  </div>
+                  <div>
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Risk</span>
+                    <span id="ref-patient-risk" class="font-bold text-red-700 text-sm block mt-0.5">—</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Hospital + Reason -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                    <span class="text-base">🏥</span>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Referring Hospital</span>
+                  </div>
+                  <div class="p-5">
+                    <p id="ref-hospital-from" class="font-semibold text-gray-800 text-sm">—</p>
+                    <p id="ref-hospital-time" class="text-xs text-gray-400 mt-1">—</p>
+                  </div>
+                </div>
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                    <span class="text-base">📋</span>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Clinical Reason</span>
+                  </div>
+                  <div class="p-5">
+                    <p id="ref-reason-text" class="text-sm text-gray-700 leading-relaxed">—</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SOAP Notes -->
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                  <span class="text-base">🩺</span>
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">SOAP Clinical Notes</span>
+                </div>
+                <div class="p-5">
+                  <p id="ref-soap-text" class="font-mono text-xs text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-100">—</p>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex flex-wrap gap-3">
+                <button id="ref-btn-arrived" onclick="updateRefDetailStatus('ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow hover:opacity-90 transition">✅ Confirm Patient Arrival</button>
+                <button id="ref-btn-admitted" onclick="updateRefDetailStatus('ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-emerald-50 transition">🏥 Log Inpatient Admission</button>
+                <button onclick="switchView('doc-referrals')" class="border border-gray-200 text-gray-500 text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-gray-50 transition">← Back to Queue</button>
+              </div>
+            </div>
+
+            <!-- RIGHT: Status Timeline + QR -->
+            <div class="space-y-4">
+              <!-- Status Timeline -->
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                  <span class="text-base">📍</span>
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Status Timeline</span>
+                </div>
+                <div class="p-5 space-y-0" id="ref-timeline-container">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+
+              <!-- QR Code -->
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
+                  <span class="text-base">📱</span>
+                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Digital Identity QR</span>
+                </div>
+                <div class="p-5 flex flex-col items-center space-y-3">
+                  <div class="border-2 border-[#5C7E7E] p-3 rounded-xl bg-white shadow-inner">
+                    <svg class="w-32 h-32 text-gray-800" viewBox="0 0 100 100" fill="currentColor">
+                      <path d="M5 5h30v30H5V5zm5 5v20h20V10H10zM5 65h30v30H5V65zm5 5v20h20V70H10zM65 5h30v30H65V5zm5 5v20h20V10H70zM45 15h10v10H45v-10zM45 45h10v10H45v-10zM15 45h10v10H15v-10zM75 45h10v10H75v-10zM45 75h10v10H45v-10zM75 75h15v15H75v-15z"/>
+                    </svg>
+                  </div>
+                  <span id="ref-qr-token" class="text-xs font-mono tracking-widest text-gray-500 font-bold uppercase">—</span>
+                  <p class="text-[10px] text-gray-400 text-center">Scan at triage desk to instantly load patient records</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="doc-qr-scanner" class="app-view hidden space-y-6">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800">Triage Desk Patient Intake Scan Engine</h2>
+            <p class="text-sm text-gray-500">Scan digital token cards to instantly isolate incoming maternal risk files.</p>
+          </div>
+          <div class="max-w-md mx-auto bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-center space-y-4">
+            <div class="w-full h-64 bg-gray-900 rounded-xl relative flex flex-col items-center justify-center text-white border-4 border-dashed border-emerald-700 overflow-hidden">
+              <div class="absolute inset-x-0 top-1/2 h-0.5 bg-red-500 shadow animate-bounce"></div>
+              <span class="text-xs text-gray-400 tracking-wider">[ Camera Stream Active Target Node ]</span>
+            </div>
+            <div class="text-xs font-bold text-gray-400 uppercase">OR MANUALLY KEY PATIENT TOKEN</div>
+            <div class="flex space-x-2">
+              <input type="text" id="manual-token-input" placeholder="MTR-992381" class="flex-1 px-4 py-2 border rounded-xl text-center font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+              <button onclick="handleManualTokenIntakeSearch()" class="bg-gray-800 text-white text-xs font-semibold px-4 rounded-xl">Ingest Token</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="modal-register-mother" class="hidden fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-lg font-bold text-gray-800">Register New Maternal Profile Record</h3>
+        <button onclick="closeRegistrationModal()" class="text-gray-400 hover:text-gray-800 text-xl font-bold">×</button>
+      </div>
+      <form id="form-new-mother" onsubmit="handleCreateMotherProfile(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Full Identity Name</label>
+          <input type="text" id="reg-name" required placeholder="e.g. Laxmi Devi" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Age (Years)</label>
+            <input type="number" id="reg-age" required placeholder="e.g. 24" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Gestation Month</label>
+            <input type="number" min="1" max="9" id="reg-month" required placeholder="1-9" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Regional Village Node</label>
+          <select id="reg-village" class="w-full px-3 py-2 border rounded-xl text-xs bg-gray-50 focus:outline-none">
+            <option value="Vellore PHC">Vellore PHC</option>
+            <option value="Salem Sub-centre">Salem Sub-centre</option>
+            <option value="Namakkal PHC">Namakkal PHC</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Mobile Contact String</label>
+          <input type="text" id="reg-phone" required placeholder="e.g. 9876543210" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+        </div>
+        <button type="submit" class="w-full bg-cover text-white font-bold py-2.5 rounded-xl text-xs mt-2 shadow shadow-md hover:opacity-90">
+          Commit Record Set to System
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Global Clinical Mock State Storage Core Dictionary Model
+    const appState = {
+      userRole: null, 
+      isOnline: true,
+      offlineQueue: [],
+      activeProfileId: null,
+      activeProfileTab: 'overview',
+      
+      mothers: [
+        { id: 1, name: "Priya S.", age: 24, week: 32, month: 8, village: "Vellore PHC", phone: "9812345670", risk: "GREEN", hb: 11.2, systolic: 118, sugar: 98, meta: "Next visit: 2 weeks · Iron tabs prescribed", token: "MTR-339201" },
+        { id: 2, name: "Kavitha R.", age: 31, week: 28, month: 7, village: "Salem Sub-centre", phone: "9712345671", risk: "AMBER", hb: 9.1, systolic: 134, sugar: 118, meta: "Iron supplements recommended · Follow-up 1 week", token: "MTR-882910" },
+        { id: 3, name: "Meena T.", age: 19, week: 36, month: 9, village: "Namakkal PHC", phone: "9612345672", risk: "RED", hb: 7.8, systolic: 158, sugar: 98, meta: "Preeclampsia suspected · Referral sent to doctor", token: "MTR-992381" },
+        { id: 4, name: "Rani K.", age: 27, week: 22, month: 5, village: "Dharmapuri PHC", phone: "9512345673", risk: "AMBER", hb: 10.6, systolic: 122, sugar: 162, meta: "GDM watch · Diet counselling scheduled", token: "MTR-447210" }
+      ],
+      
+      referrals: [
+        { id: 101, motherId: 3, from: "Namakkal PHC (ANM Devi)", timestamp: "10 mins ago", status: "PENDING", soap: "S: C/o severe continuous fronto-temporal headache. O: BP 158/98, Pedal Edema ++, Hb 7.8 g/dL. A: Suspected severe Preeclampsia with Severe Anemia. P: Urgent referral for IV MgSO4 management architecture initiation." },
+        { id: 102, motherId: 2, from: "Salem Sub-centre (ANM Lakshmi)", timestamp: "2 hours ago", status: "ARRIVED", soap: "S: Reports mild dizziness upon exertion. O: BP 134/88, Hb 9.1 g/dL. A: Moderate Anemia with gestational hypertensive trending indices. P: Review iron therapy metrics." }
+      ],
+      
+      charts: {} // Component chart context reference variables
+    };
+
+    // Routing View Engine Controller
+    function switchView(viewId) {
+      document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+      const activeElement = document.getElementById(viewId);
+      if(activeElement) activeElement.classList.remove('hidden');
+      
+      document.querySelectorAll('.sidebar-link').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.sidebar-link')).find(btn => btn.getAttribute('onclick').includes(viewId));
+      if(activeBtn) activeBtn.classList.add('active');
+
+      // Hook dynamic initialization triggers per view requirements
+      if (viewId === 'anm-dashboard') renderANMDashboard();
+      if (viewId === 'anm-registry') renderMotherRegistry();
+      if (viewId === 'anm-followups') renderFollowups();
+      if (viewId === 'doc-dashboard') renderDoctorDashboard();
+      if (viewId === 'doc-referrals') renderDoctorReferralQueue();
+      if (viewId === 'anm-visit-form') initializeVisitFormOptions();
+    }
+
+    // Role-Aware Routing System Authentication Logic
+    function handleLogin(e) {
+      e.preventDefault();
+      const selectedRole = document.getElementById('login-role').value;
+      appState.userRole = selectedRole;
+      
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      
+      const badge = document.getElementById('user-role-badge');
+      badge.textContent = `${selectedRole} Portal`;
+      
+      if(selectedRole === 'ANM') {
+        document.getElementById('nav-anm').classList.remove('hidden');
+        document.getElementById('nav-doctor').classList.add('hidden');
+        switchView('anm-dashboard');
+      } else {
+        document.getElementById('nav-anm').classList.add('hidden');
+        document.getElementById('nav-doctor').classList.remove('hidden');
+        switchView('doc-dashboard');
+      }
+    }
+
+    function logout() {
+      appState.userRole = null;
+      document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('view-login').classList.remove('hidden');
+    }
+
+    // Dynamic Synchronization Engine Layer Mock
+    function toggleMockNetwork() {
+      appState.isOnline = !appState.isOnline;
+      const btn = document.getElementById('network-toggle-btn');
+      const banner = document.getElementById('offline-banner');
+      
+      if(appState.isOnline) {
+        btn.textContent = "Online Mode";
+        btn.className = "text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg";
+        banner.classList.add('hidden');
+        if(appState.offlineQueue.length > 0) {
+          alert(`Network gateway verified. Transmitting ${appState.offlineQueue.length} queued record batches to PHC Hub.`);
+          triggerManualSyncProcessing();
+        }
+      } else {
+        btn.textContent = "Offline Mode Active";
+        btn.className = "text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg";
+        banner.classList.remove('hidden');
+      }
+    }
+
+    // ======================================================== -->
+    // ANM ARCHITECTURE SCREEN LOGIC AND RENDERS                -->
+    // ======================================================== -->
+    function renderANMDashboard() {
+      const alertContainer = document.getElementById('dashboard-alerts-list');
+      alertContainer.innerHTML = '';
+      
+      // Isolate RED mothers to fulfill dashboard structural requirements
+      const redMothers = appState.mothers.filter(m => m.risk === 'RED');
+      document.getElementById('stat-total-mothers').textContent = appState.mothers.length;
+      document.getElementById('stat-red-mothers').textContent = redMothers.length;
+      
+      if(redMothers.length === 0) {
+        alertContainer.innerHTML = `<div class="text-xs text-gray-400 py-4 text-center">Zero priority maternal exceptions documented.</div>`;
+        return;
+      }
+
+      redMothers.forEach(m => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-xl text-xs";
+        item.innerHTML = `
+          <div>
+            <span class="font-bold text-gray-800">${m.name} (Age ${m.age}) · Week ${m.week}</span>
+            <p class="text-red-700 mt-0.5 font-medium">${m.meta}</p>
+          </div>
+          <button onclick="viewPatientProfile(${m.id})" class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">Drill Profile</button>
+        `;
+        alertContainer.appendChild(item);
+      });
+    }
+
+    function renderMotherRegistry() {
+      const tbody = document.getElementById('registry-table-body');
+      tbody.innerHTML = '';
+      
+      appState.mothers.forEach(m => {
+        const badgeColor = m.risk === 'RED' ? 'bg-red-100 text-red-800' : (m.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-gray-50 transition";
+        tr.innerHTML = `
+          <td class="p-4">
+            <span class="font-bold text-gray-800 block">${m.name}</span>
+            <span class="text-xs text-gray-400">ID Token: ${m.token} · Age ${m.age}</span>
+          </td>
+          <td class="p-4 text-gray-600 font-medium">${m.village}</td>
+          <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${m.risk} RISK</span></td>
+          <td class="p-4 font-medium text-gray-600">Week ${m.week} <span class="text-xs text-gray-400 block">Month ${m.month}</span></td>
+          <td class="p-4 text-right">
+            <button onclick="viewPatientProfile(${m.id})" class="text-xs bg-cream text-cover font-bold px-3 py-1.5 rounded-lg border border-rug hover:bg-opacity-50">Profile Workspace</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function applyRegistryFilters() {
+      // Dynamic logic hooks can integrate with filters here
+      renderMotherRegistry();
+    }
+
+    function initializeVisitFormOptions() {
+      const selector = document.getElementById('visit-patient-id');
+      selector.innerHTML = '';
+      appState.mothers.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id;
+        opt.textContent = `${m.name} (Week ${m.week}) [${m.token}]`;
+        selector.appendChild(opt);
+      });
+    }
+
+    // Profile Screen Workspace Navigation & Rendering Logic
+    function viewPatientProfile(id) {
+      const mother = appState.mothers.find(m => m.id === id);
+      if(!mother) return;
+      
+      appState.activeProfileId = id;
+      document.getElementById('profile-patient-name').textContent = mother.name;
+      document.getElementById('prof-meta-age').textContent = mother.age;
+      document.getElementById('prof-meta-village').textContent = mother.village;
+      document.getElementById('prof-meta-week').textContent = mother.week;
+      document.getElementById('qr-card-token').textContent = mother.token;
+      
+      const badgeTarget = document.getElementById('profile-risk-badge');
+      const badgeColor = mother.risk === 'RED' ? 'bg-red-100 text-red-800' : (mother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+      badgeTarget.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${mother.risk} RISK</span>`;
+      
+      const clinicalStatusBlock = document.getElementById('profile-clinical-status-block');
+      clinicalStatusBlock.innerHTML = `
+        <p><strong>Latest Clinical Metrics Session:</strong> Hb: ${mother.hb} g/dL | BP: ${mother.systolic} mmHg (Systolic) | Blood Sugar: ${mother.sugar} mg/dL</p>
+        <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic"><strong>Internal Diagnostic Logic Log:</strong> ${mother.meta}</p>
+      `;
+
+      switchView('anm-patient-profile');
+      switchProfileTab('overview');
+      buildPatientTrendCharts();
+    }
+
+    function switchProfileTab(tabName) {
+      appState.activeProfileTab = tabName;
+      document.querySelectorAll('.profile-tab-btn').forEach(btn => {
+        btn.className = "profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1";
+      });
+      document.querySelectorAll('.profile-tab-content').forEach(c => c.classList.add('hidden'));
+      
+      const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+      if(targetBtn) targetBtn.className = "profile-tab-btn border-b-2 border-emerald-700 text-cover pb-2 font-bold px-1";
+      
+      const targetContent = document.getElementById(`profile-tab-${tabName}`);
+      if(targetContent) targetContent.classList.remove('hidden');
+
+      // Build trend alerts when history tab is opened
+      if (tabName === 'history' && appState.activeProfileId) {
+        const m = appState.mothers.find(x => x.id === appState.activeProfileId);
+        if (m) buildTrendAlerts(m);
+      }
+    }
+
+    // Render longitudinal dynamic charts via Chart.js component frameworks
+    function buildPatientTrendCharts() {
+      // Clear existing contexts safely to enable canvas rewriting
+      if(appState.charts.hb) appState.charts.hb.destroy();
+      if(appState.charts.bp) appState.charts.bp.destroy();
+      
+      const ctxHb = document.getElementById('chart-hb').getContext('2d');
+      appState.charts.hb = new Chart(ctxHb, {
+        type: 'line',
+        data: {
+          labels: ['Visit 1 (W12)', 'Visit 2 (W20)', 'Visit 3 (W28)', 'Current Visit'],
+          datasets: [{ label: 'Hemoglobin Trend', data: [11.8, 11.0, 10.2, 9.1], borderColor: '#5C7E7E', fill: false, tension: 0.1 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      const ctxBp = document.getElementById('chart-bp').getContext('2d');
+      appState.charts.bp = new Chart(ctxBp, {
+        type: 'line',
+        data: {
+          labels: ['Visit 1', 'Visit 2', 'Visit 3', 'Current'],
+          datasets: [
+            { label: 'Systolic', data: [110, 120, 128, 134], borderColor: '#C96B5A', fill: false },
+            { label: 'Diastolic', data: [70, 76, 80, 88], borderColor: '#B8CCCC', fill: false }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // Modal Control Routines
+    function openRegistrationModal() { document.getElementById('modal-register-mother').classList.remove('hidden'); }
+    function closeRegistrationModal() { document.getElementById('modal-register-mother').classList.add('hidden'); }
+    
+    function handleCreateMotherProfile(e) {
+      e.preventDefault();
+      const newM = {
+        id: appState.mothers.length + 1,
+        name: document.getElementById('reg-name').value,
+        age: parseInt(document.getElementById('reg-age').value),
+        week: parseInt(document.getElementById('reg-month').value) * 4,
+        month: parseInt(document.getElementById('reg-month').value),
+        village: document.getElementById('reg-village').value,
+        phone: document.getElementById('reg-phone').value,
+        risk: "GREEN", hb: 12.0, systolic: 120, sugar: 90, meta: "Initial baseline registration entry log.",
+        token: "MTR-" + Math.floor(100000 + Math.random() * 900000)
+      };
+      appState.mothers.push(newM);
+      closeRegistrationModal();
+      renderMotherRegistry();
+      switchView('anm-registry');
+    }
+
+    function renderFollowups() {
+      const container = document.getElementById('followups-container-element');
+      container.innerHTML = '';
+      
+      const priorityMothers = appState.mothers.filter(m => m.risk !== 'GREEN');
+      priorityMothers.forEach(m => {
+        const el = document.createElement('div');
+        el.className = "p-4 flex justify-between items-center text-xs hover:bg-gray-50 transition";
+        el.innerHTML = `
+          <div>
+            <span class="font-bold text-gray-800 block">${m.name} · ${m.village}</span>
+            <span class="text-gray-400">Risk Severity: ${m.risk} | Communication Line: ${m.phone}</span>
+          </div>
+          <button onclick="viewPatientProfile(${m.id})" class="bg-cover text-white px-3 py-1.5 rounded-lg">Trigger Direct Call / Audit</button>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ======================================================== -->
+    // AI INTERACTIVE CORE INTELLIGENCE ROUTINES                -->
+    // ======================================================== -->
+    function simulateOCRExtraction() {
+      // Implementation switch details routing logic
+      const targetUrl = appState.isOnline ? "/ai/ocr" : "/ai/ocr?offline=true";
+      console.log(`Routing target URL chosen: ${targetUrl}`);
+      
+      alert(`Triggering Optical Character Recognition processing scan on endpoint: ${targetUrl}`);
+      
+      // Auto pre-fill diagnostic matrix to allow manual override workflow verification
+      document.getElementById('input-hb').value = "8.4";
+      document.getElementById('input-systolic').value = "145";
+      document.getElementById('input-sugar').value = "110";
+      
+      // Fire live engine rule analysis evaluation
+      evaluateRiskScoreEngineRealtime();
+    }
+
+    function simulateVoiceTranscription() {
+      const btn = document.getElementById('btn-voice-input');
+      const textNode = document.getElementById('voice-btn-text');
+      const iconNode = document.getElementById('voice-mic-icon');
+      
+      textNode.textContent = "Streaming Speech Audio Engine Buffer (/ai/transcribe)...";
+      iconNode.className = "animate-ping text-rose-600";
+      
+      setTimeout(() => {
+        // Toggles specified logical check fields matching mapped voice arrays
+        document.getElementById('symptom-headache').checked = true;
+        document.getElementById('symptom-vision').checked = true;
+        
+        textNode.textContent = "Stream Complications Speech";
+        iconNode.className = "";
+        alert("Whisper pipeline transcribed regional speech patterns: Auto-selected identified complication symptoms successfully.");
+        evaluateRiskScoreEngineRealtime();
+      }, 1500);
+    }
+
+    // Form Event Monitor tracking direct logic changes
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('input-hb').addEventListener('input', evaluateRiskScoreEngineRealtime);
+      document.getElementById('input-systolic').addEventListener('input', evaluateRiskScoreEngineRealtime);
+      document.getElementById('input-sugar').addEventListener('input', evaluateRiskScoreEngineRealtime);
+    });
+
+    function evaluateRiskScoreEngineRealtime() {
+      const hb = parseFloat(document.getElementById('input-hb').value);
+      const bp = parseInt(document.getElementById('input-systolic').value);
+      const sugar = parseInt(document.getElementById('input-sugar').value);
+      
+      if(isNaN(hb) && isNaN(bp) && isNaN(sugar)) return;
+      
+      document.getElementById('ai-analysis-empty').classList.add('hidden');
+      const loader = document.getElementById('ai-analysis-loading');
+      const output = document.getElementById('ai-analysis-output');
+      
+      loader.classList.remove('hidden');
+      output.classList.add('hidden');
+      
+      // Evaluate strict MOHFW Clinical thresholds criteria parameters sequentially
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        output.classList.remove('hidden');
+        
+        const badge = document.getElementById('analysis-badge-target');
+        const reasonsList = document.getElementById('analysis-reasons-list');
+        reasonsList.innerHTML = '';
+        
+        let calculatedRisk = "GREEN";
+        let reasons = [];
+        
+        if (hb < 9.0) { calculatedRisk = "RED"; reasons.push("Severe Anemia Condition: Hb parameter drops below 9.0 g/dL critical threshold."); }
+        else if (hb < 11.0) { if(calculatedRisk !== "RED") calculatedRisk = "AMBER"; reasons.push("Mild Anemia Indicator observed: Hb lower than standard 11.0 g/dL baseline limits."); }
+        
+        if (bp >= 140) { calculatedRisk = "RED"; reasons.push("Preeclampsia Risk: Systolic Blood Pressure scales past 140 mmHg limit context."); }
+        if (sugar >= 140) { if(calculatedRisk !== "RED") calculatedRisk = "AMBER"; reasons.push("Gestational Diabetes Mellitus (GDM) watch: Blood Sugar tracks past 140 mg/dL target spectrum."); }
+        
+        if (document.getElementById('symptom-headache').checked || document.getElementById('symptom-vision').checked) {
+          calculatedRisk = "RED";
+          reasons.push("Subjective Neurological Danger Signs reported: Immediate specialist attention advised.");
+        }
+
+        if(reasons.length === 0) { reasons.push("Vitals scale within standard safe parameters."); }
+
+        badge.textContent = `${calculatedRisk} RISK LEVEL RATING`;
+        if(calculatedRisk === 'RED') badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-red-100 text-red-800 border border-red-300";
+        else if(calculatedRisk === 'AMBER') badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-amber-100 text-amber-800 border border-amber-300";
+        else badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-green-100 text-green-800 border border-green-300";
+        
+        reasons.forEach(r => {
+          const li = document.createElement('li');
+          li.textContent = r;
+          reasonsList.appendChild(li);
+        });
+      }, 400);
+    }
+
+    function handleVisitSubmit(e) {
+      e.preventDefault();
+      const pId = parseInt(document.getElementById('visit-patient-id').value);
+      const mother = appState.mothers.find(m => m.id === pId);
+      
+      const hb = parseFloat(document.getElementById('input-hb').value);
+      const bp = parseInt(document.getElementById('input-systolic').value);
+      const sugar = parseInt(document.getElementById('input-sugar').value);
+      
+      let determinedRisk = "GREEN";
+      if (hb < 9 || bp >= 140) determinedRisk = "RED";
+      else if (hb < 11 || sugar >= 140) determinedRisk = "AMBER";
+
+      const txRecord = { motherId: pId, hb, systolic: bp, sugar, risk: determinedRisk, timestamp: new Date().toISOString() };
+
+      if (!appState.isOnline) {
+        appState.offlineQueue.push(txRecord);
+        document.getElementById('queued-count').textContent = appState.offlineQueue.length;
+        document.getElementById('sync-telemetry-queued').textContent = appState.offlineQueue.length;
+        document.getElementById('stat-queued-count').textContent = appState.offlineQueue.length;
+        alert("System working offline: Transaction record batched safely to local IndexedDB processing partition cache.");
+      } else {
+        if(mother) {
+          mother.hb = hb; mother.systolic = bp; mother.sugar = sugar; mother.risk = determinedRisk;
+          mother.meta = `Updated via ANC Screening Portal Session. Risk Level Stratified: ${determinedRisk}`;
+        }
+        alert("Telemetry records committed successfully to real-time central infrastructure storage nodes.");
+      }
+      
+      document.getElementById('anc-visit-form').reset();
+      document.getElementById('ai-analysis-empty').classList.remove('hidden');
+      document.getElementById('ai-analysis-output').classList.add('hidden');
+      switchView('anm-dashboard');
+    }
+
+    function triggerManualSyncProcessing() {
+      if(!appState.isOnline) { alert("Cannot initiate sync routines while offline network blockades remain active."); return; }
+      if(appState.offlineQueue.length === 0) { alert("Cache data records queue dry. Zero syncing sequences required."); return; }
+      
+      appState.offlineQueue.forEach(record => {
+        const m = appState.mothers.find(mother => mother.id === record.motherId);
+        if(m) { m.hb = record.hb; m.systolic = record.systolic; m.sugar = record.sugar; m.risk = record.risk; m.meta = "Synced from offline data session parameters."; }
+      });
+      
+      appState.offlineQueue = [];
+      document.getElementById('queued-count').textContent = "0";
+      document.getElementById('sync-telemetry-queued').textContent = "0";
+      document.getElementById('stat-queued-count').textContent = "0";
+      document.getElementById('offline-banner').classList.add('hidden');
+      alert("Local storage synchronization sequence executed completely. Data tables uploaded cleanly.");
+      renderANMDashboard();
+    }
+
+    function triggerCarePlanGeneration() {
+      const loader = document.getElementById('careplan-loading');
+      const results = document.getElementById('careplan-results');
+      const lang = document.getElementById('careplan-lang').value;
+      
+      loader.classList.remove('hidden');
+      results.classList.add('hidden');
+      
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        results.classList.remove('hidden');
+        
+        const guidance = document.getElementById('careplan-txt-guidance');
+        const redflags = document.getElementById('careplan-txt-redflags');
+        
+        if(lang === 'ta') {
+          guidance.textContent = "[தமிழ்] தினசரி இரண்டு மாத்திரைகள் இரும்புச்சத்து எடுத்துக்கொள்ளவும். பால் மற்றும் கால்சியம் நிறைந்த உணவுகளை உட்கொள்ளவும்.";
+          redflags.textContent = "[தமிழ்] கடுமையான தலைவலி அல்லது கண்பார்வை மங்குதல் ஏற்பட்டால் உடனடியாக ஆரம்ப சுகாதார நிலையத்தை அணுகவும்.";
+        } else if(lang === 'hi') {
+          guidance.textContent = "[हिन्दी] रोजाना दो आयरन की गोलियां लें। हरी पत्तेदार सब्जियां खाएं और आराम करें।";
+          redflags.textContent = "[हिन्दी] यदि तेज सिरदर्द हो या धुंधला दिखाई दे, तो तुरंत डॉक्टर के पास जाएं।";
+        } else {
+          guidance.textContent = "[English AI output] Administer secondary iron supplementation metrics twice daily. Ensure strict tracking of dietary calcium inputs.";
+          redflags.textContent = "[English AI output] Severe flashing scotoma or unremitting headache requires direct triage escalation immediately.";
+        }
+      }, 1200);
+    }
+
+    function playTTS(elementId) {
+      const textText = document.getElementById(elementId).textContent;
+      alert(`Invoking Speech Synthesis Endpoint Core (/ai/tts) passing payload stream content: "${textText}"`);
+    }
+
+    // ======================================================== -->
+    // DOCTOR ARCHITECTURE SCREEN LOGIC AND RENDERS             -->
+    // ======================================================== -->
+    function renderDoctorDashboard() {
+      document.getElementById('doc-stat-active-referrals').textContent = appState.referrals.filter(r => r.status === 'PENDING').length;
+      
+      const ctx = document.getElementById('chart-doc-macro-distribution').getContext('2d');
+      if(appState.charts.docMacro) appState.charts.docMacro.destroy();
+      appState.charts.docMacro = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['High Risk (RED)', 'Moderate Watch (AMBER)', 'Normal Boundary Range'],
+          datasets: [{ label: 'District Cohort Distribution Metrics', data: [12, 28, 102], backgroundColor: ['#C96B5A', '#E8B882', '#8FB5A8'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    function renderDoctorReferralQueue() {
+      const container = document.getElementById('doc-referrals-container');
+      container.innerHTML = '';
+      
+      appState.referrals.forEach(ref => {
+        const mother = appState.mothers.find(m => m.id === ref.motherId);
+        if(!mother) return;
+        
+        const div = document.createElement('div');
+        div.className = "bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3";
+        div.innerHTML = `
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-xs bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded uppercase tracking-wider">${mother.risk} Referral Triage</span>
+              <h3 class="font-bold text-gray-800 text-base mt-1">${mother.name} (Age ${mother.age}) · Gestation Progress Week ${mother.week}</h3>
+              <p class="text-xs text-gray-400">Origin Dispatch Point: ${ref.from} · ${ref.timestamp}</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded border">${ref.status}</span>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border font-mono text-xs text-slate-700 whitespace-pre-wrap">${ref.soap}</div>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <button onclick="openReferralDetail(${ref.id})" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition">🔍 View Full Details</button>
+            <button onclick="updateReferralStatus(${ref.id}, 'ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">✅ Confirm Arrival</button>
+            <button onclick="updateReferralStatus(${ref.id}, 'ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-emerald-50">🏥 Log Admission</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateReferralStatus(refId, newStatus) {
+      const ref = appState.referrals.find(r => r.id === refId);
+      if(ref) {
+        ref.status = newStatus;
+        alert(`Triage transmission success: Referral token registry flag parsed to status state [${newStatus}].`);
+        renderDoctorReferralQueue();
+        renderDoctorDashboard();
+      }
+    }
+
+    function handleManualTokenIntakeSearch() {
+      const rawToken = document.getElementById('manual-token-input').value.trim().toUpperCase();
+      const match = appState.mothers.find(m => m.token === rawToken || rawToken.includes(m.token));
+      if(match) {
+        alert(`Token index target hit. Relaying data pipeline context directly into medical officer diagnostic workspace.`);
+        // Re-use ANM profile frame metrics layout safely inside context
+        viewPatientProfile(match.id);
+      } else {
+        alert("Token string search failure: Invalid identity tracking index provided.");
+      }
+    }
+    // ======================================================== -->
+    // REFERRAL DETAILS PAGE /referrals/:id                     -->
+    // ======================================================== -->
+    function openReferralDetail(refId) {
+      const ref = appState.referrals.find(r => r.id === refId);
+      if (!ref) return;
+      const mother = appState.mothers.find(m => m.id === ref.motherId);
+      if (!mother) return;
+
+      appState.activeReferralId = refId;
+
+      // Populate patient section
+      document.getElementById('ref-patient-name').textContent = mother.name;
+      document.getElementById('ref-patient-age').textContent = `${mother.age} yrs`;
+      document.getElementById('ref-patient-week').textContent = `Week ${mother.week} (Month ${mother.month})`;
+      document.getElementById('ref-patient-risk').textContent = `${mother.risk} RISK`;
+      const riskClr = mother.risk === 'RED' ? 'text-red-700' : (mother.risk === 'AMBER' ? 'text-amber-700' : 'text-green-700');
+      document.getElementById('ref-patient-risk').className = `font-bold text-sm block mt-0.5 ${riskClr}`;
+
+      // Hospital + reason
+      document.getElementById('ref-hospital-from').textContent = ref.from;
+      document.getElementById('ref-hospital-time').textContent = `Dispatched: ${ref.timestamp}`;
+
+      // Extract assessment from SOAP (A: line)
+      const aMatch = ref.soap.match(/A:\s*([^P]+)/);
+      document.getElementById('ref-reason-text').textContent = aMatch ? aMatch[1].trim() : 'See SOAP notes below';
+
+      // SOAP notes
+      document.getElementById('ref-soap-text').textContent = ref.soap;
+
+      // Status badge
+      const statusBadge = document.getElementById('ref-detail-status-badge');
+      const statusMap = { PENDING: 'bg-amber-100 text-amber-800', ARRIVED: 'bg-blue-100 text-blue-800', ADMITTED: 'bg-green-100 text-green-800' };
+      statusBadge.textContent = ref.status;
+      statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${statusMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
+
+      // QR
+      document.getElementById('ref-qr-token').textContent = mother.token;
+
+      // Timeline
+      renderReferralTimeline(ref);
+
+      // Switch to detail view
+      document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById('doc-referral-detail').classList.remove('hidden');
+    }
+
+    function renderReferralTimeline(ref) {
+      const steps = [
+        { key: 'PENDING', label: 'Referral Dispatched', icon: '📤', sub: ref.timestamp },
+        { key: 'ARRIVED', label: 'Patient Arrived at Hospital', icon: '🚶', sub: 'Awaiting confirmation' },
+        { key: 'ADMITTED', label: 'Patient Admitted', icon: '🏥', sub: 'Awaiting admission log' }
+      ];
+      const order = ['PENDING', 'ARRIVED', 'ADMITTED'];
+      const currentIdx = order.indexOf(ref.status);
+      const container = document.getElementById('ref-timeline-container');
+      container.innerHTML = '';
+
+      steps.forEach((step, i) => {
+        const done = i <= currentIdx;
+        const current = i === currentIdx;
+        const div = document.createElement('div');
+        div.className = 'flex items-start space-x-3 pb-4 relative';
+
+        const lineClass = i < steps.length - 1
+          ? `absolute left-4 top-8 w-0.5 h-full ${done ? 'bg-[#5C7E7E]' : 'bg-gray-200'}`
+          : '';
+
+        div.innerHTML = `
+          ${i < steps.length - 1 ? `<div class="${lineClass}"></div>` : ''}
+          <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm z-10
+            ${done ? 'bg-[#5C7E7E] shadow-md' : 'bg-gray-100 border border-gray-200'}">
+            ${done ? `<span>${step.icon}</span>` : `<span class="text-gray-400 text-xs font-bold">${i + 1}</span>`}
+          </div>
+          <div class="pt-1">
+            <p class="text-xs font-bold ${done ? 'text-gray-800' : 'text-gray-400'}">${step.label}</p>
+            <p class="text-[10px] ${current ? 'text-[#5C7E7E] font-semibold' : 'text-gray-400'} mt-0.5">
+              ${current ? '● Current Status' : (done ? '✓ Completed' : step.sub)}
+            </p>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function updateRefDetailStatus(newStatus) {
+      const ref = appState.referrals.find(r => r.id === appState.activeReferralId);
+      if (ref) {
+        ref.status = newStatus;
+        openReferralDetail(ref.id); // re-render detail page with updated status
+      }
+    }
+
+    // ======================================================== -->
+    // TREND ALERTS BOX above charts                            -->
+    // ======================================================== -->
+    function buildTrendAlerts(mother) {
+      const alerts = [];
+      // Hb drop: compare current vs estimated prior (mock: prior = +2.7 based on chart data)
+      const prevHb = parseFloat((mother.hb + 2.7).toFixed(1));
+      if (mother.hb < prevHb - 1) {
+        alerts.push({ icon: '⚠️', color: 'text-red-700 bg-red-50 border-red-100', text: `Hb dropped from ${prevHb} → ${mother.hb} g/dL — Worsening Anemia Trend` });
+      }
+      // BP rising
+      if (mother.systolic >= 130) {
+        alerts.push({ icon: '⚠️', color: 'text-amber-700 bg-amber-50 border-amber-100', text: `BP rising trend detected — Systolic at ${mother.systolic} mmHg (Watch for Preeclampsia)` });
+      }
+      // Anemia classification
+      if (mother.hb < 8) {
+        alerts.push({ icon: '⚠️', color: 'text-red-700 bg-red-50 border-red-100', text: `Severe anemia developing — Hb ${mother.hb} g/dL is below critical threshold (8 g/dL)` });
+      } else if (mother.hb < 11) {
+        alerts.push({ icon: '⚠️', color: 'text-amber-700 bg-amber-50 border-amber-100', text: `Moderate anemia developing — Hb ${mother.hb} g/dL requires iron supplementation review` });
+      }
+      // Blood sugar spike
+      if (mother.sugar >= 140) {
+        alerts.push({ icon: '⚠️', color: 'text-orange-700 bg-orange-50 border-orange-100', text: `Elevated blood sugar: ${mother.sugar} mg/dL — GDM risk, dietary review needed` });
+      }
+
+      const box = document.getElementById('trend-alert-box');
+      const list = document.getElementById('trend-alerts-list');
+      list.innerHTML = '';
+
+      if (alerts.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+      box.style.display = '';
+      alerts.forEach(a => {
+        const el = document.createElement('div');
+        el.className = `flex items-start space-x-3 py-3 px-0`;
+        el.innerHTML = `
+          <span class="text-base mt-0.5">${a.icon}</span>
+          <div class="flex-1 text-xs font-semibold text-gray-700 py-2 px-3 rounded-xl border ${a.color}">${a.text}</div>
+        `;
+        list.appendChild(el);
+      });
+    }
+    // End of additions
+
+  </script>
+</body>
+</html>

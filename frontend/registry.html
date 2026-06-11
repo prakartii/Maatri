@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maatri — Register a Mother</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --morning-sky: #D1DCDC;
+    --cozy-rug: #AFC9BF;
+    --book-cover: #7E9595;
+    --clean-desk: #F7D0AB;
+    --simple-eraser: #EEB2A9;
+    --bg: #F5F0EB;
+    --text-dark: #3a4a4a;
+    --text-mid: #6a8080;
+    --white: #ffffff;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+
+  /* subtle grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .register-section {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+    max-width: 1100px;
+    width: 100%;
+    align-items: start;
+  }
+
+  /* ── LEFT ── */
+  .left {
+    padding-top: 8px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--book-cover);
+    background: transparent;
+    border: 1.5px solid var(--cozy-rug);
+    border-radius: 100px;
+    padding: 6px 16px;
+    margin-bottom: 32px;
+  }
+
+  .tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cozy-rug);
+    flex-shrink: 0;
+  }
+
+  .left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5vw, 58px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text-dark);
+    margin-bottom: 24px;
+  }
+
+  .left h1 span {
+    color: var(--simple-eraser);
+    font-style: italic;
+  }
+
+  .left p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--text-mid);
+    max-width: 340px;
+    margin-bottom: 48px;
+  }
+
+  /* soft decorative accent block */
+  .accent-strip {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+
+  .strip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .trust-note {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    font-weight: 500;
+  }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 44px 40px;
+    box-shadow:
+      0 1px 3px rgba(126,149,149,0.06),
+      0 8px 32px rgba(126,149,149,0.10);
+    border: 1px solid rgba(175,201,191,0.25);
+  }
+
+  .form-card form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-card form input,
+  .form-card form textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-dark);
+    background: #fafaf8;
+    border: 1.5px solid var(--morning-sky);
+    border-radius: 12px;
+    padding: 14px 18px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .form-card form input::placeholder,
+  .form-card form textarea::placeholder {
+    color: #b0bfbf;
+    font-weight: 300;
+  }
+
+  /* date input label-style trick */
+  .form-card form input[type="date"] {
+    color: var(--text-mid);
+  }
+
+  .form-card form input:focus,
+  .form-card form textarea:focus {
+    border-color: var(--cozy-rug);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(175,201,191,0.18);
+  }
+
+  .form-card form textarea {
+    grid-column: 1 / -1;
+    resize: none;
+    height: 96px;
+  }
+
+  /* field label wrappers */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--book-cover);
+  }
+
+  .field.full {
+    grid-column: 1 / -1;
+  }
+
+  /* button */
+  .form-card form button {
+    grid-column: 1 / -1;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--white);
+    background: var(--book-cover);
+    border: none;
+    border-radius: 14px;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    margin-top: 4px;
+  }
+
+  .form-card form button:hover {
+    background: #6b8080;
+    box-shadow: 0 4px 18px rgba(126,149,149,0.28);
+    transform: translateY(-1px);
+  }
+
+  .form-card form button:active {
+    transform: translateY(0);
+  }
+
+  /* divider inside form */
+  .form-divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--morning-sky), transparent);
+    margin: 4px 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .register-section {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .left p { max-width: 100%; }
+    .form-card { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="register-section">
+
+  <!-- LEFT -->
+  <div class="left">
+    <span class="tag">AI-Powered Registration</span>
+
+    <h1>Register a <span>mother.</span></h1>
+
+    <p>
+      Capture maternal health data in under 3 minutes using
+      Maatri's intelligent screening system.
+    </p>
+
+    <div class="accent-strip">
+      <div class="strip-dot" style="background: var(--simple-eraser);"></div>
+      <div class="strip-dot" style="background: var(--clean-desk);"></div>
+      <div class="strip-dot" style="background: var(--cozy-rug);"></div>
+      <span class="trust-note">Trusted by 12,000+ ANMs across India</span>
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="form-card">
+    <form>
+
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" placeholder="e.g. Priya Devi">
+      </div>
+
+      <div class="field">
+        <label>Age</label>
+        <input type="number" placeholder="e.g. 24">
+      </div>
+
+      <div class="field">
+        <label>Village</label>
+        <input type="text" placeholder="Village / Block">
+      </div>
+
+      <div class="field">
+        <label>Phone Number</label>
+        <input type="tel" placeholder="+91 XXXXX XXXXX">
+      </div>
+
+      <div class="field">
+        <label>Blood Group</label>
+        <input type="text" placeholder="e.g. B+">
+      </div>
+
+      <div class="field">
+        <label>Expected Due Date</label>
+        <input type="date">
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="field full">
+        <label>Additional Notes</label>
+        <textarea placeholder="Any clinical observations or risk flags…"></textarea>
+      </div>
+
+      <button type="submit">Register Mother →</button>
+
+    </form>
+  </div>
+
+</section>
+
+</body>
+</html>
