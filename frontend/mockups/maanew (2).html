@@ -58,11 +58,11 @@
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Email / Mobile Number</label>
-          <input id="login-email" type="text" value="admin@maatri.org" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+          <input type="text" value="admin@maatri.org" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Security Password</label>
-          <input id="login-password" type="password" value="" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+          <input type="password" value="••••••••" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
         </div>
         <button type="submit" class="w-full bg-cover text-white py-3 rounded-xl font-semibold hover:opacity-90 transition shadow-md">
           Authenticate & Enter Dashboard
@@ -755,50 +755,6 @@
       
       charts: {} // Component chart context reference variables
     };
-    async function loadPatients() {
-  try {
-    const patients = await apiRequest('/patients');
-
-    appState.mothers = patients.map(p => ({
-      id: p.id,
-      name: p.name,
-      age: p.age,
-      week: p.pregnancy_month * 4,
-      month: p.pregnancy_month,
-      village: p.village,
-      phone: p.phone,
-      risk: p.current_risk,
-      token: p.qr_token
-    }));
-
-    renderMotherRegistry();
-  } catch (err) {
-    console.error('Failed loading patients:', err);
-  }
-}
-
-   const API_BASE = "http://localhost:5000/api";
-    function getAuthHeaders() {
-      const headers = { "Content-Type": "application/json" };
-      const token = localStorage.getItem("maatri_token");
-      if (token) headers.Authorization = `Bearer ${token}`;
-      return headers;
-    }
-
-    async function apiRequest(path, options = {}) {
-      const response = await fetch(`${API_BASE}${path}`, {
-        ...options,
-        headers: {
-          ...getAuthHeaders(),
-          ...(options.headers || {})
-        }
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(payload.error || payload.message || "Request failed");
-      }
-      return payload.data !== undefined ? payload.data : payload;
-    }
 
     // Routing View Engine Controller
     function switchView(viewId) {
@@ -812,7 +768,7 @@
 
       // Hook dynamic initialization triggers per view requirements
       if (viewId === 'anm-dashboard') renderANMDashboard();
-      if (viewId === 'anm-registry') loadPatients();
+      if (viewId === 'anm-registry') renderMotherRegistry();
       if (viewId === 'anm-followups') renderFollowups();
       if (viewId === 'doc-dashboard') renderDoctorDashboard();
       if (viewId === 'doc-referrals') renderDoctorReferralQueue();
@@ -820,51 +776,32 @@
     }
 
     // Role-Aware Routing System Authentication Logic
-    async function handleLogin(e) {
+    function handleLogin(e) {
       e.preventDefault();
       const selectedRole = document.getElementById('login-role').value;
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-
-      try {
-        const response = await apiRequest('/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ email, password })
-        });
-
-        const token = response?.token || response?.data?.token;
-        if (!token) {
-          throw new Error('Login response did not include a token.');
-        }
-
-        localStorage.setItem('maatri_token', token);
-        appState.userRole = selectedRole;
-
-        document.getElementById('view-login').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-
-        const badge = document.getElementById('user-role-badge');
-        badge.textContent = `${selectedRole} Portal`;
-
-        if (selectedRole === 'ANM') {
-          document.getElementById('nav-anm').classList.remove('hidden');
-          document.getElementById('nav-doctor').classList.add('hidden');
-          switchView('anm-dashboard');
-        } else {
-          document.getElementById('nav-anm').classList.add('hidden');
-          document.getElementById('nav-doctor').classList.remove('hidden');
-          switchView('doc-dashboard');
-        }
-      } catch (error) {
-        alert(error.message || 'Unable to sign in.');
+      appState.userRole = selectedRole;
+      
+      document.getElementById('view-login').classList.add('hidden');
+      document.getElementById('main-app').classList.remove('hidden');
+      
+      const badge = document.getElementById('user-role-badge');
+      badge.textContent = `${selectedRole} Portal`;
+      
+      if(selectedRole === 'ANM') {
+        document.getElementById('nav-anm').classList.remove('hidden');
+        document.getElementById('nav-doctor').classList.add('hidden');
+        switchView('anm-dashboard');
+      } else {
+        document.getElementById('nav-anm').classList.add('hidden');
+        document.getElementById('nav-doctor').classList.remove('hidden');
+        switchView('doc-dashboard');
       }
     }
 
     function logout() {
-      localStorage.removeItem('maatri_token');
-      localStorage.removeItem('maatri_role');
       appState.userRole = null;
-      window.location.href = 'login.html';
+      document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('view-login').classList.remove('hidden');
     }
 
     // Dynamic Synchronization Engine Layer Mock
@@ -913,7 +850,7 @@
             <span class="font-bold text-gray-800">${m.name} (Age ${m.age}) · Week ${m.week}</span>
             <p class="text-red-700 mt-0.5 font-medium">${m.meta}</p>
           </div>
-          <button onclick='viewPatientProfile("${m.id}")' class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">Drill Profile</button>
+          <button onclick="viewPatientProfile(${m.id})" class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">Drill Profile</button>
         `;
         alertContainer.appendChild(item);
       });
@@ -936,7 +873,7 @@
           <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${m.risk} RISK</span></td>
           <td class="p-4 font-medium text-gray-600">Week ${m.week} <span class="text-xs text-gray-400 block">Month ${m.month}</span></td>
           <td class="p-4 text-right">
-            <button onclick='viewPatientProfile("${m.id}")' class="text-xs bg-cream text-cover font-bold px-3 py-1.5 rounded-lg border border-rug hover:bg-opacity-50">Profile Workspace</button>
+            <button onclick="viewPatientProfile(${m.id})" class="text-xs bg-cream text-cover font-bold px-3 py-1.5 rounded-lg border border-rug hover:bg-opacity-50">Profile Workspace</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -960,57 +897,26 @@
     }
 
     // Profile Screen Workspace Navigation & Rendering Logic
-    async function viewPatientProfile(id) {
-      const fallbackMother = appState.mothers.find(m => m.id === id);
-      if (!fallbackMother) return;
-
+    function viewPatientProfile(id) {
+      const mother = appState.mothers.find(m => m.id === id);
+      if(!mother) return;
+      
       appState.activeProfileId = id;
-      document.getElementById('profile-patient-name').textContent = fallbackMother.name;
-      document.getElementById('prof-meta-age').textContent = fallbackMother.age;
-      document.getElementById('prof-meta-village').textContent = fallbackMother.village;
-      document.getElementById('prof-meta-week').textContent = fallbackMother.week;
-      document.getElementById('qr-card-token').textContent = fallbackMother.token;
-
+      document.getElementById('profile-patient-name').textContent = mother.name;
+      document.getElementById('prof-meta-age').textContent = mother.age;
+      document.getElementById('prof-meta-village').textContent = mother.village;
+      document.getElementById('prof-meta-week').textContent = mother.week;
+      document.getElementById('qr-card-token').textContent = mother.token;
+      
       const badgeTarget = document.getElementById('profile-risk-badge');
-      const badgeColor = fallbackMother.risk === 'RED' ? 'bg-red-100 text-red-800' : (fallbackMother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
-      badgeTarget.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${fallbackMother.risk} RISK</span>`;
-
+      const badgeColor = mother.risk === 'RED' ? 'bg-red-100 text-red-800' : (mother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+      badgeTarget.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${mother.risk} RISK</span>`;
+      
       const clinicalStatusBlock = document.getElementById('profile-clinical-status-block');
       clinicalStatusBlock.innerHTML = `
-        <p><strong>Latest Clinical Metrics Session:</strong> Hb: ${fallbackMother.hb} g/dL | BP: ${fallbackMother.systolic} mmHg (Systolic) | Blood Sugar: ${fallbackMother.sugar} mg/dL</p>
-        <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic"><strong>Internal Diagnostic Logic Log:</strong> ${fallbackMother.meta}</p>
+        <p><strong>Latest Clinical Metrics Session:</strong> Hb: ${mother.hb} g/dL | BP: ${mother.systolic} mmHg (Systolic) | Blood Sugar: ${mother.sugar} mg/dL</p>
+        <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic"><strong>Internal Diagnostic Logic Log:</strong> ${mother.meta}</p>
       `;
-
-      try {
-        const patient = await apiRequest(`/patients/${id}`);
-        if (patient) {
-          const existingIndex = appState.mothers.findIndex(m => m.id === id);
-          if (existingIndex >= 0) {
-            appState.mothers[existingIndex] = {
-              ...appState.mothers[existingIndex],
-              name: patient.name || appState.mothers[existingIndex].name,
-              age: patient.age || appState.mothers[existingIndex].age,
-              village: patient.village || appState.mothers[existingIndex].village,
-              week: patient.pregnancy_month ? patient.pregnancy_month * 4 : appState.mothers[existingIndex].week,
-              month: patient.pregnancy_month || appState.mothers[existingIndex].month,
-              phone: patient.phone || appState.mothers[existingIndex].phone,
-              risk: patient.current_risk || appState.mothers[existingIndex].risk,
-              token: patient.qr_token || appState.mothers[existingIndex].token,
-              meta: patient.next_visit_date ? `Next visit: ${patient.next_visit_date}` : appState.mothers[existingIndex].meta
-            };
-          }
-
-          const refreshedMother = appState.mothers.find(m => m.id === id);
-          document.getElementById('profile-patient-name').textContent = refreshedMother.name;
-          document.getElementById('prof-meta-age').textContent = refreshedMother.age;
-          document.getElementById('prof-meta-village').textContent = refreshedMother.village;
-          document.getElementById('prof-meta-week').textContent = refreshedMother.week;
-          document.getElementById('qr-card-token').textContent = refreshedMother.token;
-          document.getElementById('profile-risk-badge').innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${refreshedMother.risk === 'RED' ? 'bg-red-100 text-red-800' : (refreshedMother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800')}">${refreshedMother.risk} RISK</span>`;
-        }
-      } catch (error) {
-        console.warn('Patient detail fetch failed, falling back to local state:', error.message);
-      }
 
       switchView('anm-patient-profile');
       switchProfileTab('overview');
@@ -1071,48 +977,23 @@
     function openRegistrationModal() { document.getElementById('modal-register-mother').classList.remove('hidden'); }
     function closeRegistrationModal() { document.getElementById('modal-register-mother').classList.add('hidden'); }
     
-    async function handleCreateMotherProfile(e) {
+    function handleCreateMotherProfile(e) {
       e.preventDefault();
-      const payload = {
-        name: document.getElementById('reg-name').value.trim(),
-        age: parseInt(document.getElementById('reg-age').value, 10),
+      const newM = {
+        id: appState.mothers.length + 1,
+        name: document.getElementById('reg-name').value,
+        age: parseInt(document.getElementById('reg-age').value),
+        week: parseInt(document.getElementById('reg-month').value) * 4,
+        month: parseInt(document.getElementById('reg-month').value),
         village: document.getElementById('reg-village').value,
-        phone: document.getElementById('reg-phone').value.trim(),
-        pregnancy_month: parseInt(document.getElementById('reg-month').value, 10),
-        current_risk: 'GREEN',
-        next_visit_date: null
+        phone: document.getElementById('reg-phone').value,
+        risk: "GREEN", hb: 12.0, systolic: 120, sugar: 90, meta: "Initial baseline registration entry log.",
+        token: "MTR-" + Math.floor(100000 + Math.random() * 900000)
       };
-
-      try {
-        const createdPatient = await apiRequest('/patients', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-
-        const newM = {
-          id: createdPatient.id || appState.mothers.length + 1,
-          name: createdPatient.name || payload.name,
-          age: createdPatient.age || payload.age,
-          week: (createdPatient.pregnancy_month || payload.pregnancy_month) * 4,
-          month: createdPatient.pregnancy_month || payload.pregnancy_month,
-          village: createdPatient.village || payload.village,
-          phone: createdPatient.phone || payload.phone,
-          risk: createdPatient.current_risk || 'GREEN',
-          hb: 12.0,
-          systolic: 120,
-          sugar: 90,
-          meta: 'Initial baseline registration entry log.',
-          token: createdPatient.qr_token || `MTR-${Math.floor(100000 + Math.random() * 900000)}`
-        };
-
-        appState.mothers.push(newM);
-        closeRegistrationModal();
-        renderMotherRegistry();
-        switchView('anm-registry');
-        alert('Mother profile created successfully.');
-      } catch (error) {
-        alert(error.message || 'Unable to create mother profile.');
-      }
+      appState.mothers.push(newM);
+      closeRegistrationModal();
+      renderMotherRegistry();
+      switchView('anm-registry');
     }
 
     function renderFollowups() {
@@ -1137,74 +1018,44 @@
     // ======================================================== -->
     // AI INTERACTIVE CORE INTELLIGENCE ROUTINES                -->
     // ======================================================== -->
-    async function simulateOCRExtraction() {
-      const targetUrl = appState.isOnline ? "/ai/ocr" : "/ai/ocr";
+    function simulateOCRExtraction() {
+      // Implementation switch details routing logic
+      const targetUrl = appState.isOnline ? "/ai/ocr" : "/ai/ocr?offline=true";
       console.log(`Routing target URL chosen: ${targetUrl}`);
-
-      try {
-        const ocrResult = await apiRequest('/ai/ocr', {
-          method: 'POST',
-          body: JSON.stringify({ imageUrl: 'https://example.com/scan.png' })
-        });
-        console.log('OCR response:', ocrResult);
-        alert('OCR scan request sent to the backend.');
-      } catch (error) {
-        alert(error.message || 'OCR request failed.');
-      }
-
+      
+      alert(`Triggering Optical Character Recognition processing scan on endpoint: ${targetUrl}`);
+      
+      // Auto pre-fill diagnostic matrix to allow manual override workflow verification
       document.getElementById('input-hb').value = "8.4";
       document.getElementById('input-systolic').value = "145";
       document.getElementById('input-sugar').value = "110";
-
+      
+      // Fire live engine rule analysis evaluation
       evaluateRiskScoreEngineRealtime();
     }
 
-    async function simulateVoiceTranscription() {
+    function simulateVoiceTranscription() {
       const btn = document.getElementById('btn-voice-input');
       const textNode = document.getElementById('voice-btn-text');
       const iconNode = document.getElementById('voice-mic-icon');
-
+      
       textNode.textContent = "Streaming Speech Audio Engine Buffer (/ai/transcribe)...";
       iconNode.className = "animate-ping text-rose-600";
-
-      try {
-        const response = await apiRequest('/ai/transcribe', {
-          method: 'POST',
-          body: JSON.stringify({ audioUrl: 'https://example.com/audio.wav' })
-        });
-        console.log('Transcribe response:', response);
+      
+      setTimeout(() => {
+        // Toggles specified logical check fields matching mapped voice arrays
         document.getElementById('symptom-headache').checked = true;
         document.getElementById('symptom-vision').checked = true;
+        
         textNode.textContent = "Stream Complications Speech";
         iconNode.className = "";
-        alert('Voice transcription request sent to the backend.');
-      } catch (error) {
-        alert(error.message || 'Transcription request failed.');
-      }
-
-      evaluateRiskScoreEngineRealtime();
+        alert("Whisper pipeline transcribed regional speech patterns: Auto-selected identified complication symptoms successfully.");
+        evaluateRiskScoreEngineRealtime();
+      }, 1500);
     }
 
     // Form Event Monitor tracking direct logic changes
     document.addEventListener('DOMContentLoaded', () => {
-      const storedToken = localStorage.getItem('maatri_token');
-      const storedRole = localStorage.getItem('maatri_role');
-      if (storedToken && storedRole) {
-        appState.userRole = storedRole;
-        document.getElementById('view-login').classList.add('hidden');
-        document.getElementById('main-app').classList.remove('hidden');
-        document.getElementById('user-role-badge').textContent = `${storedRole} Portal`;
-        if (storedRole === 'ANM') {
-          document.getElementById('nav-anm').classList.remove('hidden');
-          document.getElementById('nav-doctor').classList.add('hidden');
-          switchView('anm-dashboard');
-        } else {
-          document.getElementById('nav-anm').classList.add('hidden');
-          document.getElementById('nav-doctor').classList.remove('hidden');
-          switchView('doc-dashboard');
-        }
-      }
-
       document.getElementById('input-hb').addEventListener('input', evaluateRiskScoreEngineRealtime);
       document.getElementById('input-systolic').addEventListener('input', evaluateRiskScoreEngineRealtime);
       document.getElementById('input-sugar').addEventListener('input', evaluateRiskScoreEngineRealtime);
@@ -1262,19 +1113,18 @@
       }, 400);
     }
 
-    async function handleVisitSubmit(e) {
+    function handleVisitSubmit(e) {
       e.preventDefault();
-      const pId = parseInt(document.getElementById('visit-patient-id').value, 10);
+      const pId = parseInt(document.getElementById('visit-patient-id').value);
       const mother = appState.mothers.find(m => m.id === pId);
-
+      
       const hb = parseFloat(document.getElementById('input-hb').value);
-      const bp = parseInt(document.getElementById('input-systolic').value, 10);
-      const sugar = parseInt(document.getElementById('input-sugar').value, 10);
-      const selectedSymptoms = Array.from(document.querySelectorAll('#anc-visit-form input[type="checkbox"]:checked')).map(el => el.parentElement?.textContent?.trim()).filter(Boolean);
-
-      let determinedRisk = 'GREEN';
-      if (hb < 9 || bp >= 140) determinedRisk = 'RED';
-      else if (hb < 11 || sugar >= 140) determinedRisk = 'AMBER';
+      const bp = parseInt(document.getElementById('input-systolic').value);
+      const sugar = parseInt(document.getElementById('input-sugar').value);
+      
+      let determinedRisk = "GREEN";
+      if (hb < 9 || bp >= 140) determinedRisk = "RED";
+      else if (hb < 11 || sugar >= 140) determinedRisk = "AMBER";
 
       const txRecord = { motherId: pId, hb, systolic: bp, sugar, risk: determinedRisk, timestamp: new Date().toISOString() };
 
@@ -1283,71 +1133,40 @@
         document.getElementById('queued-count').textContent = appState.offlineQueue.length;
         document.getElementById('sync-telemetry-queued').textContent = appState.offlineQueue.length;
         document.getElementById('stat-queued-count').textContent = appState.offlineQueue.length;
-        alert('System working offline: Transaction record batched safely to local processing cache.');
+        alert("System working offline: Transaction record batched safely to local IndexedDB processing partition cache.");
       } else {
-        try {
-          const visitPayload = {
-            patient_id: pId,
-            visit_date: new Date().toISOString().split('T')[0],
-            hemoglobin: hb,
-            systolic_bp: bp,
-            symptoms: selectedSymptoms,
-            notes: `Risk classified as ${determinedRisk}`
-          };
-          await apiRequest('/visits', {
-            method: 'POST',
-            body: JSON.stringify(visitPayload)
-          });
-
-          if (mother) {
-            mother.hb = hb; mother.systolic = bp; mother.sugar = sugar; mother.risk = determinedRisk;
-            mother.meta = `Updated via ANC Screening Portal Session. Risk Level Stratified: ${determinedRisk}`;
-          }
-          alert('Visit saved successfully to the backend.');
-        } catch (error) {
-          alert(error.message || 'Unable to save visit.');
+        if(mother) {
+          mother.hb = hb; mother.systolic = bp; mother.sugar = sugar; mother.risk = determinedRisk;
+          mother.meta = `Updated via ANC Screening Portal Session. Risk Level Stratified: ${determinedRisk}`;
         }
+        alert("Telemetry records committed successfully to real-time central infrastructure storage nodes.");
       }
-
+      
       document.getElementById('anc-visit-form').reset();
       document.getElementById('ai-analysis-empty').classList.remove('hidden');
       document.getElementById('ai-analysis-output').classList.add('hidden');
       switchView('anm-dashboard');
     }
 
-    async function triggerManualSyncProcessing() {
-      if (!appState.isOnline) { alert('Cannot initiate sync routines while offline network blockades remain active.'); return; }
-      if (appState.offlineQueue.length === 0) { alert('Cache data records queue dry. Zero syncing sequences required.'); return; }
-
-      try {
-        const payload = {
-          visits: appState.offlineQueue.map(record => ({
-            patient_id: record.motherId,
-            visit_date: record.timestamp.split('T')[0],
-            hemoglobin: record.hb,
-            systolic_bp: record.systolic,
-            notes: `Queued visit synced from doctor portal for patient ${record.motherId}`
-          }))
-        };
-        await apiRequest('/sync/batch', {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        });
-
-        appState.offlineQueue = [];
-        document.getElementById('queued-count').textContent = '0';
-        document.getElementById('sync-telemetry-queued').textContent = '0';
-        document.getElementById('stat-queued-count').textContent = '0';
-        document.getElementById('offline-banner').classList.add('hidden');
-        alert('Offline queue synced successfully to the backend.');
-        renderANMDashboard();
-      } catch (error) {
-        alert(error.message || 'Unable to sync queued records.');
-      }
+    function triggerManualSyncProcessing() {
+      if(!appState.isOnline) { alert("Cannot initiate sync routines while offline network blockades remain active."); return; }
+      if(appState.offlineQueue.length === 0) { alert("Cache data records queue dry. Zero syncing sequences required."); return; }
+      
+      appState.offlineQueue.forEach(record => {
+        const m = appState.mothers.find(mother => mother.id === record.motherId);
+        if(m) { m.hb = record.hb; m.systolic = record.systolic; m.sugar = record.sugar; m.risk = record.risk; m.meta = "Synced from offline data session parameters."; }
+      });
+      
+      appState.offlineQueue = [];
+      document.getElementById('queued-count').textContent = "0";
+      document.getElementById('sync-telemetry-queued').textContent = "0";
+      document.getElementById('stat-queued-count').textContent = "0";
+      document.getElementById('offline-banner').classList.add('hidden');
+      alert("Local storage synchronization sequence executed completely. Data tables uploaded cleanly.");
+      renderANMDashboard();
     }
 
     function triggerCarePlanGeneration() {
-      // TODO: This care-plan flow is not backed by a supported backend endpoint in the current contract.
       const loader = document.getElementById('careplan-loading');
       const results = document.getElementById('careplan-results');
       const lang = document.getElementById('careplan-lang').value;
@@ -1376,7 +1195,6 @@
     }
 
     function playTTS(elementId) {
-      // TODO: Text-to-speech is not wired to a supported backend endpoint in the current contract.
       const textText = document.getElementById(elementId).textContent;
       alert(`Invoking Speech Synthesis Endpoint Core (/ai/tts) passing payload stream content: "${textText}"`);
     }
@@ -1400,7 +1218,6 @@
     }
 
     function renderDoctorReferralQueue() {
-      // TODO: A referral list endpoint is not included in the current supported contract, so this view continues to render from local state.
       const container = document.getElementById('doc-referrals-container');
       container.innerHTML = '';
       
@@ -1430,82 +1247,72 @@
       });
     }
 
-    async function updateReferralStatus(refId, newStatus) {
-      try {
-        await apiRequest(`/referrals/${refId}/status`, {
-          method: 'PATCH',
-          body: JSON.stringify({ status: newStatus })
-        });
-
-        const ref = appState.referrals.find(r => r.id === refId);
-        if (ref) {
-          ref.status = newStatus;
-        }
-
-        alert(`Referral status updated to ${newStatus}.`);
+    function updateReferralStatus(refId, newStatus) {
+      const ref = appState.referrals.find(r => r.id === refId);
+      if(ref) {
+        ref.status = newStatus;
+        alert(`Triage transmission success: Referral token registry flag parsed to status state [${newStatus}].`);
         renderDoctorReferralQueue();
         renderDoctorDashboard();
-      } catch (error) {
-        alert(error.message || 'Unable to update referral status.');
       }
     }
 
     function handleManualTokenIntakeSearch() {
-      // TODO: QR token intake is not backed by a supported backend endpoint in the current contract.
       const rawToken = document.getElementById('manual-token-input').value.trim().toUpperCase();
       const match = appState.mothers.find(m => m.token === rawToken || rawToken.includes(m.token));
       if(match) {
-        alert('Token index target hit. Relaying data pipeline context directly into medical officer diagnostic workspace.');
+        alert(`Token index target hit. Relaying data pipeline context directly into medical officer diagnostic workspace.`);
+        // Re-use ANM profile frame metrics layout safely inside context
         viewPatientProfile(match.id);
       } else {
-        alert('Token string search failure: Invalid identity tracking index provided.');
+        alert("Token string search failure: Invalid identity tracking index provided.");
       }
     }
     // ======================================================== -->
     // REFERRAL DETAILS PAGE /referrals/:id                     -->
     // ======================================================== -->
-    async function openReferralDetail(refId) {
-      try {
-        const referral = await apiRequest(`/referrals/${refId}`);
-        const mother = appState.mothers.find(m => m.id === referral.patient_id);
-        const ref = {
-          ...referral,
-          id: referral.id,
-          motherId: referral.patient_id,
-          from: referral.hospitals?.name || 'Unknown hospital',
-          timestamp: referral.created_at || 'Recently created',
-          soap: referral.referral_reason || 'No clinical notes available',
-          status: referral.status || 'PENDING'
-        };
+    function openReferralDetail(refId) {
+      const ref = appState.referrals.find(r => r.id === refId);
+      if (!ref) return;
+      const mother = appState.mothers.find(m => m.id === ref.motherId);
+      if (!mother) return;
 
-        appState.activeReferralId = refId;
+      appState.activeReferralId = refId;
 
-        document.getElementById('ref-patient-name').textContent = mother ? mother.name : (referral.patients?.name || 'Unknown patient');
-        document.getElementById('ref-patient-age').textContent = `${mother ? mother.age : referral.patients?.age || '—'} yrs`;
-        document.getElementById('ref-patient-week').textContent = `Week ${mother ? mother.week : (referral.patients?.pregnancy_month || 0) * 4}`;
-        document.getElementById('ref-patient-risk').textContent = `${mother ? mother.risk : referral.patients?.current_risk || 'GREEN'} RISK`;
-        const riskClr = (mother ? mother.risk : referral.patients?.current_risk || 'GREEN') === 'RED' ? 'text-red-700' : ((mother ? mother.risk : referral.patients?.current_risk || 'GREEN') === 'AMBER' ? 'text-amber-700' : 'text-green-700');
-        document.getElementById('ref-patient-risk').className = `font-bold text-sm block mt-0.5 ${riskClr}`;
+      // Populate patient section
+      document.getElementById('ref-patient-name').textContent = mother.name;
+      document.getElementById('ref-patient-age').textContent = `${mother.age} yrs`;
+      document.getElementById('ref-patient-week').textContent = `Week ${mother.week} (Month ${mother.month})`;
+      document.getElementById('ref-patient-risk').textContent = `${mother.risk} RISK`;
+      const riskClr = mother.risk === 'RED' ? 'text-red-700' : (mother.risk === 'AMBER' ? 'text-amber-700' : 'text-green-700');
+      document.getElementById('ref-patient-risk').className = `font-bold text-sm block mt-0.5 ${riskClr}`;
 
-        document.getElementById('ref-hospital-from').textContent = ref.from;
-        document.getElementById('ref-hospital-time').textContent = `Dispatched: ${ref.timestamp}`;
-        document.getElementById('ref-reason-text').textContent = ref.referral_reason || 'See SOAP notes below';
-        document.getElementById('ref-soap-text').textContent = ref.soap;
+      // Hospital + reason
+      document.getElementById('ref-hospital-from').textContent = ref.from;
+      document.getElementById('ref-hospital-time').textContent = `Dispatched: ${ref.timestamp}`;
 
-        const statusBadge = document.getElementById('ref-detail-status-badge');
-        const statusMap = { PENDING: 'bg-amber-100 text-amber-800', ARRIVED: 'bg-blue-100 text-blue-800', ADMITTED: 'bg-green-100 text-green-800' };
-        statusBadge.textContent = ref.status;
-        statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${statusMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
+      // Extract assessment from SOAP (A: line)
+      const aMatch = ref.soap.match(/A:\s*([^P]+)/);
+      document.getElementById('ref-reason-text').textContent = aMatch ? aMatch[1].trim() : 'See SOAP notes below';
 
-        document.getElementById('ref-qr-token').textContent = mother ? mother.token : '—';
+      // SOAP notes
+      document.getElementById('ref-soap-text').textContent = ref.soap;
 
-        renderReferralTimeline(ref);
+      // Status badge
+      const statusBadge = document.getElementById('ref-detail-status-badge');
+      const statusMap = { PENDING: 'bg-amber-100 text-amber-800', ARRIVED: 'bg-blue-100 text-blue-800', ADMITTED: 'bg-green-100 text-green-800' };
+      statusBadge.textContent = ref.status;
+      statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${statusMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
 
-        document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
-        document.getElementById('doc-referral-detail').classList.remove('hidden');
-      } catch (error) {
-        alert(error.message || 'Unable to load referral details.');
-      }
+      // QR
+      document.getElementById('ref-qr-token').textContent = mother.token;
+
+      // Timeline
+      renderReferralTimeline(ref);
+
+      // Switch to detail view
+      document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
+      document.getElementById('doc-referral-detail').classList.remove('hidden');
     }
 
     function renderReferralTimeline(ref) {

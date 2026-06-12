@@ -277,44 +277,46 @@
 
   <!-- FORM CARD -->
   <div class="form-card">
-    <form>
+    <form id="patient-form">
 
       <div class="field">
-        <label>Full Name</label>
-        <input type="text" placeholder="e.g. Priya Devi">
+        <label for="name">Full Name</label>
+        <input id="name" name="name" type="text" placeholder="e.g. Priya Devi" required>
       </div>
 
       <div class="field">
-        <label>Age</label>
-        <input type="number" placeholder="e.g. 24">
+        <label for="age">Age</label>
+        <input id="age" name="age" type="number" placeholder="e.g. 24" required>
       </div>
 
       <div class="field">
-        <label>Village</label>
-        <input type="text" placeholder="Village / Block">
+        <label for="village">Village</label>
+        <input id="village" name="village" type="text" placeholder="Village / Block" required>
       </div>
 
       <div class="field">
-        <label>Phone Number</label>
-        <input type="tel" placeholder="+91 XXXXX XXXXX">
+        <label for="phone">Phone Number</label>
+        <input id="phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX">
       </div>
 
       <div class="field">
-        <label>Blood Group</label>
-        <input type="text" placeholder="e.g. B+">
+        <label for="bloodGroup">Blood Group</label>
+        <input id="bloodGroup" name="bloodGroup" type="text" placeholder="e.g. B+">
       </div>
 
       <div class="field">
-        <label>Expected Due Date</label>
-        <input type="date">
+        <label for="expectedDueDate">Expected Due Date</label>
+        <input id="expectedDueDate" name="expectedDueDate" type="date">
       </div>
 
       <div class="form-divider"></div>
 
       <div class="field full">
-        <label>Additional Notes</label>
-        <textarea placeholder="Any clinical observations or risk flags…"></textarea>
+        <label for="notes">Additional Notes</label>
+        <textarea id="notes" name="notes" placeholder="Any clinical observations or risk flags…"></textarea>
       </div>
+
+      <div id="form-status" role="status" aria-live="polite" style="display:none; grid-column:1 / -1; padding:12px 14px; border-radius:12px; background:#fef2f2; color:#b91c1c;"></div>
 
       <button type="submit">Register Mother →</button>
 
@@ -322,6 +324,80 @@
   </div>
 
 </section>
+
+<script>
+  const form = document.getElementById('patient-form');
+  const statusBox = document.getElementById('form-status');
+
+  function showStatus(message, type) {
+    if (!statusBox) return;
+    statusBox.style.display = 'block';
+    statusBox.textContent = message;
+    statusBox.style.background = type === 'success' ? '#ecfdf3' : '#fef2f2';
+    statusBox.style.color = type === 'success' ? '#166534' : '#b91c1c';
+  }
+
+  if (form) {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      const name = document.getElementById('name').value.trim();
+      const age = document.getElementById('age').value;
+      const village = document.getElementById('village').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const expectedDueDate = document.getElementById('expectedDueDate').value;
+
+      if (!name || !age || !village) {
+        showStatus('Please enter the mother’s name, age, and village.', 'error');
+        return;
+      }
+
+      const payload = {
+        name,
+        age: Number(age),
+        village,
+        phone: phone || null,
+        next_visit_date: expectedDueDate || null,
+      };
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Registering...';
+      }
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/patients', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Unable to register mother.');
+        }
+
+        showStatus('Registration successful. Redirecting to the doctor dashboard…', 'success');
+        window.setTimeout(() => {
+          window.location.href = 'doctor.html';
+        }, 1200);
+      } catch (error) {
+        showStatus(error.message || 'Unable to register mother. Please try again.', 'error');
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Register Mother →';
+        }
+      }
+    });
+  }
+</script>
 
 </body>
 </html>

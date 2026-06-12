@@ -539,6 +539,72 @@
   .trimester-labels .lbl-mid   { text-align: center; color: var(--book-cover); font-weight: 600; }
   .trimester-labels .lbl-end   { text-align: right; }
 
+  .visit-form {
+    display: grid;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .visit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .visit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .visit-field.full {
+    grid-column: 1 / -1;
+  }
+
+  .visit-field label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+
+  .visit-field input,
+  .visit-field textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-dark);
+    background: #fafaf8;
+    border: 1px solid var(--morning-sky);
+    border-radius: 10px;
+    padding: 10px 12px;
+    width: 100%;
+    outline: none;
+  }
+
+  .visit-field textarea {
+    min-height: 72px;
+    resize: vertical;
+  }
+
+  .status-box {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .status-box.error {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+
+  .status-box.success {
+    background: #ecfdf3;
+    color: #166534;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 860px) {
     .hero-card { grid-template-columns: auto 1fr; }
@@ -569,26 +635,28 @@
   </a>
 
   <!-- HERO CARD -->
+  <div id="page-status" class="status-box"></div>
+
   <div class="hero-card">
     <div class="avatar-wrap">
-      <div class="avatar">PD</div>
+      <div class="avatar" id="patient-initials">--</div>
       <div class="avatar-ring"></div>
     </div>
 
     <div class="hero-info">
-      <div class="hero-tag">Active Case &middot; 2nd Trimester</div>
-      <h1 class="hero-name">Priya <em>Devi</em></h1>
+      <div class="hero-tag" id="patient-tag">Loading patient…</div>
+      <h1 class="hero-name" id="patient-name">Loading…</h1>
       <div class="hero-meta">
-        <span>Age 24</span>
-        <span>B+ Blood Group</span>
-        <span>Kovilpatti Village, TN</span>
-        <span>Registered 12 Apr 2026</span>
+        <span id="patient-age">Age --</span>
+        <span id="patient-risk">Risk --</span>
+        <span id="patient-village">Village --</span>
+        <span id="patient-registered">Registered --</span>
       </div>
     </div>
 
     <div class="risk-badge">
       <div class="risk-circle">
-        <span class="risk-number">68</span>
+        <span class="risk-number" id="risk-score">--</span>
       </div>
       <span class="risk-label">Risk Score</span>
     </div>
@@ -599,22 +667,22 @@
     <div class="stat-card">
       <div class="stat-dot" style="background: var(--cozy-rug);"></div>
       <div class="stat-label">Gestational Age</div>
-      <div class="stat-value">24<span style="font-size:16px; font-family:'DM Sans'; color:var(--text-mid); margin-left:4px;">wks</span></div>
-      <div class="stat-sub">Due &middot; 14 Sep 2026</div>
+      <div class="stat-value" id="gestational-age">--</div>
+      <div class="stat-sub" id="gestational-sub">Due &middot; --</div>
     </div>
 
     <div class="stat-card">
       <div class="stat-dot" style="background: var(--clean-desk);"></div>
       <div class="stat-label">ANC Visits</div>
-      <div class="stat-value">3<span style="font-size:16px; font-family:'DM Sans'; color:var(--text-mid); margin-left:4px;">/ 8</span></div>
-      <div class="stat-sub">Next &middot; 20 Jun 2026</div>
+      <div class="stat-value" id="anc-visits">--</div>
+      <div class="stat-sub" id="anc-sub">Next &middot; --</div>
     </div>
 
     <div class="stat-card">
       <div class="stat-dot" style="background: var(--simple-eraser);"></div>
       <div class="stat-label">Last Visit</div>
-      <div class="stat-value" style="font-size:20px; padding-top:4px;">10 Jun</div>
-      <div class="stat-sub">ANM Rekha S.</div>
+      <div class="stat-value" id="last-visit" style="font-size:20px; padding-top:4px;">--</div>
+      <div class="stat-sub" id="last-visit-sub">--</div>
     </div>
   </div>
 
@@ -622,8 +690,8 @@
   <div class="card" style="margin-bottom:20px; padding: 24px 32px;">
     <div class="card-title">Pregnancy Progress</div>
     <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-      <span style="font-size:13px; color:var(--text-mid);">Currently in <strong style="color:var(--text-dark);">2nd Trimester</strong></span>
-      <span style="font-size:13px; color:var(--text-mid);">Week 24 of 40</span>
+      <span style="font-size:13px; color:var(--text-mid);">Currently in <strong style="color:var(--text-dark);" id="trimester-label">Loading…</strong></span>
+      <span style="font-size:13px; color:var(--text-mid);" id="pregnancy-progress-text">Week -- of 40</span>
     </div>
     <div class="trimester-track">
       <div class="trimester-fill"></div>
@@ -644,40 +712,56 @@
       <div class="vitals-grid">
         <div class="vital-item">
           <div class="vital-name">Blood Pressure</div>
-          <div class="vital-value">138<span class="vital-unit">/ 90 mmHg</span></div>
-          <div class="vital-status status-watch">Watch</div>
+          <div class="vital-value" id="latest-bp">--</div>
+          <div class="vital-status status-watch" id="latest-bp-status">Pending</div>
         </div>
         <div class="vital-item">
           <div class="vital-name">Haemoglobin</div>
-          <div class="vital-value">9.8<span class="vital-unit">g/dL</span></div>
-          <div class="vital-status status-alert">Low</div>
+          <div class="vital-value" id="latest-hemoglobin">--</div>
+          <div class="vital-status status-alert" id="latest-hemoglobin-status">Pending</div>
         </div>
         <div class="vital-item">
           <div class="vital-name">Weight</div>
-          <div class="vital-value">58<span class="vital-unit">kg</span></div>
-          <div class="vital-status status-normal">Normal</div>
+          <div class="vital-value" id="latest-weight">--</div>
+          <div class="vital-status status-normal" id="latest-weight-status">Pending</div>
         </div>
         <div class="vital-item">
-          <div class="vital-name">Fetal Heart Rate</div>
-          <div class="vital-value">148<span class="vital-unit">bpm</span></div>
-          <div class="vital-status status-normal">Normal</div>
-        </div>
-        <div class="vital-item">
-          <div class="vital-name">Blood Sugar</div>
-          <div class="vital-value">105<span class="vital-unit">mg/dL</span></div>
-          <div class="vital-status status-normal">Normal</div>
-        </div>
-        <div class="vital-item">
-          <div class="vital-name">Urine Protein</div>
-          <div class="vital-value">+1</div>
-          <div class="vital-status status-watch">Watch</div>
+          <div class="vital-name">Symptoms</div>
+          <div class="vital-value" id="latest-symptoms">--</div>
+          <div class="vital-status status-normal" id="latest-symptoms-status">Pending</div>
         </div>
       </div>
 
-      <div class="actions">
-        <button class="btn-primary">Update Vitals &rarr;</button>
-        <button class="btn-secondary">Send WhatsApp</button>
-      </div>
+      <form id="visit-form" class="visit-form">
+        <div class="visit-grid">
+          <div class="visit-field">
+            <label for="systolic_bp">Systolic BP</label>
+            <input id="systolic_bp" name="systolic_bp" type="number" step="0.1" placeholder="120">
+          </div>
+          <div class="visit-field">
+            <label for="diastolic_bp">Diastolic BP</label>
+            <input id="diastolic_bp" name="diastolic_bp" type="number" step="0.1" placeholder="80">
+          </div>
+          <div class="visit-field">
+            <label for="hemoglobin">Hemoglobin</label>
+            <input id="hemoglobin" name="hemoglobin" type="number" step="0.1" placeholder="10.5">
+          </div>
+          <div class="visit-field">
+            <label for="weight">Weight (kg)</label>
+            <input id="weight" name="weight" type="number" step="0.1" placeholder="58">
+          </div>
+          <div class="visit-field full">
+            <label for="symptoms">Symptoms</label>
+            <input id="symptoms" name="symptoms" type="text" placeholder="e.g. headache, dizziness">
+          </div>
+          <div class="visit-field full">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" placeholder="Add clinical notes"></textarea>
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Save Visit &rarr;</button>
+        <div id="visit-status" class="status-box"></div>
+      </form>
     </div>
 
     <!-- RIGHT COLUMN -->
@@ -689,23 +773,23 @@
         <div class="info-list">
           <div class="info-row">
             <span class="info-key">Phone</span>
-            <span class="info-val">+91 94456 77832</span>
+            <span class="info-val" id="patient-phone">--</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Husband</span>
-            <span class="info-val">Rajan Devi</span>
+            <span class="info-key">Village</span>
+            <span class="info-val" id="patient-village-info">--</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Previous Pregnancies</span>
-            <span class="info-val">1 (Normal delivery)</span>
+            <span class="info-key">Registered</span>
+            <span class="info-val" id="patient-registered-info">--</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Assigned ANM</span>
-            <span class="info-val">Rekha Sundaram</span>
+            <span class="info-key">Next Visit</span>
+            <span class="info-val" id="patient-next-visit">--</span>
           </div>
           <div class="info-row">
-            <span class="info-key">Nearest PHC</span>
-            <span class="info-val">Kovilpatti PHC</span>
+            <span class="info-key">Current Risk</span>
+            <span class="info-val" id="patient-current-risk">--</span>
           </div>
         </div>
       </div>
@@ -713,38 +797,15 @@
       <!-- VISIT TIMELINE -->
       <div class="card">
         <div class="card-title">Visit History</div>
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="tl-dot-wrap">
-              <div class="tl-dot" style="background: var(--simple-eraser);"></div>
-              <div class="tl-line"></div>
-            </div>
-            <div class="tl-content">
-              <div class="tl-date">10 Jun 2026</div>
-              <div class="tl-text">BP elevated &mdash; flagged for monitoring. Iron supplements prescribed.</div>
-              <div class="tl-worker">Rekha Sundaram &middot; ANM</div>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="tl-dot-wrap">
-              <div class="tl-dot" style="background: var(--clean-desk);"></div>
-              <div class="tl-line"></div>
-            </div>
-            <div class="tl-content">
-              <div class="tl-date">14 May 2026</div>
-              <div class="tl-text">Anomaly scan completed. Fetal growth on track.</div>
-              <div class="tl-worker">Rekha Sundaram &middot; ANM</div>
-            </div>
-          </div>
+        <div class="timeline" id="visit-timeline">
           <div class="timeline-item">
             <div class="tl-dot-wrap">
               <div class="tl-dot" style="background: var(--cozy-rug);"></div>
               <div class="tl-line"></div>
             </div>
             <div class="tl-content">
-              <div class="tl-date">12 Apr 2026</div>
-              <div class="tl-text">Initial registration. Voice screening completed via Tamil input.</div>
-              <div class="tl-worker">Meena Rajan &middot; ASHA</div>
+              <div class="tl-date">Loading…</div>
+              <div class="tl-text">No visit history loaded yet.</div>
             </div>
           </div>
         </div>
@@ -754,6 +815,197 @@
   </div>
 
 </div>
+
+<script>
+  const patientId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('selectedPatientId');
+  const token = localStorage.getItem('token');
+  const visitForm = document.getElementById('visit-form');
+  const visitStatus = document.getElementById('visit-status');
+  const pageStatus = document.getElementById('page-status');
+
+  function showStatus(element, message, type) {
+    if (!element) return;
+    element.style.display = message ? 'block' : 'none';
+    element.textContent = message || '';
+    element.className = `status-box ${type || ''}`.trim();
+  }
+
+  function formatDate(value) {
+    if (!value) return '--';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function formatShortDate(value) {
+    if (!value) return '--';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+
+  function getInitials(name) {
+    if (!name) return '--';
+    return name.split(' ').slice(0, 2).map(part => part[0]).join('').toUpperCase();
+  }
+
+  function getTrimesterLabel(months) {
+    const monthValue = Number(months);
+    if (!Number.isFinite(monthValue)) return 'Pregnancy tracking';
+    if (monthValue <= 3) return '1st Trimester';
+    if (monthValue <= 6) return '2nd Trimester';
+    return '3rd Trimester';
+  }
+
+  function renderPatient(patient) {
+    if (!patient) return;
+
+    document.getElementById('patient-initials').textContent = getInitials(patient.name);
+    document.getElementById('patient-tag').textContent = `${getTrimesterLabel(patient.pregnancy_month || 6)} • Active Case`;
+    document.getElementById('patient-name').innerHTML = `${patient.name || 'Mother'}${patient.name ? '' : ''}`;
+    document.getElementById('patient-age').textContent = `Age ${patient.age || '--'}`;
+    document.getElementById('patient-risk').textContent = `Risk ${patient.current_risk || 'GREEN'}`;
+    document.getElementById('patient-village').textContent = patient.village ? `${patient.village}` : 'Village --';
+    document.getElementById('patient-registered').textContent = `Registered ${formatDate(patient.created_at)}`;
+    document.getElementById('risk-score').textContent = patient.current_risk === 'HIGH' ? '84' : patient.current_risk === 'MEDIUM' ? '68' : '34';
+
+    document.getElementById('gestational-age').innerHTML = `${patient.pregnancy_month || '--'}<span style="font-size:16px; font-family:'DM Sans'; color:var(--text-mid); margin-left:4px;">mos</span>`;
+    document.getElementById('gestational-sub').textContent = `Due • ${patient.next_visit_date ? formatDate(patient.next_visit_date) : '--'}`;
+    document.getElementById('anc-visits').textContent = '--';
+    document.getElementById('anc-sub').textContent = `Next • ${patient.next_visit_date ? formatDate(patient.next_visit_date) : '--'}`;
+    document.getElementById('last-visit').textContent = '--';
+    document.getElementById('last-visit-sub').textContent = '--';
+    document.getElementById('trimester-label').textContent = getTrimesterLabel(patient.pregnancy_month || 6);
+    document.getElementById('pregnancy-progress-text').textContent = `Month ${patient.pregnancy_month || '--'} of 9`;
+
+    document.getElementById('patient-phone').textContent = patient.phone || '--';
+    document.getElementById('patient-village-info').textContent = patient.village || '--';
+    document.getElementById('patient-registered-info').textContent = formatDate(patient.created_at);
+    document.getElementById('patient-next-visit').textContent = patient.next_visit_date ? formatDate(patient.next_visit_date) : '--';
+    document.getElementById('patient-current-risk').textContent = patient.current_risk || 'GREEN';
+  }
+
+  function renderVisits(visits) {
+    const timeline = document.getElementById('visit-timeline');
+    if (!timeline) return;
+
+    if (!Array.isArray(visits) || visits.length === 0) {
+      timeline.innerHTML = '<div class="timeline-item"><div class="tl-dot-wrap"><div class="tl-dot" style="background: var(--cozy-rug);"></div><div class="tl-line"></div></div><div class="tl-content"><div class="tl-date">No visits yet</div><div class="tl-text">No visit history is available for this mother yet.</div></div></div>';
+      return;
+    }
+
+    const latestVisit = visits[0];
+    document.getElementById('latest-bp').innerHTML = latestVisit.systolic_bp && latestVisit.diastolic_bp ? `${latestVisit.systolic_bp}<span class="vital-unit">/ ${latestVisit.diastolic_bp} mmHg</span>` : '--';
+    document.getElementById('latest-bp-status').textContent = latestVisit.systolic_bp && latestVisit.diastolic_bp ? 'Recorded' : 'Pending';
+    document.getElementById('latest-hemoglobin').innerHTML = latestVisit.hemoglobin ? `${latestVisit.hemoglobin}<span class="vital-unit">g/dL</span>` : '--';
+    document.getElementById('latest-hemoglobin-status').textContent = latestVisit.hemoglobin ? 'Recorded' : 'Pending';
+    document.getElementById('latest-weight').innerHTML = latestVisit.weight ? `${latestVisit.weight}<span class="vital-unit">kg</span>` : '--';
+    document.getElementById('latest-weight-status').textContent = latestVisit.weight ? 'Recorded' : 'Pending';
+    document.getElementById('latest-symptoms').textContent = latestVisit.symptoms || '--';
+    document.getElementById('latest-symptoms-status').textContent = latestVisit.symptoms ? 'Recorded' : 'Pending';
+
+    document.getElementById('anc-visits').textContent = visits.length;
+    document.getElementById('anc-sub').textContent = `Next • ${latestVisit.visit_date ? formatDate(latestVisit.visit_date) : '--'}`;
+    document.getElementById('last-visit').textContent = formatShortDate(latestVisit.visit_date);
+    document.getElementById('last-visit-sub').textContent = latestVisit.notes || 'Latest visit recorded';
+
+    timeline.innerHTML = visits.map((visit, index) => `
+      <div class="timeline-item">
+        <div class="tl-dot-wrap">
+          <div class="tl-dot" style="background: ${index % 2 === 0 ? 'var(--simple-eraser)' : 'var(--clean-desk)'};"></div>
+          <div class="tl-line"></div>
+        </div>
+        <div class="tl-content">
+          <div class="tl-date">${formatDate(visit.visit_date)}</div>
+          <div class="tl-text">${visit.notes || visit.symptoms || 'Visit recorded.'}</div>
+          <div class="tl-worker">${visit.symptoms ? `${visit.symptoms}` : 'Visit recorded'}${visit.systolic_bp && visit.diastolic_bp ? ` • BP ${visit.systolic_bp}/${visit.diastolic_bp}` : ''}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function loadProfile() {
+    if (!patientId) {
+      showStatus(pageStatus, 'No patient selected. Add ?id=... to the URL.', 'error');
+      return;
+    }
+
+    const headers = {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
+
+    try {
+      showStatus(pageStatus, 'Loading patient profile…', '');
+      const [patientResponse, visitsResponse] = await Promise.all([
+        fetch(`/api/patients/${patientId}`, { headers }),
+        fetch(`/api/visits/patient/${patientId}`, { headers }),
+      ]);
+
+      const patientPayload = await patientResponse.json().catch(() => ({}));
+      const visitsPayload = await visitsResponse.json().catch(() => ({}));
+
+      if (!patientResponse.ok || !patientPayload.success) {
+        throw new Error(patientPayload.error || 'Unable to load patient details.');
+      }
+
+      if (!visitsResponse.ok || !visitsPayload.success) {
+        throw new Error(visitsPayload.error || 'Unable to load visit history.');
+      }
+
+      renderPatient(patientPayload.data);
+      renderVisits(Array.isArray(visitsPayload.data) ? visitsPayload.data : []);
+      showStatus(pageStatus, '', '');
+    } catch (error) {
+      showStatus(pageStatus, error.message || 'Unable to load patient profile.', 'error');
+    }
+  }
+
+  if (visitForm) {
+    visitForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!patientId) {
+        showStatus(visitStatus, 'No patient selected.', 'error');
+        return;
+      }
+
+      const payload = {
+        patient_id: patientId,
+        visit_date: new Date().toISOString().split('T')[0],
+        systolic_bp: document.getElementById('systolic_bp').value ? Number(document.getElementById('systolic_bp').value) : null,
+        diastolic_bp: document.getElementById('diastolic_bp').value ? Number(document.getElementById('diastolic_bp').value) : null,
+        hemoglobin: document.getElementById('hemoglobin').value ? Number(document.getElementById('hemoglobin').value) : null,
+        weight: document.getElementById('weight').value ? Number(document.getElementById('weight').value) : null,
+        symptoms: document.getElementById('symptoms').value.trim() || null,
+        notes: document.getElementById('notes').value.trim() || null,
+      };
+
+      try {
+        const response = await fetch('/api/visits', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.success) {
+          throw new Error(result.error || 'Unable to save visit.');
+        }
+
+        showStatus(visitStatus, 'Visit saved successfully.', 'success');
+        visitForm.reset();
+        loadProfile();
+      } catch (error) {
+        showStatus(visitStatus, error.message || 'Unable to save visit.', 'error');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', loadProfile);
+</script>
 
 </body>
 </html>

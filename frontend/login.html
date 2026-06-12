@@ -640,6 +640,8 @@
       <a href="#" class="forgot-link">Forgot password?</a>
     </div>
 
+    <div id="login-error" role="alert" style="display:none; margin-bottom:12px; color:#b91c1c; font-size:14px;"></div>
+
     <button class="btn-signin" onclick="handleSignIn()">Sign in &rarr;</button>
 
     <div class="divider">
@@ -667,6 +669,7 @@
   function setRole(btn) {
     document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    localStorage.setItem('maatri_role', btn.textContent.includes('Doctor') ? 'DOCTOR' : 'ANM');
   }
 
   function togglePassword() {
@@ -682,22 +685,25 @@
   }
 
   function handleSignIn() {
+    console.log("SIGN IN CLICKED");
     const phone = document.getElementById('phone').value.trim();
-    const pass  = document.getElementById('password').value;
+    const pass = document.getElementById('password').value;
+    const errorBox = document.getElementById('login-error');
     let valid = true;
 
     const phoneField = document.getElementById('field-phone');
-    const passField  = document.getElementById('field-pass');
+    const passField = document.getElementById('field-pass');
 
     phoneField.classList.remove('has-error');
     passField.classList.remove('has-error');
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
 
-    const digits = phone.replace(/\D/g, '');
-    if (digits.length < 10) {
-      phoneField.classList.add('has-error');
-      valid = false;
+    if (!phone.includes('@')) {
+    phoneField.classList.add('has-error');
+    valid = false;
     }
-    if (pass.length < 8) {
+    if (pass.length < 6) {
       passField.classList.add('has-error');
       valid = false;
     }
@@ -707,11 +713,41 @@
       btn.textContent = 'Signing in…';
       btn.style.opacity = '0.75';
       btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = 'Sign in \u2192';
-        btn.style.opacity = '1';
-        btn.disabled = false;
-      }, 2000);
+
+      fetch("http://localhost:5000/api/auth/login", {
+         method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: phone,
+    password: pass
+  })
+})
+        .then(async (response) => {
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || !payload.success) {
+            throw new Error(payload.error || 'Login failed');
+          }
+
+          const token = payload.data?.token;
+          if (!token) {
+            throw new Error('No authentication token returned');
+          }
+
+          localStorage.setItem('maatri_token', token);
+          localStorage.setItem('maatri_role', document.querySelector('.role-btn.active').textContent.includes('Doctor') ? 'DOCTOR' : 'ANM');
+          window.location.href = 'doctor.html';
+        })
+        .catch((err) => {
+          errorBox.textContent = err.message || 'Unable to sign in. Please try again.';
+          errorBox.style.display = 'block';
+        })
+        .finally(() => {
+          btn.textContent = 'Sign in →';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        });
     }
   }
 </script>

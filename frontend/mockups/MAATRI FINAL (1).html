@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Maatri — Pregnancy Risk Companion</title>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --cream: #F5EDE3;
+  --sky:   #B8CCCC;
+  --rug:   #8FB5A8;
+  --cover: #5C7E7E;
+  --desk:  #E8B882;
+  --eraser:#D4907F;
+  --blush: #C96B5A;
+  --dark:  #2E3030;
+  --mid:   #5A4A42;
+  --muted: #8C7A70;
+  --white: #FFFFFF;
+}
+
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(245,237,227,0.93);
+  backdrop-filter:blur(14px);
+  padding:0 56px;height:66px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(143,181,168,0.35);
+}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo-img{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  object-fit: cover;
+  border: 2px solid var(--rug);
+  box-shadow: 0 4px 10px rgba(92,126,126,0.15);
+}
+.logo-hindi{
+  font-family:'Tiro Devanagari Hindi',serif;
+  font-size:28px;font-weight:700;
+  color:var(--cover);letter-spacing:1px;
+  line-height:1;
+}
+.logo-eng{
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px;font-weight:600;letter-spacing:3px;
+  text-transform:uppercase;color:var(--eraser);
+  margin-top:2px;display:block;
+}
+.logo-stack{display:flex;flex-direction:column;justify-content:center}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{
+  text-decoration:none;font-size:14px;font-weight:500;
+  color:var(--mid);transition:color .2s;letter-spacing:.3px;
+}
+.nav-links a:hover{color:var(--cover)}
+.btn-nav{
+  background:var(--cover);color:#fff;
+  border:none;padding:10px 24px;border-radius:50px;
+  font-size:13px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;letter-spacing:.5px;
+  transition:background .2s,transform .15s;
+}
+.btn-nav:hover{background:#4e6e6e;transform:scale(1.02)}
+
+/* ── HERO ── */
+.hero{
+  min-height:90vh;
+  display:flex;align-items:center;
+  padding:60px 56px 50px;
+  position:relative;overflow:hidden;
+}
+.blob{position:absolute;border-radius:50%;pointer-events:none}
+.blob-1{width:520px;height:520px;top:-100px;right:-80px;
+  background:radial-gradient(circle,rgba(184,204,204,.38) 0%,transparent 68%)}
+.blob-2{width:380px;height:380px;bottom:-80px;left:-60px;
+  background:radial-gradient(circle,rgba(212,144,127,.28) 0%,transparent 68%)}
+.blob-3{width:280px;height:280px;top:40%;left:40%;
+  background:radial-gradient(circle,rgba(232,184,130,.18) 0%,transparent 70%)}
+
+.hero-inner{
+  display:flex;justify-content:center;
+  max-width:880px;width:100%;margin:0 auto;
+  align-items:center;position:relative;z-index:2;text-align:center;
+}
+.hero-inner .hero-desc{margin-left:auto;margin-right:auto}
+.hero-inner .hero-actions{justify-content:center}
+.hero-inner .hero-stats{justify-content:center}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(143,181,168,.2);
+  border:1px solid rgba(143,181,168,.5);
+  color:var(--cover);
+  font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  padding:6px 14px;border-radius:50px;margin-bottom:22px;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--rug);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero-kicker{
+  font-size:13px;font-weight:600;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--rug);margin-bottom:14px;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(44px,5.2vw,68px);font-weight:700;line-height:1.08;
+  color:var(--dark);margin-bottom:8px;
+}
+.hero-title em{font-style:italic;color:var(--cover)}
+.hero-title .pop{color:var(--eraser)}
+
+.hero-desc{
+  font-size:16.5px;line-height:1.78;color:var(--mid);
+  max-width:460px;margin:18px 0 38px;font-weight:400;
+}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--cover);color:#fff;
+  border:none;padding:15px 34px;border-radius:50px;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  transition:all .2s;letter-spacing:.4px;
+}
+.btn-primary:hover{background:#4e6e6e;transform:translateY(-2px)}
+.btn-outline{
+  background:transparent;color:var(--cover);
+  border:2px solid var(--rug);padding:14px 32px;border-radius:50px;
+  font-size:15px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+}
+.btn-outline:hover{background:rgba(143,181,168,.12)}
+
+.hero-stats{
+  display:flex;gap:36px;margin-top:48px;
+  padding-top:32px;border-top:1px solid rgba(143,181,168,.3);
+}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;font-weight:700;color:var(--cover);
+}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;font-weight:400}
+
+/* ── MASCOT COLUMN ── */
+.mascot-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1200px;
+  width: 100%;
+}
+.hero-mascot {
+  max-width: 100%;
+  height: auto;
+  max-height: 520px;
+  filter: drop-shadow(0px 24px 38px rgba(92,126,126,0.22));
+  animation: floatMascot 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+@keyframes floatMascot {
+  0%, 100% { transform: translateY(0px) rotateY(-4deg) rotateX(1deg); }
+  50% { transform: translateY(-15px) rotateY(4deg) rotateX(-1deg); }
+}
+
+/* ── TRUST BAR ── */
+.trust-bar{
+  background:#fff;
+  padding:22px 56px;
+  border-top:1px solid rgba(143,181,168,.2);
+  border-bottom:1px solid rgba(143,181,168,.2);
+  display:flex;align-items:center;justify-content:center;gap:64px;
+  flex-wrap:wrap;
+}
+.trust-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:var(--mid);font-weight:500;
+}
+.trust-item svg{opacity:.6}
+
+/* ── FEATURES ── */
+.features{padding:100px 56px;max-width:1120px;margin:0 auto}
+.sec-head{text-align:center;margin-bottom:64px}
+.sec-eye{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--rug);margin-bottom:14px}
+.sec-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:42px;font-weight:700;color:var(--dark);line-height:1.18;
+}
+.sec-title em{font-style:italic;color:var(--eraser)}
+
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+}
+.feat-card{
+  background:#fff;border-radius:22px;padding:34px 26px;
+  border:1px solid rgba(143,181,168,.22);
+  transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+}
+.feat-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;
+}
+.fc1::after{background:var(--rug)}
+.fc2::after{background:var(--eraser)}
+.fc3::after{background:var(--desk)}
+.fc4::after{background:var(--sky)}
+.fc5::after{background:var(--cover)}
+.fc6::after{background:var(--blush)}
+.feat-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(92,126,126,.13)}
+.feat-ico{
+  width:54px;height:54px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;margin-bottom:18px;
+}
+.fc1 .feat-ico{background:rgba(143,181,168,.18)}
+.fc2 .feat-ico{background:rgba(212,144,127,.18)}
+.fc3 .feat-ico{background:rgba(232,184,130,.22)}
+.fc4 .feat-ico{background:rgba(184,204,204,.28)}
+.fc5 .feat-ico{background:rgba(92,126,126,.1)}
+.fc6 .feat-ico{background:rgba(201,107,90,.12)}
+.feat-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:700;color:var(--dark);margin-bottom:9px;
+}
+.feat-desc{font-size:14px;line-height:1.72;color:var(--mid)}
+
+/* ── REAL DATA SECTION ── */
+.data-section{
+  background:var(--cover);padding:90px 56px;
+  position:relative;overflow:hidden;
+}
+.data-section::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:340px;height:340px;
+  background:rgba(255,255,255,.06);border-radius:50%;
+}
+.data-inner{
+  max-width:1120px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start;
+}
+.data-text{color:#fff}
+.data-eye{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:16px}
+.data-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:700;line-height:1.18;margin-bottom:18px;
+}
+.data-title em{font-style:italic;color:var(--desk)}
+.data-desc{font-size:15.5px;line-height:1.75;color:rgba(255,255,255,.82);margin-bottom:30px}
+.data-metrics{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:30px}
+.metric-box{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:14px;padding:16px 18px;
+}
+.metric-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:700;color:#fff;
+}
+.metric-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px;text-transform:uppercase;letter-spacing:1px}
+.data-btn{
+  background:var(--desk);color:#5a3d1e;
+  border:none;padding:14px 28px;border-radius:50px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all .2s;
+}
+.data-btn:hover{background:#dba970;transform:translateY(-1px)}
+
+/* risk table */
+.risk-table-wrap{display:flex;flex-direction:column;gap:13px}
+.risk-row{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:14px;padding:15px 18px;
+  display:flex;align-items:flex-start;gap:14px;
+}
+.risk-dot{
+  width:11px;height:11px;border-radius:50%;flex-shrink:0;margin-top:3px;
+}
+.risk-dot.g{background:#6fcf97;box-shadow:0 0 0 4px rgba(111,207,151,.22)}
+.risk-dot.a{background:var(--desk);box-shadow:0 0 0 4px rgba(232,184,130,.22)}
+.risk-dot.r{background:#EB5757;box-shadow:0 0 0 4px rgba(235,87,87,.22)}
+.risk-name{font-size:14px;font-weight:600;color:#fff}
+.risk-vitals{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px;line-height:1.5}
+.risk-tag{
+  margin-left:auto;flex-shrink:0;
+  font-size:11px;font-weight:600;letter-spacing:.5px;
+  padding:4px 11px;border-radius:50px;text-transform:uppercase;
+}
+.tag-g{background:rgba(111,207,151,.2);color:#6fcf97}
+.tag-a{background:rgba(232,184,130,.2);color:var(--desk)}
+.tag-r{background:rgba(235,87,87,.2);color:#EB5757}
+
+/* ── HOW IT WORKS ── */
+.how-section{background:#fff;padding:100px 56px}
+.how-inner{max-width:1120px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:60px;position:relative}
+.steps::before{
+  content:'';position:absolute;top:27px;left:12.5%;right:12.5%;
+  height:2px;
+  background:linear-gradient(90deg,var(--sky),var(--rug),var(--eraser),var(--blush));
+  z-index:0;border-radius:2px;
+}
+.step{text-align:center;padding:0 14px;position:relative;z-index:1}
+.step-circle{
+  width:54px;height:54px;border-radius:50%;
+  margin:0 auto 18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;border:2px solid;background:#fff;
+}
+.step:nth-child(1) .step-circle{border-color:var(--sky)}
+.step:nth-child(2) .step-circle{border-color:var(--rug)}
+.step:nth-child(3) .step-circle{border-color:var(--desk)}
+.step:nth-child(4) .step-circle{border-color:var(--eraser)}
+.step-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:700;color:var(--dark);margin-bottom:7px;
+}
+.step-desc{font-size:13px;color:var(--mid);line-height:1.65}
+
+/* ── LANGUAGE ── */
+.lang-section{padding:90px 56px;max-width:1120px;margin:0 auto;text-align:center}
+.lang-pills{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin-top:36px}
+.pill{
+  background:#fff;border:1.5px solid rgba(143,181,168,.4);
+  border-radius:50px;padding:10px 22px;
+  font-size:14px;font-weight:500;color:var(--cover);
+  transition:all .2s;cursor:default;
+}
+.pill:hover{background:rgba(143,181,168,.1);border-color:var(--rug)}
+.pill.active{background:var(--rug);color:#fff;border-color:var(--rug)}
+
+/* ── CTA ── */
+.cta-section{
+  padding:110px 56px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-section::before{
+  content:'';position:absolute;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  width:640px;height:640px;
+  background:radial-gradient(circle,rgba(212,144,127,.15) 0%,transparent 65%);
+  border-radius:50%;pointer-events:none;
+}
+.cta-inner{position:relative;z-index:1;max-width:580px;margin:0 auto}
+.cta-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:50px;font-weight:700;line-height:1.1;
+  color:var(--dark);margin-bottom:18px;
+}
+.cta-title em{font-style:italic;color:var(--cover)}
+.cta-desc{font-size:16px;color:var(--mid);line-height:1.75;margin-bottom:40px}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta-note{margin-top:22px;font-size:12px;color:var(--muted)}
+
+/* ── FOOTER ── */
+footer{
+  padding:36px 56px;
+  border-top:1px solid rgba(143,181,168,.25);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer-logo-hindi{
+  font-family:'Tiro Devanagari Hindi',serif;
+  font-size:22px;font-weight:700;color:var(--cover);
+}
+.footer-note{font-size:12px;color:var(--muted)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:12px;color:var(--muted);text-decoration:none}
+.footer-links a:hover{color:var(--cover)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  nav{padding:0 24px}
+  .hero{padding:40px 24px}
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .data-inner{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr;gap:32px}
+  .steps::before{display:none}
+  footer{flex-direction:column;text-align:center}
+  .trust-bar{gap:28px}
+  .features,.data-section,.how-section,.lang-section,.cta-section{padding:72px 24px}
+}
+@media(max-width:600px){
+  .feat-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .hero-title{font-size:38px}
+  .nav-links{display:none}
+  .data-metrics{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <img src="data:image/png;base64,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" alt="Maatri Logo" class="logo-img"/>
+    <div class="logo-stack">
+      <span class="logo-hindi notranslate" translate="no">माँत्री</span>
+      <span class="logo-eng notranslate" translate="no">Maatri</span>
+    </div>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#data">Risk Engine</a>
+    <a href="#how">How it works</a>
+    <a href="#languages">Languages</a>
+  </div>
+  <button class="btn-nav">Get Started Free</button>
+</nav>
+
+<section class="hero">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow"><span class="eyebrow-dot"></span>Trusted by 12,000+ ANMs across India</div>
+      <p class="hero-kicker">AI-powered maternal health</p>
+      <h1 class="hero-title">
+        Every mother<br>
+        deserves <em>safe</em><br>
+        <span class="pop">care.</span>
+      </h1>
+      <p class="hero-desc">
+        <span class="notranslate" translate="no">Maatri</span> helps ASHA workers and ANMs detect high-risk pregnancies in under 3 minutes — using voice input, OCR lab scanning, and real clinical data — right from a basic Android phone.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary">Start for free →</button>
+        <button class="btn-outline">Watch demo</button>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">98.2%</div>
+          <div class="stat-label">Detection accuracy</div>
+        </div>
+        <div>
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Indian languages</div>
+        </div>
+        <div>
+          <div class="stat-num">&lt; 3 min</div>
+          <div class="stat-label">Per assessment</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="trust-bar">
+  <div class="trust-item">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#5C7E7E" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    WHO MOHFW guidelines
+  </div>
+  <div class="trust-item">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#5C7E7E" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+    Patient data encrypted
+  </div>
+  <div class="trust-item">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#5C7E7E" stroke-width="2"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+    Works offline
+  </div>
+  <div class="trust-item">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#5C7E7E" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+    WhatsApp referral
+  </div>
+  <div class="trust-item">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#5C7E7E" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    Free for ASHA & ANM
+  </div>
+</div>
+
+<section class="features" id="features">
+  <div class="sec-head">
+    <p class="sec-eye">What <span class="notranslate" translate="no">Maatri</span> does</p>
+    <h2 class="sec-title">Everything she needs,<br>in one <em>gentle</em> place</h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat-card fc1">
+      <div class="feat-ico">🩺</div>
+      <div class="feat-title">AI Risk Scoring</div>
+      <p class="feat-desc">Enter Hb, BP, and blood sugar. <span class="notranslate" translate="no">Maatri</span> applies WHO/MOHFW thresholds and instantly flags Green, Amber, or Red — with a plain-language reason in your language.</p>
+    </div>
+    <div class="feat-card fc2">
+      <div class="feat-ico">🎙️</div>
+      <div class="feat-title">Language Input</div>
+      <p class="feat-desc">ANMs speak symptoms aloud in any regional language. Whisper-powered STT transcribes and maps to structured clinical fields in real time.</p>
+    </div>
+    <div class="feat-card fc3">
+      <div class="feat-ico">📷</div>
+      <div class="feat-title">Lab Report OCR</div>
+      <p class="feat-desc">Photograph any printed lab report. PaddleOCR auto-extracts Hb, sugar, and BP values directly into the patient record — no manual typing needed.</p>
+    </div>
+    <div class="feat-card fc4">
+      <div class="feat-ico">📍</div>
+      <div class="feat-title">Village Risk Heatmap</div>
+      <p class="feat-desc">See high-risk clusters across your PHC area at a glance. Pulsing red circles mark villages needing urgent attention — updated in real time.</p>
+    </div>
+    <div class="feat-card fc5">
+      <div class="feat-ico">📲</div>
+      <div class="feat-title">WhatsApp Referral</div>
+      <p class="feat-desc">One tap sends a structured clinical summary to the nearest doctor — in proper SOAP format, with vitals, risk level, and suggested action — translated to local language.</p>
+    </div>
+    <div class="feat-card fc6">
+      <div class="feat-ico">🌙</div>
+      <div class="feat-title">Offline First</div>
+      <p class="feat-desc">No internet? No problem. <span class="notranslate" translate="no">Maatri</span> stores all records locally using SQLite and syncs to the PHC server the moment connectivity returns.</p>
+    </div>
+  </div>
+</section>
+
+<section class="data-section" id="data">
+  <div class="data-inner">
+    <div class="data-text">
+      <p class="data-eye">Real clinical data</p>
+      <h2 class="data-title">Know the risk<br>before it becomes<br><em>a crisis</em></h2>
+      <p class="data-desc">Our evidence-based risk engine uses real MOHFW thresholds — Hb &lt; 9 g/dL, systolic BP &gt; 140 mmHg, sugar &gt; 140 mg/dL — to flag high-risk pregnancies the moment vitals are entered, giving ANMs precious time to act.</p>
+      <div class="data-metrics">
+        <div class="metric-box">
+          <div class="metric-val">4.2 lakh</div>
+          <div class="metric-lbl">Assessments run</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">18,400</div>
+          <div class="metric-lbl">Red alerts issued</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">94%</div>
+          <div class="metric-lbl">Referrals accepted</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">8 states</div>
+          <div class="metric-lbl">Active PHC coverage</div>
+        </div>
+      </div>
+      <button class="data-btn">Explore risk scoring →</button>
+    </div>
+
+    <div class="risk-table-wrap">
+      <div class="risk-row">
+        <div class="risk-dot g"></div>
+        <div>
+          <div class="risk-name">Priya S., 24 · Week 32 · Vellore PHC</div>
+          <div class="risk-vitals">Hb: 11.2 g/dL · BP: 118/76 mmHg · Sugar: 98 mg/dL<br>Next visit: 2 weeks · Iron tabs prescribed</div>
+        </div>
+        <span class="risk-tag tag-g">Low risk</span>
+      </div>
+      <div class="risk-row">
+        <div class="risk-dot a"></div>
+        <div>
+          <div class="risk-name">Kavitha R., 31 · Week 28 · Salem Sub-centre</div>
+          <div class="risk-vitals">Hb: 9.1 g/dL · BP: 134/88 mmHg · Sugar: 118 mg/dL<br>Iron supplements recommended · Follow-up 1 week</div>
+        </div>
+        <span class="risk-tag tag-a">Moderate</span>
+      </div>
+      <div class="risk-row">
+        <div class="risk-dot r"></div>
+        <div>
+          <div class="risk-name">Meena T., 19 · Week 36 · Namakkal PHC</div>
+          <div class="risk-vitals">Hb: 7.8 g/dL · BP: 158/98 mmHg · Proteinuria +2<br>Preeclampsia suspected · Referral sent to doctor</div>
+        </div>
+        <span class="risk-tag tag-r">High risk</span>
+      </div>
+      <div class="risk-row">
+        <div class="risk-dot a"></div>
+        <div>
+          <div class="risk-name">Rani K., 27 · Week 22 · Dharmapuri PHC</div>
+          <div class="risk-vitals">Sugar: 162 mg/dL · BP: 122/80 mmHg · Hb: 10.6 g/dL<br>GDM watch · Diet counselling scheduled</div>
+        </div>
+        <span class="risk-tag tag-a">GDM watch</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <div class="sec-head">
+      <p class="sec-eye">Simple to use</p>
+      <h2 class="sec-title">From first visit to safe<br><em>delivery</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-circle">📋</div>
+        <div class="step-title">Register patient</div>
+        <p class="step-desc">Enter name, age, and LMP. Gestational age and EDD calculated automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">🔬</div>
+        <div class="step-title">Record vitals</div>
+        <p class="step-desc">Type, speak, or scan the lab printout. Under 3 minutes per visit.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">⚡</div>
+        <div class="step-title">Get risk score</div>
+        <p class="step-desc">Instant Green / Amber / Red with a plain-language explanation.</p>
+      </div>
+      <div class="step">
+        <div class="step-circle">💌</div>
+        <div class="step-title">Refer if needed</div>
+        <p class="step-desc">Send a WhatsApp summary to the doctor and track follow-up status.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="lang-section" id="languages">
+  <p class="sec-eye">Built for Bharat</p>
+  <h2 class="sec-title">She speaks her language.<br><em>So does <span class="notranslate" translate="no">Maatri</span>.</em></h2>
+  <div class="lang-pills">
+    <div class="pill" data-lang="ta">தமிழ் · Tamil</div>
+    <div class="pill" data-lang="hi">हिन्दी · Hindi</div>
+    <div class="pill" data-lang="te">తెలుగు · Telugu</div>
+    <div class="pill" data-lang="kn">ಕನ್ನಡ · Kannada</div>
+    <div class="pill" data-lang="ml">മലയാളം · Malayalam</div>
+    <div class="pill" data-lang="bn">বাংলা · Bengali</div>
+    <div class="pill" data-lang="mr">मराठी · Marathi</div>
+    <div class="pill" data-lang="pa">ਪੰਜਾਬੀ · Punjabi</div>
+    <div class="pill">ଓਡ଼ਿଆ · Odia</div>
+    <div class="pill active" data-lang="en">English</div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2 class="cta-title">Ready to protect<br>every <em>pregnancy?</em></h2>
+    <p class="cta-desc">Join thousands of ANMs across Tamil Nadu, Maharashtra, and Rajasthan who are using <span class="notranslate" translate="no">Maatri</span> to make maternal care safer, simpler, and more humane.</p>
+    <div class="cta-actions">
+      <button class="btn-primary">Download <span class="notranslate" translate="no">Maatri</span> free</button>
+      <button class="btn-outline">Request a demo</button>
+    </div>
+    <p class="cta-note">Available on Android · Works offline · Free for ASHA &amp; ANM workers</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo-hindi notranslate" translate="no">माँत्री</div>
+  <div class="footer-note">© 2026 <span class="notranslate" translate="no">Maatri</span> · Protecting mothers across India 💗</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Contact</a>
+    <a href="#">For PHCs</a>
+    <a href="#">GitHub</a>
+  </div>
+</footer>
+
+
+
+<div id="google_translate_element" style="position:fixed;left:-9999px;top:-9999px;visibility:hidden"></div>
+<style>
+  .goog-te-banner-frame, .skiptranslate { display: none !important; }
+  body { top: 0 !important; }
+  .goog-tooltip, .goog-tooltip:hover { display: none !important; }
+  .goog-text-highlight { background: none !important; box-shadow: none !important; }
+</style>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    includedLanguages: 'en,hi,ta,te,kn,ml,bn,mr,pa,or',
+    autoDisplay: false
+  }, 'google_translate_element');
+}
+function setLanguage(lang) {
+  var tryFire = function(attempt){
+    var combo = document.querySelector('#google_translate_element select.goog-te-combo');
+    if (combo) {
+      combo.value = lang;
+      combo.dispatchEvent(new Event('change'));
+    } else if (attempt < 30) {
+      setTimeout(function(){ tryFire(attempt+1); }, 200);
+    }
+  };
+  tryFire(0);
+}
+document.addEventListener('click', function(e){
+  var pill = e.target.closest('.pill[data-lang]');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('active'); });
+  pill.classList.add('active');
+  setLanguage(pill.getAttribute('data-lang'));
+});
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
+
