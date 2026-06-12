@@ -616,9 +616,9 @@
     <!-- fields -->
     <div class="field-group">
       <div class="field" id="field-phone">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX" maxlength="14" autocomplete="tel">
-        <span class="field-error">Please enter a valid 10-digit number.</span>
+        <label for="phone">Email Address</label>
+        <input type="email" id="phone" placeholder="you@example.com" autocomplete="email">
+        <span class="field-error">Please enter a valid email address.</span>
       </div>
 
       <div class="field" id="field-pass">
@@ -650,7 +650,7 @@
       <div class="divider-line"></div>
     </div>
 
-    <button class="btn-otp">
+    <button class="btn-otp" onclick="alert('OTP login is not available in this demo. Please use email and password.')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.86 12 19.79 19.79 0 0 1 1.8 3.4 2 2 0 0 1 3.78 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.04 6.04l1.18-1.18a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
       </svg>
@@ -685,7 +685,6 @@
   }
 
   function handleSignIn() {
-    console.log("SIGN IN CLICKED");
     const phone = document.getElementById('phone').value.trim();
     const pass = document.getElementById('password').value;
     const errorBox = document.getElementById('login-error');
@@ -699,9 +698,9 @@
     errorBox.style.display = 'none';
     errorBox.textContent = '';
 
-    if (!phone.includes('@')) {
-    phoneField.classList.add('has-error');
-    valid = false;
+    if (!phone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(phone)) {
+      phoneField.classList.add('has-error');
+      valid = false;
     }
     if (pass.length < 6) {
       passField.classList.add('has-error');
@@ -735,8 +734,11 @@
             throw new Error('No authentication token returned');
           }
 
+          const backendRole = payload.data?.user?.role || '';
+          const role = backendRole.toLowerCase() === 'doctor' ? 'DOCTOR' : 'ANM';
+
           localStorage.setItem('maatri_token', token);
-          localStorage.setItem('maatri_role', document.querySelector('.role-btn.active').textContent.includes('Doctor') ? 'DOCTOR' : 'ANM');
+          localStorage.setItem('maatri_role', role);
           window.location.href = 'doctor.html';
         })
         .catch((err) => {

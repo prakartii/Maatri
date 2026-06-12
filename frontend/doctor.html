@@ -139,15 +139,15 @@
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Total Registered</span>
-              <span class="text-3xl font-bold text-gray-800 block mt-1" id="stat-total-mothers">142</span>
+              <span class="text-3xl font-bold text-gray-800 block mt-1" id="stat-total-mothers">—</span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">High Risk (RED)</span>
-              <span class="text-3xl font-bold text-red-600 block mt-1" id="stat-red-mothers">12</span>
+              <span class="text-3xl font-bold text-red-600 block mt-1" id="stat-red-mothers">—</span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-400">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Moderate Risk</span>
-              <span class="text-3xl font-bold text-amber-600 block mt-1">28</span>
+              <span class="text-3xl font-bold text-amber-600 block mt-1" id="stat-amber-mothers">—</span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Pending Sync</span>
@@ -192,9 +192,6 @@
               <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Filter by Village</label>
               <select id="filter-village" onchange="applyRegistryFilters()" class="border rounded-lg text-xs p-2 bg-gray-50">
                 <option value="ALL">All Villages</option>
-                <option value="Vellore PHC">Vellore PHC</option>
-                <option value="Salem Sub-centre">Salem Sub-centre</option>
-                <option value="Namakkal PHC">Namakkal PHC</option>
               </select>
             </div>
             <div class="flex flex-col">
@@ -252,6 +249,24 @@
                 <div id="profile-clinical-status-block" class="text-xs space-y-2">
                   </div>
               </div>
+            </div>
+
+            <!-- ANM Referral Creation — shown only when userRole === ANM -->
+            <div id="anm-referral-section" class="hidden bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+              <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Create Referral to Hospital</h4>
+              <form id="anm-referral-form" onsubmit="handleCreateReferral(event)" class="space-y-3">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Refer to Hospital</label>
+                  <select id="ref-hospital-select" required class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 bg-gray-50">
+                    <option value="">— Select hospital —</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Clinical Reason / SOAP Notes</label>
+                  <textarea id="ref-reason-input" required rows="3" placeholder="Describe reason for referral..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 bg-white resize-none"></textarea>
+                </div>
+                <button type="submit" class="bg-cover text-white font-semibold px-4 py-2 rounded-xl text-xs shadow hover:opacity-90 transition">Submit Referral</button>
+              </form>
             </div>
           </div>
 
@@ -333,13 +348,13 @@
           <div id="profile-tab-qr" class="profile-tab-content hidden flex flex-col items-center justify-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
             <div class="border-2 border-emerald-800 p-4 rounded-2xl bg-white shadow-md text-center max-w-xs space-y-3">
               <span class="font-hindi text-xl text-cover tracking-wide block">माँत्री HEALTH IDENTITY</span>
-              <svg class="w-48 h-48 mx-auto text-gray-800" viewBox="0 0 100 100" fill="currentColor">
-                <path d="M5 5h30v30H5V5zm5 5v20h20V10H10zM5 65h30v30H5V65zm5 5v20h20V70H10zM65 5h30v30H65V5zm5 5v20h20V10H70zM45 15h10v10H45v-10zM45 45h10v10H45v-10zM15 45h10v10H15v-10zM75 45h10v10H75v-10zM45 75h10v10H45v-10zM75 75h15v15H75v-15z"/>
-              </svg>
-              <span id="qr-card-token" class="text-xs font-mono tracking-widest text-gray-500 font-bold uppercase block">MTR-992381</span>
+              <div id="qr-image-wrapper" class="w-48 h-48 mx-auto flex items-center justify-center bg-gray-50 rounded-xl border border-gray-200">
+                <span class="text-xs text-gray-400">Open QR tab to load</span>
+              </div>
+              <span id="qr-card-token" class="text-xs font-mono tracking-widest text-gray-500 font-bold uppercase block">—</span>
               <p class="text-[10px] text-gray-400">Scan this code at PHC triage or referral desks to immediately populate clinical records.</p>
             </div>
-            <button class="mt-4 bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">Download Token Identifier Image</button>
+            <button id="qr-download-btn" onclick="downloadQrImage()" class="mt-4 bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">Download Token Identifier Image</button>
           </div>
         </div>
 
@@ -523,7 +538,7 @@
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Active Triage Referrals</span>
-              <span class="text-3xl font-bold text-gray-800 mt-1 block" id="doc-stat-active-referrals">2</span>
+              <span class="text-3xl font-bold text-gray-800 mt-1 block" id="doc-stat-active-referrals">—</span>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Admitted Status Tracker</span>
@@ -682,7 +697,7 @@
             </div>
             <div class="text-xs font-bold text-gray-400 uppercase">OR MANUALLY KEY PATIENT TOKEN</div>
             <div class="flex space-x-2">
-              <input type="text" id="manual-token-input" placeholder="MTR-992381" class="flex-1 px-4 py-2 border rounded-xl text-center font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+              <input type="text" id="manual-token-input" placeholder="Enter patient QR token (UUID)" class="flex-1 px-4 py-2 border rounded-xl text-center font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
               <button onclick="handleManualTokenIntakeSearch()" class="bg-gray-800 text-white text-xs font-semibold px-4 rounded-xl">Ingest Token</button>
             </div>
           </div>
@@ -714,12 +729,8 @@
           </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Regional Village Node</label>
-          <select id="reg-village" class="w-full px-3 py-2 border rounded-xl text-xs bg-gray-50 focus:outline-none">
-            <option value="Vellore PHC">Vellore PHC</option>
-            <option value="Salem Sub-centre">Salem Sub-centre</option>
-            <option value="Namakkal PHC">Namakkal PHC</option>
-          </select>
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Village / Block</label>
+          <input type="text" id="reg-village" required placeholder="e.g. Vellore PHC" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Mobile Contact String</label>
@@ -733,42 +744,35 @@
   </div>
 
   <script>
-    // Global Clinical Mock State Storage Core Dictionary Model
     const appState = {
-      userRole: null, 
+      userRole: null,
       isOnline: true,
       offlineQueue: [],
       activeProfileId: null,
       activeProfileTab: 'overview',
-      
-      mothers: [
-        { id: 1, name: "Priya S.", age: 24, week: 32, month: 8, village: "Vellore PHC", phone: "9812345670", risk: "GREEN", hb: 11.2, systolic: 118, sugar: 98, meta: "Next visit: 2 weeks · Iron tabs prescribed", token: "MTR-339201" },
-        { id: 2, name: "Kavitha R.", age: 31, week: 28, month: 7, village: "Salem Sub-centre", phone: "9712345671", risk: "AMBER", hb: 9.1, systolic: 134, sugar: 118, meta: "Iron supplements recommended · Follow-up 1 week", token: "MTR-882910" },
-        { id: 3, name: "Meena T.", age: 19, week: 36, month: 9, village: "Namakkal PHC", phone: "9612345672", risk: "RED", hb: 7.8, systolic: 158, sugar: 98, meta: "Preeclampsia suspected · Referral sent to doctor", token: "MTR-992381" },
-        { id: 4, name: "Rani K.", age: 27, week: 22, month: 5, village: "Dharmapuri PHC", phone: "9512345673", risk: "AMBER", hb: 10.6, systolic: 122, sugar: 162, meta: "GDM watch · Diet counselling scheduled", token: "MTR-447210" }
-      ],
-      
-      referrals: [
-        { id: 101, motherId: 3, from: "Namakkal PHC (ANM Devi)", timestamp: "10 mins ago", status: "PENDING", soap: "S: C/o severe continuous fronto-temporal headache. O: BP 158/98, Pedal Edema ++, Hb 7.8 g/dL. A: Suspected severe Preeclampsia with Severe Anemia. P: Urgent referral for IV MgSO4 management architecture initiation." },
-        { id: 102, motherId: 2, from: "Salem Sub-centre (ANM Lakshmi)", timestamp: "2 hours ago", status: "ARRIVED", soap: "S: Reports mild dizziness upon exertion. O: BP 134/88, Hb 9.1 g/dL. A: Moderate Anemia with gestational hypertensive trending indices. P: Review iron therapy metrics." }
-      ],
-      
-      charts: {} // Component chart context reference variables
+      mothers: [],
+      referrals: [],
+      hospitals: [],
+      charts: {},
+      _qrDataUrl: null,
+      _qrToken: null
     };
     async function loadPatients() {
   try {
     const patients = await apiRequest('/patients');
+    if (!patients) return;
 
     appState.mothers = patients.map(p => ({
       id: p.id,
       name: p.name,
       age: p.age,
-      week: p.pregnancy_month * 4,
+      week: p.pregnancy_month ? p.pregnancy_month * 4 : null,
       month: p.pregnancy_month,
       village: p.village,
       phone: p.phone,
       risk: p.current_risk,
-      token: p.qr_token
+      token: p.qr_token,
+      next_visit_date: p.next_visit_date
     }));
 
     renderMotherRegistry();
@@ -776,6 +780,16 @@
     console.error('Failed loading patients:', err);
   }
 }
+
+    async function loadHospitals() {
+      try {
+        const hospitals = await apiRequest('/hospitals');
+        if (!hospitals) return;
+        appState.hospitals = Array.isArray(hospitals) ? hospitals : [];
+      } catch (err) {
+        console.error('Failed loading hospitals:', err);
+      }
+    }
 
    const API_BASE = "http://localhost:5000/api";
     function getAuthHeaders() {
@@ -794,6 +808,15 @@
         }
       });
       const payload = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        localStorage.removeItem('maatri_token');
+        localStorage.removeItem('maatri_role');
+        window.location.href = 'login.html';
+        return;
+      }
+      if (response.status === 403) {
+        throw new Error('You do not have permission to perform this action.');
+      }
       if (!response.ok) {
         throw new Error(payload.error || payload.message || "Request failed");
       }
@@ -894,26 +917,31 @@
     function renderANMDashboard() {
       const alertContainer = document.getElementById('dashboard-alerts-list');
       alertContainer.innerHTML = '';
-      
-      // Isolate RED mothers to fulfill dashboard structural requirements
+
       const redMothers = appState.mothers.filter(m => m.risk === 'RED');
+      const amberMothers = appState.mothers.filter(m => m.risk === 'AMBER');
+
       document.getElementById('stat-total-mothers').textContent = appState.mothers.length;
       document.getElementById('stat-red-mothers').textContent = redMothers.length;
-      
-      if(redMothers.length === 0) {
-        alertContainer.innerHTML = `<div class="text-xs text-gray-400 py-4 text-center">Zero priority maternal exceptions documented.</div>`;
+      const amberEl = document.getElementById('stat-amber-mothers');
+      if (amberEl) amberEl.textContent = amberMothers.length;
+
+      if (redMothers.length === 0) {
+        alertContainer.innerHTML = `<div class="text-xs text-gray-400 py-4 text-center">No high-risk patients currently registered.</div>`;
         return;
       }
 
       redMothers.forEach(m => {
         const item = document.createElement('div');
         item.className = "flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-xl text-xs";
+        const weekInfo = m.week ? ` · Week ${m.week}` : '';
+        const visitInfo = m.next_visit_date ? `Next visit: ${m.next_visit_date}` : 'No visit scheduled';
         item.innerHTML = `
           <div>
-            <span class="font-bold text-gray-800">${m.name} (Age ${m.age}) · Week ${m.week}</span>
-            <p class="text-red-700 mt-0.5 font-medium">${m.meta}</p>
+            <span class="font-bold text-gray-800">${m.name} (Age ${m.age})${weekInfo}</span>
+            <p class="text-red-700 mt-0.5 font-medium">${visitInfo}</p>
           </div>
-          <button onclick='viewPatientProfile("${m.id}")' class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">Drill Profile</button>
+          <button onclick='viewPatientProfile("${m.id}")' class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">View Profile</button>
         `;
         alertContainer.appendChild(item);
       });
@@ -922,19 +950,48 @@
     function renderMotherRegistry() {
       const tbody = document.getElementById('registry-table-body');
       tbody.innerHTML = '';
-      
-      appState.mothers.forEach(m => {
+
+      // Populate village filter dynamically from actual patient data
+      const villageSelect = document.getElementById('filter-village');
+      if (villageSelect) {
+        const currentVillage = villageSelect.value;
+        const villages = [...new Set(appState.mothers.map(m => m.village).filter(Boolean))].sort();
+        villageSelect.innerHTML = '<option value="ALL">All Villages</option>';
+        villages.forEach(v => {
+          const opt = document.createElement('option');
+          opt.value = v;
+          opt.textContent = v;
+          if (v === currentVillage) opt.selected = true;
+          villageSelect.appendChild(opt);
+        });
+      }
+
+      const villageFilter = villageSelect?.value || 'ALL';
+      const riskFilter = document.getElementById('filter-risk')?.value || 'ALL';
+
+      const filtered = appState.mothers.filter(m => {
+        if (villageFilter !== 'ALL' && m.village !== villageFilter) return false;
+        if (riskFilter !== 'ALL' && m.risk !== riskFilter) return false;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-xs text-gray-400">${appState.mothers.length === 0 ? 'No patients registered yet.' : 'No patients match the selected filters.'}</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(m => {
         const badgeColor = m.risk === 'RED' ? 'bg-red-100 text-red-800' : (m.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
         const tr = document.createElement('tr');
         tr.className = "hover:bg-gray-50 transition";
         tr.innerHTML = `
           <td class="p-4">
             <span class="font-bold text-gray-800 block">${m.name}</span>
-            <span class="text-xs text-gray-400">ID Token: ${m.token} · Age ${m.age}</span>
+            <span class="text-xs text-gray-400">Token: ${m.token || '—'} · Age ${m.age}</span>
           </td>
-          <td class="p-4 text-gray-600 font-medium">${m.village}</td>
-          <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${m.risk} RISK</span></td>
-          <td class="p-4 font-medium text-gray-600">Week ${m.week} <span class="text-xs text-gray-400 block">Month ${m.month}</span></td>
+          <td class="p-4 text-gray-600 font-medium">${m.village || '—'}</td>
+          <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${m.risk || 'UNKNOWN'} RISK</span></td>
+          <td class="p-4 font-medium text-gray-600">${m.week ? 'Week ' + m.week : '—'} <span class="text-xs text-gray-400 block">${m.month ? 'Month ' + m.month : ''}</span></td>
           <td class="p-4 text-right">
             <button onclick='viewPatientProfile("${m.id}")' class="text-xs bg-cream text-cover font-bold px-3 py-1.5 rounded-lg border border-rug hover:bg-opacity-50">Profile Workspace</button>
           </td>
@@ -954,62 +1011,80 @@
       appState.mothers.forEach(m => {
         const opt = document.createElement('option');
         opt.value = m.id;
-        opt.textContent = `${m.name} (Week ${m.week}) [${m.token}]`;
+        opt.textContent = `${m.name}${m.week ? ' (Week ' + m.week + ')' : ''} [${m.token || '—'}]`;
         selector.appendChild(opt);
       });
     }
 
     // Profile Screen Workspace Navigation & Rendering Logic
     async function viewPatientProfile(id) {
-      const fallbackMother = appState.mothers.find(m => m.id === id);
+      const fallbackMother = appState.mothers.find(m => String(m.id) === String(id));
       if (!fallbackMother) return;
 
       appState.activeProfileId = id;
-      document.getElementById('profile-patient-name').textContent = fallbackMother.name;
-      document.getElementById('prof-meta-age').textContent = fallbackMother.age;
-      document.getElementById('prof-meta-village').textContent = fallbackMother.village;
-      document.getElementById('prof-meta-week').textContent = fallbackMother.week;
-      document.getElementById('qr-card-token').textContent = fallbackMother.token;
 
-      const badgeTarget = document.getElementById('profile-risk-badge');
-      const badgeColor = fallbackMother.risk === 'RED' ? 'bg-red-100 text-red-800' : (fallbackMother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
-      badgeTarget.innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${fallbackMother.risk} RISK</span>`;
+      function renderProfileFields(m) {
+        document.getElementById('profile-patient-name').textContent = m.name;
+        document.getElementById('prof-meta-age').textContent = m.age ?? '—';
+        document.getElementById('prof-meta-village').textContent = m.village ?? '—';
+        document.getElementById('prof-meta-week').textContent = m.week ?? '—';
+        document.getElementById('qr-card-token').textContent = m.token ?? '—';
 
-      const clinicalStatusBlock = document.getElementById('profile-clinical-status-block');
-      clinicalStatusBlock.innerHTML = `
-        <p><strong>Latest Clinical Metrics Session:</strong> Hb: ${fallbackMother.hb} g/dL | BP: ${fallbackMother.systolic} mmHg (Systolic) | Blood Sugar: ${fallbackMother.sugar} mg/dL</p>
-        <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic"><strong>Internal Diagnostic Logic Log:</strong> ${fallbackMother.meta}</p>
-      `;
+        const badgeColor = m.risk === 'RED' ? 'bg-red-100 text-red-800' : (m.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+        document.getElementById('profile-risk-badge').innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${m.risk ?? 'UNKNOWN'} RISK</span>`;
+
+        const nextVisit = m.next_visit_date ? `Next visit: ${m.next_visit_date}` : 'No upcoming visit scheduled';
+        document.getElementById('profile-clinical-status-block').innerHTML = `
+          <p class="text-xs"><strong>Phone:</strong> ${m.phone || '—'}</p>
+          <p class="text-xs"><strong>Pregnancy Month:</strong> ${m.month ?? '—'}</p>
+          <p class="text-xs"><strong>Risk Level:</strong> ${m.risk ?? '—'}</p>
+          <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic text-xs">${nextVisit}</p>
+        `;
+      }
+
+      renderProfileFields(fallbackMother);
+
+      const referralSection = document.getElementById('anm-referral-section');
+      if (appState.userRole === 'ANM') {
+        referralSection.classList.remove('hidden');
+        if (appState.hospitals.length === 0) {
+          await loadHospitals();
+        }
+        const hospitalSelect = document.getElementById('ref-hospital-select');
+        hospitalSelect.innerHTML = '<option value="">— Select hospital —</option>';
+        appState.hospitals.forEach(h => {
+          const opt = document.createElement('option');
+          opt.value = h.id;
+          opt.textContent = `${h.name}${h.district ? ' · ' + h.district : ''}`;
+          hospitalSelect.appendChild(opt);
+        });
+      } else {
+        referralSection.classList.add('hidden');
+      }
 
       try {
         const patient = await apiRequest(`/patients/${id}`);
         if (patient) {
-          const existingIndex = appState.mothers.findIndex(m => m.id === id);
+          const existingIndex = appState.mothers.findIndex(m => String(m.id) === String(id));
           if (existingIndex >= 0) {
             appState.mothers[existingIndex] = {
               ...appState.mothers[existingIndex],
               name: patient.name || appState.mothers[existingIndex].name,
-              age: patient.age || appState.mothers[existingIndex].age,
+              age: patient.age ?? appState.mothers[existingIndex].age,
               village: patient.village || appState.mothers[existingIndex].village,
               week: patient.pregnancy_month ? patient.pregnancy_month * 4 : appState.mothers[existingIndex].week,
-              month: patient.pregnancy_month || appState.mothers[existingIndex].month,
+              month: patient.pregnancy_month ?? appState.mothers[existingIndex].month,
               phone: patient.phone || appState.mothers[existingIndex].phone,
               risk: patient.current_risk || appState.mothers[existingIndex].risk,
               token: patient.qr_token || appState.mothers[existingIndex].token,
-              meta: patient.next_visit_date ? `Next visit: ${patient.next_visit_date}` : appState.mothers[existingIndex].meta
+              next_visit_date: patient.next_visit_date ?? appState.mothers[existingIndex].next_visit_date
             };
           }
-
-          const refreshedMother = appState.mothers.find(m => m.id === id);
-          document.getElementById('profile-patient-name').textContent = refreshedMother.name;
-          document.getElementById('prof-meta-age').textContent = refreshedMother.age;
-          document.getElementById('prof-meta-village').textContent = refreshedMother.village;
-          document.getElementById('prof-meta-week').textContent = refreshedMother.week;
-          document.getElementById('qr-card-token').textContent = refreshedMother.token;
-          document.getElementById('profile-risk-badge').innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${refreshedMother.risk === 'RED' ? 'bg-red-100 text-red-800' : (refreshedMother.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800')}">${refreshedMother.risk} RISK</span>`;
+          const refreshed = appState.mothers.find(m => String(m.id) === String(id));
+          renderProfileFields(refreshed);
         }
       } catch (error) {
-        console.warn('Patient detail fetch failed, falling back to local state:', error.message);
+        console.warn('Patient detail fetch failed, using local state:', error.message);
       }
 
       switchView('anm-patient-profile');
@@ -1034,6 +1109,9 @@
       if (tabName === 'history' && appState.activeProfileId) {
         const m = appState.mothers.find(x => x.id === appState.activeProfileId);
         if (m) buildTrendAlerts(m);
+      }
+      if (tabName === 'qr' && appState.activeProfileId) {
+        loadPatientQrTab(appState.activeProfileId);
       }
     }
 
@@ -1073,41 +1151,27 @@
     
     async function handleCreateMotherProfile(e) {
       e.preventDefault();
+      const monthVal = parseInt(document.getElementById('reg-month').value, 10);
       const payload = {
         name: document.getElementById('reg-name').value.trim(),
         age: parseInt(document.getElementById('reg-age').value, 10),
-        village: document.getElementById('reg-village').value,
-        phone: document.getElementById('reg-phone').value.trim(),
-        pregnancy_month: parseInt(document.getElementById('reg-month').value, 10),
+        village: document.getElementById('reg-village').value.trim(),
+        phone: document.getElementById('reg-phone').value.trim() || null,
+        pregnancy_month: isNaN(monthVal) ? null : monthVal,
         current_risk: 'GREEN',
         next_visit_date: null
       };
 
       try {
-        const createdPatient = await apiRequest('/patients', {
+        await apiRequest('/patients', {
           method: 'POST',
           body: JSON.stringify(payload)
         });
 
-        const newM = {
-          id: createdPatient.id || appState.mothers.length + 1,
-          name: createdPatient.name || payload.name,
-          age: createdPatient.age || payload.age,
-          week: (createdPatient.pregnancy_month || payload.pregnancy_month) * 4,
-          month: createdPatient.pregnancy_month || payload.pregnancy_month,
-          village: createdPatient.village || payload.village,
-          phone: createdPatient.phone || payload.phone,
-          risk: createdPatient.current_risk || 'GREEN',
-          hb: 12.0,
-          systolic: 120,
-          sugar: 90,
-          meta: 'Initial baseline registration entry log.',
-          token: createdPatient.qr_token || `MTR-${Math.floor(100000 + Math.random() * 900000)}`
-        };
-
-        appState.mothers.push(newM);
         closeRegistrationModal();
-        renderMotherRegistry();
+        document.getElementById('form-new-mother').reset();
+        await loadPatients();
+        renderANMDashboard();
         switchView('anm-registry');
         alert('Mother profile created successfully.');
       } catch (error) {
@@ -1115,11 +1179,46 @@
       }
     }
 
+    async function handleCreateReferral(e) {
+      e.preventDefault();
+      const hospitalId = document.getElementById('ref-hospital-select').value;
+      const reason = document.getElementById('ref-reason-input').value.trim();
+      if (!hospitalId || !reason) {
+        alert('Please select a hospital and provide a referral reason.');
+        return;
+      }
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+      try {
+        await apiRequest('/referrals', {
+          method: 'POST',
+          body: JSON.stringify({
+            patient_id: appState.activeProfileId,
+            hospital_id: hospitalId,
+            referral_reason: reason
+          })
+        });
+        alert('Referral created successfully.');
+        document.getElementById('ref-reason-input').value = '';
+        document.getElementById('ref-hospital-select').value = '';
+      } catch (err) {
+        alert(err.message || 'Unable to create referral.');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
+      }
+    }
+
     function renderFollowups() {
       const container = document.getElementById('followups-container-element');
       container.innerHTML = '';
-      
+
       const priorityMothers = appState.mothers.filter(m => m.risk !== 'GREEN');
+
+      if (priorityMothers.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-gray-400">No follow-up required. All registered patients are currently low risk.</div>`;
+        return;
+      }
+
       priorityMothers.forEach(m => {
         const el = document.createElement('div');
         el.className = "p-4 flex justify-between items-center text-xs hover:bg-gray-50 transition";
@@ -1128,7 +1227,7 @@
             <span class="font-bold text-gray-800 block">${m.name} · ${m.village}</span>
             <span class="text-gray-400">Risk Severity: ${m.risk} | Communication Line: ${m.phone}</span>
           </div>
-          <button onclick="viewPatientProfile(${m.id})" class="bg-cover text-white px-3 py-1.5 rounded-lg">Trigger Direct Call / Audit</button>
+          <button onclick="viewPatientProfile('${m.id}')" class="bg-cover text-white px-3 py-1.5 rounded-lg">View Profile</button>
         `;
         container.appendChild(el);
       });
@@ -1138,15 +1237,11 @@
     // AI INTERACTIVE CORE INTELLIGENCE ROUTINES                -->
     // ======================================================== -->
     async function simulateOCRExtraction() {
-      const targetUrl = appState.isOnline ? "/ai/ocr" : "/ai/ocr";
-      console.log(`Routing target URL chosen: ${targetUrl}`);
-
       try {
-        const ocrResult = await apiRequest('/ai/ocr', {
+        await apiRequest('/ai/ocr', {
           method: 'POST',
           body: JSON.stringify({ imageUrl: 'https://example.com/scan.png' })
         });
-        console.log('OCR response:', ocrResult);
         alert('OCR scan request sent to the backend.');
       } catch (error) {
         alert(error.message || 'OCR request failed.');
@@ -1189,7 +1284,13 @@
     document.addEventListener('DOMContentLoaded', () => {
       const storedToken = localStorage.getItem('maatri_token');
       const storedRole = localStorage.getItem('maatri_role');
-      if (storedToken && storedRole) {
+
+      if (!storedToken) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (storedRole) {
         appState.userRole = storedRole;
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-app').classList.remove('hidden');
@@ -1197,11 +1298,11 @@
         if (storedRole === 'ANM') {
           document.getElementById('nav-anm').classList.remove('hidden');
           document.getElementById('nav-doctor').classList.add('hidden');
-          switchView('anm-dashboard');
+          loadPatients().then(() => switchView('anm-dashboard'));
         } else {
           document.getElementById('nav-anm').classList.add('hidden');
           document.getElementById('nav-doctor').classList.remove('hidden');
-          switchView('doc-dashboard');
+          loadPatients().then(() => switchView('doc-dashboard'));
         }
       }
 
@@ -1264,8 +1365,8 @@
 
     async function handleVisitSubmit(e) {
       e.preventDefault();
-      const pId = parseInt(document.getElementById('visit-patient-id').value, 10);
-      const mother = appState.mothers.find(m => m.id === pId);
+      const pId = document.getElementById('visit-patient-id').value;
+      const mother = appState.mothers.find(m => String(m.id) === String(pId));
 
       const hb = parseFloat(document.getElementById('input-hb').value);
       const bp = parseInt(document.getElementById('input-systolic').value, 10);
@@ -1300,10 +1401,10 @@
           });
 
           if (mother) {
-            mother.hb = hb; mother.systolic = bp; mother.sugar = sugar; mother.risk = determinedRisk;
-            mother.meta = `Updated via ANC Screening Portal Session. Risk Level Stratified: ${determinedRisk}`;
+            mother.risk = determinedRisk;
           }
-          alert('Visit saved successfully to the backend.');
+          await loadPatients();
+          alert('Visit saved successfully.');
         } catch (error) {
           alert(error.message || 'Unable to save visit.');
         }
@@ -1384,46 +1485,80 @@
     // ======================================================== -->
     // DOCTOR ARCHITECTURE SCREEN LOGIC AND RENDERS             -->
     // ======================================================== -->
-    function renderDoctorDashboard() {
+    async function renderDoctorDashboard() {
+      if (appState.referrals.length === 0) {
+        try {
+          const referrals = await apiRequest('/referrals');
+          if (referrals) appState.referrals = Array.isArray(referrals) ? referrals : [];
+        } catch (err) {
+          console.error('Failed loading referrals for dashboard:', err);
+        }
+      }
+
+      const redCount = appState.mothers.filter(m => m.risk === 'RED').length;
+      const amberCount = appState.mothers.filter(m => m.risk === 'AMBER').length;
+      const greenCount = appState.mothers.filter(m => m.risk === 'GREEN').length;
+
       document.getElementById('doc-stat-active-referrals').textContent = appState.referrals.filter(r => r.status === 'PENDING').length;
-      
+
       const ctx = document.getElementById('chart-doc-macro-distribution').getContext('2d');
-      if(appState.charts.docMacro) appState.charts.docMacro.destroy();
+      if (appState.charts.docMacro) appState.charts.docMacro.destroy();
       appState.charts.docMacro = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['High Risk (RED)', 'Moderate Watch (AMBER)', 'Normal Boundary Range'],
-          datasets: [{ label: 'District Cohort Distribution Metrics', data: [12, 28, 102], backgroundColor: ['#C96B5A', '#E8B882', '#8FB5A8'] }]
+          labels: ['High Risk (RED)', 'Moderate Watch (AMBER)', 'Normal Range (GREEN)'],
+          datasets: [{ label: 'Patient Distribution', data: [redCount, amberCount, greenCount], backgroundColor: ['#C96B5A', '#E8B882', '#8FB5A8'] }]
         },
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
-    function renderDoctorReferralQueue() {
-      // TODO: A referral list endpoint is not included in the current supported contract, so this view continues to render from local state.
+    async function renderDoctorReferralQueue() {
       const container = document.getElementById('doc-referrals-container');
+      container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">Loading referrals...</div>';
+
+      try {
+        const referrals = await apiRequest('/referrals');
+        appState.referrals = Array.isArray(referrals) ? referrals : [];
+      } catch (err) {
+        console.error('Failed loading referrals:', err);
+        container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">Unable to load referrals.</div>';
+        return;
+      }
+
       container.innerHTML = '';
-      
+
+      if (appState.referrals.length === 0) {
+        container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">No active referrals in queue.</div>';
+        return;
+      }
+
       appState.referrals.forEach(ref => {
-        const mother = appState.mothers.find(m => m.id === ref.motherId);
-        if(!mother) return;
-        
+        const patientName = ref.patients?.name || 'Unknown Patient';
+        const patientAge = ref.patients?.age ?? '—';
+        const patientRisk = ref.patients?.current_risk || 'GREEN';
+        const patientWeek = ref.patients?.pregnancy_month ? ref.patients.pregnancy_month * 4 : null;
+        const hospitalName = ref.hospitals?.name || 'Unknown hospital';
+        const riskColor = patientRisk === 'RED' ? 'bg-red-100 text-red-800' : (patientRisk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+        const weekStr = patientWeek ? ` · Week ${patientWeek}` : '';
+
         const div = document.createElement('div');
         div.className = "bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3";
         div.innerHTML = `
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-xs bg-red-100 text-red-800 font-bold px-2 py-0.5 rounded uppercase tracking-wider">${mother.risk} Referral Triage</span>
-              <h3 class="font-bold text-gray-800 text-base mt-1">${mother.name} (Age ${mother.age}) · Gestation Progress Week ${mother.week}</h3>
-              <p class="text-xs text-gray-400">Origin Dispatch Point: ${ref.from} · ${ref.timestamp}</p>
+              <span class="text-xs ${riskColor} font-bold px-2 py-0.5 rounded uppercase tracking-wider">${patientRisk} Referral</span>
+              <h3 class="font-bold text-gray-800 text-base mt-1">${patientName} (Age ${patientAge})${weekStr}</h3>
+              <p class="text-xs text-gray-400">From: ${hospitalName} · ${ref.created_at || ''}</p>
             </div>
             <span class="text-xs font-mono font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded border">${ref.status}</span>
           </div>
-          <div class="bg-slate-50 p-3 rounded-xl border font-mono text-xs text-slate-700 whitespace-pre-wrap">${ref.soap}</div>
+          <div class="bg-slate-50 p-3 rounded-xl border font-mono text-xs text-slate-700 whitespace-pre-wrap">${ref.referral_reason || 'No clinical notes available'}</div>
           <div class="flex flex-wrap gap-2 pt-2">
-            <button onclick="openReferralDetail(${ref.id})" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition">🔍 View Full Details</button>
-            <button onclick="updateReferralStatus(${ref.id}, 'ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">✅ Confirm Arrival</button>
-            <button onclick="updateReferralStatus(${ref.id}, 'ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-emerald-50">🏥 Log Admission</button>
+            <button onclick="openReferralDetail('${ref.id}')" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition">🔍 View Full Details</button>
+            ${ref.status === 'PENDING' ? `<button onclick="updateReferralStatus('${ref.id}', 'ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">✅ Confirm Arrival</button>` : ''}
+            ${ref.status === 'ARRIVED' ? `<button onclick="updateReferralStatus('${ref.id}', 'ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-emerald-50">🏥 Log Admission</button>` : ''}
+            ${ref.status === 'ADMITTED' ? `<span class="text-xs font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200">✓ Admitted</span>` : ''}
           </div>
         `;
         container.appendChild(div);
@@ -1443,23 +1578,90 @@
         }
 
         alert(`Referral status updated to ${newStatus}.`);
-        renderDoctorReferralQueue();
+        await renderDoctorReferralQueue();
         renderDoctorDashboard();
       } catch (error) {
         alert(error.message || 'Unable to update referral status.');
       }
     }
 
-    function handleManualTokenIntakeSearch() {
-      // TODO: QR token intake is not backed by a supported backend endpoint in the current contract.
-      const rawToken = document.getElementById('manual-token-input').value.trim().toUpperCase();
-      const match = appState.mothers.find(m => m.token === rawToken || rawToken.includes(m.token));
-      if(match) {
-        alert('Token index target hit. Relaying data pipeline context directly into medical officer diagnostic workspace.');
-        viewPatientProfile(match.id);
-      } else {
-        alert('Token string search failure: Invalid identity tracking index provided.');
+    async function handleManualTokenIntakeSearch() {
+      const rawToken = document.getElementById('manual-token-input').value.trim();
+      if (!rawToken) {
+        alert('Please enter a patient QR token.');
+        return;
       }
+      try {
+        const scanResult = await apiRequest('/qr/scan', {
+          method: 'POST',
+          body: JSON.stringify({ qr_token: rawToken })
+        });
+        const patientData = scanResult?.patient;
+        if (!patientData || !patientData.id) {
+          alert('Patient not found for this token.');
+          return;
+        }
+        const existingIdx = appState.mothers.findIndex(m => String(m.id) === String(patientData.id));
+        if (existingIdx < 0) {
+          appState.mothers.push({
+            id: patientData.id,
+            name: patientData.name,
+            age: patientData.age,
+            week: patientData.pregnancy_month ? patientData.pregnancy_month * 4 : null,
+            month: patientData.pregnancy_month,
+            village: patientData.village,
+            phone: patientData.phone,
+            risk: patientData.current_risk,
+            token: rawToken,
+            next_visit_date: patientData.next_visit_date
+          });
+        }
+        viewPatientProfile(patientData.id);
+      } catch (err) {
+        alert(err.message || 'Token lookup failed. Please check the token and try again.');
+      }
+    }
+
+    async function loadPatientQrTab(patientId) {
+      const wrapper = document.getElementById('qr-image-wrapper');
+      if (!wrapper) return;
+      wrapper.innerHTML = '<span class="text-xs text-gray-400 animate-pulse">Generating QR...</span>';
+
+      if (appState.userRole !== 'ANM') {
+        const m = appState.mothers.find(x => String(x.id) === String(patientId));
+        wrapper.innerHTML = m?.token
+          ? `<span class="text-xs text-gray-600 font-mono break-all p-2 leading-relaxed">${m.token}</span>`
+          : '<span class="text-xs text-gray-400">QR generation requires ANM role</span>';
+        return;
+      }
+
+      try {
+        const qrData = await apiRequest(`/patients/${patientId}/qr`);
+        if (!qrData || !qrData.qr_data_url) {
+          wrapper.innerHTML = '<span class="text-xs text-red-500">Failed to generate QR</span>';
+          return;
+        }
+        wrapper.innerHTML = `<img src="${qrData.qr_data_url}" alt="Patient QR Code" class="w-44 h-44 rounded">`;
+        document.getElementById('qr-card-token').textContent = qrData.qr_token ?? '—';
+        appState._qrDataUrl = qrData.qr_data_url;
+        appState._qrToken = qrData.qr_token;
+      } catch (err) {
+        console.error('Failed to load patient QR:', err);
+        wrapper.innerHTML = `<span class="text-xs text-red-500">${err.message || 'Failed to load QR'}</span>`;
+      }
+    }
+
+    function downloadQrImage() {
+      if (!appState._qrDataUrl) {
+        alert('No QR image available. Open the QR tab for a patient first.');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = appState._qrDataUrl;
+      a.download = `maatri-qr-${appState._qrToken || 'patient'}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
     // ======================================================== -->
     // REFERRAL DETAILS PAGE /referrals/:id                     -->
@@ -1496,6 +1698,9 @@
         const statusMap = { PENDING: 'bg-amber-100 text-amber-800', ARRIVED: 'bg-blue-100 text-blue-800', ADMITTED: 'bg-green-100 text-green-800' };
         statusBadge.textContent = ref.status;
         statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${statusMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
+
+        document.getElementById('ref-btn-arrived').classList.toggle('hidden', ref.status !== 'PENDING');
+        document.getElementById('ref-btn-admitted').classList.toggle('hidden', ref.status !== 'ARRIVED');
 
         document.getElementById('ref-qr-token').textContent = mother ? mother.token : '—';
 
@@ -1546,11 +1751,17 @@
       });
     }
 
-    function updateRefDetailStatus(newStatus) {
-      const ref = appState.referrals.find(r => r.id === appState.activeReferralId);
-      if (ref) {
-        ref.status = newStatus;
-        openReferralDetail(ref.id); // re-render detail page with updated status
+    async function updateRefDetailStatus(newStatus) {
+      if (!appState.activeReferralId) return;
+      try {
+        await apiRequest(`/referrals/${appState.activeReferralId}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: newStatus })
+        });
+        alert(`Referral status updated to ${newStatus}.`);
+        openReferralDetail(appState.activeReferralId);
+      } catch (error) {
+        alert(error.message || 'Unable to update referral status.');
       }
     }
 
@@ -1558,30 +1769,21 @@
     // TREND ALERTS BOX above charts                            -->
     // ======================================================== -->
     function buildTrendAlerts(mother) {
-      const alerts = [];
-      // Hb drop: compare current vs estimated prior (mock: prior = +2.7 based on chart data)
-      const prevHb = parseFloat((mother.hb + 2.7).toFixed(1));
-      if (mother.hb < prevHb - 1) {
-        alerts.push({ icon: '⚠️', color: 'text-red-700 bg-red-50 border-red-100', text: `Hb dropped from ${prevHb} → ${mother.hb} g/dL — Worsening Anemia Trend` });
-      }
-      // BP rising
-      if (mother.systolic >= 130) {
-        alerts.push({ icon: '⚠️', color: 'text-amber-700 bg-amber-50 border-amber-100', text: `BP rising trend detected — Systolic at ${mother.systolic} mmHg (Watch for Preeclampsia)` });
-      }
-      // Anemia classification
-      if (mother.hb < 8) {
-        alerts.push({ icon: '⚠️', color: 'text-red-700 bg-red-50 border-red-100', text: `Severe anemia developing — Hb ${mother.hb} g/dL is below critical threshold (8 g/dL)` });
-      } else if (mother.hb < 11) {
-        alerts.push({ icon: '⚠️', color: 'text-amber-700 bg-amber-50 border-amber-100', text: `Moderate anemia developing — Hb ${mother.hb} g/dL requires iron supplementation review` });
-      }
-      // Blood sugar spike
-      if (mother.sugar >= 140) {
-        alerts.push({ icon: '⚠️', color: 'text-orange-700 bg-orange-50 border-orange-100', text: `Elevated blood sugar: ${mother.sugar} mg/dL — GDM risk, dietary review needed` });
-      }
-
       const box = document.getElementById('trend-alert-box');
       const list = document.getElementById('trend-alerts-list');
       list.innerHTML = '';
+
+      const alerts = [];
+
+      if (mother.risk === 'RED') {
+        alerts.push({ icon: '⚠️', color: 'text-red-700 bg-red-50 border-red-100', text: 'High-risk patient — Immediate clinical attention required.' });
+      } else if (mother.risk === 'AMBER') {
+        alerts.push({ icon: '⚠️', color: 'text-amber-700 bg-amber-50 border-amber-100', text: 'Moderate-risk patient — Monitor closely and schedule follow-up.' });
+      }
+
+      if (!mother.next_visit_date) {
+        alerts.push({ icon: '📅', color: 'text-blue-700 bg-blue-50 border-blue-100', text: 'No next visit scheduled — please book a follow-up appointment.' });
+      }
 
       if (alerts.length === 0) {
         box.style.display = 'none';
@@ -1590,7 +1792,7 @@
       box.style.display = '';
       alerts.forEach(a => {
         const el = document.createElement('div');
-        el.className = `flex items-start space-x-3 py-3 px-0`;
+        el.className = 'flex items-start space-x-3 py-3 px-0';
         el.innerHTML = `
           <span class="text-base mt-0.5">${a.icon}</span>
           <div class="flex-1 text-xs font-semibold text-gray-700 py-2 px-3 rounded-xl border ${a.color}">${a.text}</div>

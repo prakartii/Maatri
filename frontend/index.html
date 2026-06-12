@@ -410,16 +410,13 @@ footer{
   </a>
   <div class="nav-links">
   <a href="index.html">Home</a>
-  <a href="registry.html">Register</a>
-  <a href="dashboard.html">Dashboard</a>
-  <a href="doctor.html">Doctors</a>
+  <a href="#" onclick="navigateProtected(); return false;">Register</a>
+  <a href="#" onclick="navigateProtected(); return false;">Dashboard</a>
+  <a href="#" onclick="navigateProtected(); return false;">Doctors</a>
 </div>
 
-<button class="btn-nav"
-onclick="window.location.href='registry.html'">
-Register Mother
-</button>
-  <button class="btn-nav">Get Started Free</button>
+<button class="btn-nav" onclick="navigateProtected()">Register Mother</button>
+<button class="btn-nav" onclick="navigateProtected()">Get Started Free</button>
 </nav>
 
 <section class="hero">
@@ -440,7 +437,7 @@ Register Mother
         <span class="notranslate" translate="no">Maatri</span> helps ASHA workers and ANMs detect high-risk pregnancies in under 3 minutes — using voice input, OCR lab scanning, and real clinical data — right from a basic Android phone.
       </p>
       <div class="hero-actions">
-        <button class="btn-primary">Start for free →</button>
+        <button class="btn-primary" onclick="navigateProtected()">Start for free →</button>
         <button class="btn-outline">Watch demo</button>
       </div>
       <div class="hero-stats">
@@ -548,7 +545,7 @@ Register Mother
           <div class="metric-lbl">Active PHC coverage</div>
         </div>
       </div>
-      <button class="data-btn">Explore risk scoring →</button>
+      <button class="data-btn" onclick="navigateProtected()">Explore risk scoring →</button>
     </div>
 
     <div class="risk-table-wrap">
@@ -641,8 +638,8 @@ Register Mother
     <h2 class="cta-title">Ready to protect<br>every <em>pregnancy?</em></h2>
     <p class="cta-desc">Join thousands of ANMs across Tamil Nadu, Maharashtra, and Rajasthan who are using <span class="notranslate" translate="no">Maatri</span> to make maternal care safer, simpler, and more humane.</p>
     <div class="cta-actions">
-      <button class="btn-primary">Download <span class="notranslate" translate="no">Maatri</span> free</button>
-      <button class="btn-outline">Request a demo</button>
+      <button class="btn-primary" onclick="navigateProtected()">Download <span class="notranslate" translate="no">Maatri</span> free</button>
+      <button class="btn-outline" onclick="navigateProtected()">Request a demo</button>
     </div>
     <p class="cta-note">Available on Android · Works offline · Free for ASHA &amp; ANM workers</p>
   </div>
@@ -669,6 +666,17 @@ Register Mother
   .goog-text-highlight { background: none !important; box-shadow: none !important; }
 </style>
 <script type="text/javascript">
+function navigateProtected() {
+  var token = localStorage.getItem('maatri_token');
+  var role = localStorage.getItem('maatri_role');
+  if (token) {
+    var roleSuffix = role === 'DOCTOR' ? 'doctor' : 'anm';
+    window.location.href = 'doctor.html?role=' + roleSuffix;
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'en',

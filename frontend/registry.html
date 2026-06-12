@@ -326,6 +326,10 @@
 </section>
 
 <script>
+  if (!localStorage.getItem('maatri_token')) {
+    window.location.href = 'login.html';
+  }
+
   const form = document.getElementById('patient-form');
   const statusBox = document.getElementById('form-status');
 
@@ -367,8 +371,8 @@
       }
 
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/patients', {
+        const token = localStorage.getItem('maatri_token');
+        const response = await fetch('http://localhost:5000/api/patients', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
