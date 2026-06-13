@@ -5,7 +5,7 @@ import { authenticate, requireRole } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/login", login);
-router.post("/register", authenticate, requireRole("doctor"), register);
+router.post("/register", register);
 router.get("/me", authenticate, getMe);
 
 export default router;

@@ -10,8 +10,12 @@ export const uploadAudio = async (req, res) => {
     const result = await uploadService.uploadAudio(req.file, req.user.id);
     return created(res, result);
   } catch (err) {
-    console.error("Audio upload error:", err.message);
-    return error(res, "Failed to upload audio", 500);
+    console.error("Audio upload error:", {
+      message: err.message,
+      statusCode: err.statusCode,
+      error: err.error,
+    });
+    return error(res, `Failed to upload audio: ${err.message}`, 500);
   }
 };
 
@@ -24,7 +28,11 @@ export const uploadImage = async (req, res) => {
     const result = await uploadService.uploadImage(req.file, req.user.id);
     return created(res, result);
   } catch (err) {
-    console.error("Image upload error:", err.message);
-    return error(res, "Failed to upload image", 500);
+    console.error("Image upload error:", {
+      message: err.message,
+      statusCode: err.statusCode,
+      error: err.error,
+    });
+    return error(res, `Failed to upload image: ${err.message}`, 500);
   }
 };

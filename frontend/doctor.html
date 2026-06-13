@@ -57,8 +57,8 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Email / Mobile Number</label>
-          <input id="login-email" type="text" value="admin@maatri.org" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address</label>
+          <input id="login-email" type="email" placeholder="you@example.com" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-700">
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Security Password</label>
@@ -341,6 +341,14 @@
                     <button onclick="playTTS('careplan-txt-redflags')" class="text-sm bg-white p-1.5 rounded-lg border border-red-200 hover:bg-red-100">🔊 Play Audio</button>
                   </div>
                 </div>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                  <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider">Referral Urgency</h4>
+                  <p id="careplan-referral-urgency" class="text-sm text-blue-900 mt-1">—</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                  <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Follow-up Information</h4>
+                  <p id="careplan-followup-info" class="text-sm text-gray-700 mt-1">—</p>
+                </div>
               </div>
             </div>
           </div>
@@ -371,10 +379,14 @@
                 <div>
                   <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">OCR Computer Vision Extraction Matrix</h4>
                   <p class="text-xs text-gray-400 mt-0.5">Upload lab diagnostic printouts. Values extract directly into fields with manual nurse override.</p>
+                  <p id="ocr-status-text" class="hidden text-xs mt-1.5 font-medium"></p>
                 </div>
-                <button type="button" onclick="simulateOCRExtraction()" class="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition flex items-center space-x-2 shrink-0">
-                  <span>📷</span> <span>Scan printed Report</span>
-                </button>
+                <div class="shrink-0">
+                  <input type="file" id="ocr-file-input" accept="image/*,.pdf" class="hidden" onchange="handleOCRFileSelected(event)">
+                  <button type="button" id="ocr-scan-btn" onclick="document.getElementById('ocr-file-input').click()" class="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition flex items-center space-x-2">
+                    <span id="ocr-btn-icon">📷</span> <span id="ocr-btn-text">Scan printed Report</span>
+                  </button>
+                </div>
               </div>
 
               <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
@@ -482,19 +494,13 @@
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden flex flex-col justify-between" style="min-height: 400px;">
             <div class="absolute inset-0 bg-emerald-50 bg-opacity-30 flex flex-col items-center justify-center p-4 text-center">
-              <div class="w-full max-w-lg h-64 border border-dashed border-gray-300 rounded-xl bg-white p-4 relative overflow-hidden shadow-inner">
-                <div class="absolute top-1/4 left-1/3 w-16 h-16 bg-red-500 bg-opacity-20 rounded-full flex items-center justify-center animate-ping"></div>
-                <div class="absolute top-1/4 left-1/3 w-4 h-4 bg-red-600 rounded-full border-2 border-white shadow flex items-center justify-center"><span class="text-[8px] text-white font-bold">!</span></div>
-                <span class="absolute top-12 left-28 text-[10px] font-bold text-gray-700 bg-white px-1.5 py-0.5 rounded shadow">Namakkal Sector Center (4 RED Alerts)</span>
-
-                <div class="absolute bottom-1/3 right-1/4 w-12 h-12 bg-amber-500 bg-opacity-20 rounded-full flex items-center justify-center animate-pulse"></div>
-                <div class="absolute bottom-1/3 right-1/4 w-4 h-4 bg-amber-500 rounded-full border-2 border-white shadow"></div>
-                <span class="absolute bottom-12 right-12 text-[10px] font-bold text-gray-700 bg-white px-1.5 py-0.5 rounded shadow">Salem Sub-centre Cluster</span>
+              <div id="heatmap-map-canvas" class="w-full max-w-lg h-64 border border-dashed border-gray-300 rounded-xl bg-white p-4 relative overflow-hidden shadow-inner">
+                <div class="flex items-center justify-center h-full text-xs text-gray-400">Open this view to load village risk data.</div>
               </div>
             </div>
-            <div class="z-10 bg-white bg-opacity-95 p-4 rounded-xl shadow border max-w-sm mt-auto text-xs space-y-1">
-              <h4 class="font-bold text-gray-800">Pulsing Cluster Map Node Engine</h4>
-              <p class="text-gray-500">Pulsing visual heat maps isolate critical localized regions needing triage equipment allocation or doctor deployment support.</p>
+            <div id="heatmap-legend" class="z-10 bg-white bg-opacity-95 p-4 rounded-xl shadow border max-w-sm mt-auto text-xs space-y-1">
+              <h4 class="font-bold text-gray-800">Village Risk Summary</h4>
+              <p class="text-gray-500">Click the view to load real patient data from the registry.</p>
             </div>
           </div>
         </div>
@@ -744,6 +750,64 @@
   </div>
 
   <script>
+    // ── IndexedDB Offline Queue ──
+    let _idb = null;
+
+    async function getOfflineDB() {
+      if (_idb) return _idb;
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('maatri-offline', 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('offline_queue')) {
+            db.createObjectStore('offline_queue', { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        req.onsuccess = (e) => { _idb = e.target.result; resolve(_idb); };
+        req.onerror  = (e) => reject(e.target.error);
+      });
+    }
+
+    async function queueSaveRecord(record) {
+      const db = await getOfflineDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('offline_queue', 'readwrite');
+        tx.objectStore('offline_queue').add(record);
+        tx.oncomplete = resolve;
+        tx.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    async function queueGetAll() {
+      const db = await getOfflineDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('offline_queue', 'readonly');
+        const req = tx.objectStore('offline_queue').getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror  = (e) => reject(e.target.error);
+      });
+    }
+
+    async function queueClear() {
+      const db = await getOfflineDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('offline_queue', 'readwrite');
+        tx.objectStore('offline_queue').clear();
+        tx.oncomplete = resolve;
+        tx.onerror = (e) => reject(e.target.error);
+      });
+    }
+
+    function updateQueueCountDisplay(count) {
+      const s = String(count);
+      const el1 = document.getElementById('queued-count');
+      const el2 = document.getElementById('sync-telemetry-queued');
+      const el3 = document.getElementById('stat-queued-count');
+      if (el1) el1.textContent = s;
+      if (el2) el2.textContent = s;
+      if (el3) el3.textContent = s;
+    }
+
     const appState = {
       userRole: null,
       isOnline: true,
@@ -755,7 +819,9 @@
       hospitals: [],
       charts: {},
       _qrDataUrl: null,
-      _qrToken: null
+      _qrToken: null,
+      lastAnalysis: null,
+      lastCarePlanFallbackEn: null
     };
     async function loadPatients() {
   try {
@@ -837,6 +903,7 @@
       if (viewId === 'anm-dashboard') renderANMDashboard();
       if (viewId === 'anm-registry') loadPatients();
       if (viewId === 'anm-followups') renderFollowups();
+      if (viewId === 'anm-heatmap') loadHeatmap();
       if (viewId === 'doc-dashboard') renderDoctorDashboard();
       if (viewId === 'doc-referrals') renderDoctorReferralQueue();
       if (viewId === 'anm-visit-form') initializeVisitFormOptions();
@@ -890,23 +957,25 @@
       window.location.href = 'login.html';
     }
 
-    // Dynamic Synchronization Engine Layer Mock
+    // Network toggle — simulates offline mode for testing; also responds to real navigator.onLine
     function toggleMockNetwork() {
       appState.isOnline = !appState.isOnline;
       const btn = document.getElementById('network-toggle-btn');
       const banner = document.getElementById('offline-banner');
-      
-      if(appState.isOnline) {
-        btn.textContent = "Online Mode";
-        btn.className = "text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg";
+
+      if (appState.isOnline) {
+        btn.textContent = 'Online Mode';
+        btn.className = 'text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg';
         banner.classList.add('hidden');
-        if(appState.offlineQueue.length > 0) {
-          alert(`Network gateway verified. Transmitting ${appState.offlineQueue.length} queued record batches to PHC Hub.`);
-          triggerManualSyncProcessing();
-        }
+        queueGetAll().then(q => {
+          if (q.length > 0) {
+            alert(`Network restored. Transmitting ${q.length} queued record(s) to PHC Hub.`);
+            triggerManualSyncProcessing();
+          }
+        }).catch(() => {});
       } else {
-        btn.textContent = "Offline Mode Active";
-        btn.className = "text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg";
+        btn.textContent = 'Offline Mode Active';
+        btn.className = 'text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg';
         banner.classList.remove('hidden');
       }
     }
@@ -1233,25 +1302,284 @@
       });
     }
 
+    // ── Village Risk Heatmap — real data from /analytics/heatmap ──
+    async function loadHeatmap() {
+      const canvas = document.getElementById('heatmap-map-canvas');
+      const legend = document.getElementById('heatmap-legend');
+      if (!canvas) return;
+
+      canvas.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400 animate-pulse">Loading village data...</div>';
+
+      try {
+        const data = await apiRequest('/analytics/heatmap');
+
+        if (!Array.isArray(data) || data.length === 0) {
+          canvas.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-gray-400">No village patient data available.</div>';
+          return;
+        }
+
+        // Approximate Tamil Nadu geographic bounds for coordinate mapping
+        const LAT_MIN = 8.07, LAT_MAX = 13.55;
+        const LNG_MIN = 76.3,  LNG_MAX = 80.3;
+
+        canvas.innerHTML = '';
+        let totalRed = 0, totalAmber = 0, totalGreen = 0;
+        const cols = Math.ceil(Math.sqrt(data.length));
+
+        data.forEach((village, idx) => {
+          totalRed   += village.redCount;
+          totalAmber += village.amberCount;
+          totalGreen += village.greenCount;
+
+          // Choose pin style by dominant risk
+          let pinColor, ringColor, animClass;
+          if (village.redCount > 0) {
+            pinColor = 'bg-red-600'; ringColor = 'bg-red-500'; animClass = 'animate-ping';
+          } else if (village.amberCount > 0) {
+            pinColor = 'bg-amber-500'; ringColor = 'bg-amber-400'; animClass = 'animate-pulse';
+          } else {
+            pinColor = 'bg-green-600'; ringColor = 'bg-green-400'; animClass = '';
+          }
+
+          // Position: use lat/lng when available, else deterministic grid fallback
+          let leftPct, topPct;
+          if (village.latitude != null && village.longitude != null) {
+            leftPct = Math.min(88, Math.max(4, ((village.longitude - LNG_MIN) / (LNG_MAX - LNG_MIN)) * 84 + 4));
+            topPct  = Math.min(88, Math.max(4, (1 - (village.latitude - LAT_MIN) / (LAT_MAX - LAT_MIN)) * 80 + 4));
+          } else {
+            const col = idx % cols;
+            const row = Math.floor(idx / cols);
+            const totalRows = Math.ceil(data.length / cols);
+            leftPct = cols > 1 ? (col / (cols - 1)) * 80 + 8 : 50;
+            topPct  = totalRows > 1 ? (row / (totalRows - 1)) * 72 + 8 : 50;
+          }
+
+          const total = village.redCount + village.amberCount + village.greenCount;
+          const ringPx = Math.min(72, 18 + total * 5);
+
+          const pin = document.createElement('div');
+          pin.style.cssText = `position:absolute;left:${leftPct.toFixed(1)}%;top:${topPct.toFixed(1)}%;transform:translate(-50%,-50%);z-index:10;`;
+          pin.innerHTML = `
+            <div class="relative flex items-center justify-center cursor-default" style="width:${ringPx}px;height:${ringPx}px;" title="${village.village}: ${village.redCount} red, ${village.amberCount} amber, ${village.greenCount} green">
+              ${total > 0 ? `<div class="absolute inset-0 ${ringColor} bg-opacity-20 rounded-full ${animClass}"></div>` : ''}
+              <div class="w-3.5 h-3.5 ${pinColor} rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center">
+                ${village.redCount > 0 ? '<span class="text-[6px] text-white font-extrabold leading-none">!</span>' : ''}
+              </div>
+            </div>
+            <span class="absolute top-0 left-4 whitespace-nowrap text-[9px] font-bold text-gray-700 bg-white px-1 py-0.5 rounded shadow-sm" style="max-width:110px;overflow:hidden;text-overflow:ellipsis;display:block;">
+              ${village.village} (${total})
+            </span>
+          `;
+          canvas.appendChild(pin);
+        });
+
+        if (legend) {
+          legend.innerHTML = `
+            <h4 class="font-bold text-gray-800">Live Village Risk Summary</h4>
+            <div class="flex gap-3 mt-1 flex-wrap">
+              <span class="text-red-700 font-semibold">🔴 ${totalRed} High Risk</span>
+              <span class="text-amber-600 font-semibold">🟡 ${totalAmber} Moderate</span>
+              <span class="text-green-700 font-semibold">🟢 ${totalGreen} Normal</span>
+            </div>
+            <p class="text-gray-500 mt-0.5">${data.length} village${data.length !== 1 ? 's' : ''} with registered patients.</p>
+          `;
+        }
+
+      } catch (err) {
+        canvas.innerHTML = `<div class="flex items-center justify-center h-full text-xs text-red-500 px-4">Failed to load heatmap: ${err.message}</div>`;
+      }
+    }
+
     // ======================================================== -->
     // AI INTERACTIVE CORE INTELLIGENCE ROUTINES                -->
     // ======================================================== -->
-    async function simulateOCRExtraction() {
+    async function handleOCRFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const ocrBtn = document.getElementById('ocr-scan-btn');
+      const btnIcon = document.getElementById('ocr-btn-icon');
+      const btnText = document.getElementById('ocr-btn-text');
+      const statusEl = document.getElementById('ocr-status-text');
+
+      ocrBtn.disabled = true;
+      btnIcon.textContent = '⏳';
+      btnText.textContent = 'Extracting values...';
+      statusEl.textContent = 'Running OCR on lab report...';
+      statusEl.className = 'text-xs mt-1.5 font-medium text-indigo-600';
+      statusEl.classList.remove('hidden');
+
       try {
-        await apiRequest('/ai/ocr', {
+        // Send file directly to OCR endpoint as multipart — Matriscan-AI needs UploadFile, not a URL
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('maatri_token');
+        const ocrRes = await fetch(`${API_BASE}/ai/ocr`, {
           method: 'POST',
-          body: JSON.stringify({ imageUrl: 'https://example.com/scan.png' })
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          body: formData
+          // Do NOT set Content-Type — browser sets multipart boundary automatically
         });
-        alert('OCR scan request sent to the backend.');
-      } catch (error) {
-        alert(error.message || 'OCR request failed.');
+
+        if (ocrRes.status === 401) {
+          localStorage.removeItem('maatri_token');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const ocrPayload = await ocrRes.json().catch(() => ({}));
+        if (!ocrRes.ok) throw new Error(ocrPayload.error || `OCR failed (${ocrRes.status})`);
+
+        // Matriscan-AI mock response: { hb: {value, unit, confidence}, bp_systolic: {value,...}, glucose_pp: {value,...} }
+        const ocrResult = ocrPayload.data || ocrPayload;
+        let filled = 0;
+
+        const hbVal = ocrResult.hb?.value ?? ocrResult.hemoglobin?.value ?? null;
+        if (hbVal != null) {
+          document.getElementById('input-hb').value = hbVal;
+          filled++;
+        }
+
+        const bpSysVal = ocrResult.bp_systolic?.value ?? null;
+        if (bpSysVal != null) {
+          document.getElementById('input-systolic').value = bpSysVal;
+          filled++;
+        }
+
+        const sugarVal = ocrResult.glucose_pp?.value ?? ocrResult.glucose_fasting?.value ?? null;
+        if (sugarVal != null) {
+          document.getElementById('input-sugar').value = sugarVal;
+          filled++;
+        }
+
+        if (filled > 0) {
+          statusEl.textContent = `${filled} value(s) extracted. Review fields and adjust if needed.`;
+          statusEl.className = 'text-xs mt-1.5 font-medium text-emerald-600';
+        } else {
+          statusEl.textContent = 'OCR complete. No structured fields detected — enter values manually.';
+          statusEl.className = 'text-xs mt-1.5 font-medium text-amber-600';
+        }
+
+        evaluateRiskScoreEngineRealtime();
+        await triggerAIAnalysis();
+
+        setTimeout(() => statusEl.classList.add('hidden'), 5000);
+
+      } catch (err) {
+        statusEl.textContent = `Error: ${err.message}`;
+        statusEl.className = 'text-xs mt-1.5 font-medium text-red-600';
+      } finally {
+        ocrBtn.disabled = false;
+        btnIcon.textContent = '📷';
+        btnText.textContent = 'Scan printed Report';
+        event.target.value = '';
+      }
+    }
+
+    async function triggerAIAnalysis() {
+      const hb = parseFloat(document.getElementById('input-hb').value);
+      const bp = parseInt(document.getElementById('input-systolic').value);
+      const sugar = parseInt(document.getElementById('input-sugar').value);
+
+      if (isNaN(hb) && isNaN(bp) && isNaN(sugar)) return;
+
+      document.getElementById('ai-analysis-empty').classList.add('hidden');
+      document.getElementById('ai-analysis-loading').classList.remove('hidden');
+      document.getElementById('ai-analysis-output').classList.add('hidden');
+
+      // Build proper AnalyzeRequest for Matriscan-AI
+      const patientId = document.getElementById('visit-patient-id')?.value || appState.activeProfileId || 'unknown';
+      const mother = appState.mothers.find(m => String(m.id) === String(patientId)) || {};
+
+      const payload = {
+        patient: {
+          patient_id: String(patientId),
+          age: mother.age || 25,
+          parity: 'G1P0',
+          language: 'ta'
+        },
+        current_visit: {
+          visit_id: `visit-${Date.now()}`,
+          patient_id: String(patientId),
+          visit_number: 1,
+          gestational_age: mother.week || 28,
+          vitals: {
+            hemoglobin: isNaN(hb) ? null : hb,
+            bp_systolic: isNaN(bp) ? null : bp,
+            bp_diastolic: null,
+            glucose_pp: isNaN(sugar) ? null : sugar,
+            glucose_fasting: null
+          },
+          symptoms: {
+            headache: document.getElementById('symptom-headache').checked,
+            blurred_vision: document.getElementById('symptom-vision').checked,
+            swelling: document.getElementById('symptom-swelling').checked
+          }
+        },
+        visit_history: []
+      };
+
+      try {
+        const result = await apiRequest('/ai/analyze', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        displayAnalysisResult(result);
+
+      } catch (err) {
+        console.warn('AI analyze API unavailable, using local evaluation:', err.message);
+        evaluateRiskScoreEngineRealtime();
+      }
+    }
+
+    function displayAnalysisResult(result) {
+      const badge = document.getElementById('analysis-badge-target');
+      const reasonsList = document.getElementById('analysis-reasons-list');
+
+      // overall_risk: "HIGH"/"MODERATE"/"LOW" — display text
+      const riskText = String(result.overall_risk || result.risk_level || result.risk || 'UNKNOWN').toUpperCase();
+      // risk_color: "RED"/"AMBER"/"GREEN" — badge color
+      const riskColor = String(result.risk_color || result.overall_risk || result.risk_level || 'GREEN').toUpperCase();
+      const matriScore = result.matri_score ?? result.score ?? null;
+      const flaggedValues = Array.isArray(result.flagged_values)
+        ? result.flagged_values
+        : (result.flagged_values ? [result.flagged_values] : []);
+      const explanations = Array.isArray(result.explanations)
+        ? result.explanations
+        : (Array.isArray(result.reasons) ? result.reasons : (result.explanations ? [result.explanations] : []));
+
+      appState.lastAnalysis = result;
+
+      const scoreText = matriScore !== null ? ` — Matri Score: ${matriScore}` : '';
+      badge.textContent = `${riskText} RISK LEVEL${scoreText}`;
+
+      if (riskColor === 'RED' || riskColor === 'HIGH') {
+        badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-red-100 text-red-800 border border-red-300";
+      } else if (riskColor === 'AMBER' || riskColor === 'MODERATE' || riskColor === 'MEDIUM') {
+        badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-amber-100 text-amber-800 border border-amber-300";
+      } else {
+        badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-green-100 text-green-800 border border-green-300";
       }
 
-      document.getElementById('input-hb').value = "8.4";
-      document.getElementById('input-systolic').value = "145";
-      document.getElementById('input-sugar').value = "110";
+      reasonsList.innerHTML = '';
+      const allItems = [...flaggedValues, ...explanations];
 
-      evaluateRiskScoreEngineRealtime();
+      if (allItems.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = 'All vitals within normal parameters.';
+        reasonsList.appendChild(li);
+      } else {
+        allItems.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+          reasonsList.appendChild(li);
+        });
+      }
+
+      document.getElementById('ai-analysis-loading').classList.add('hidden');
+      document.getElementById('ai-analysis-output').classList.remove('hidden');
     }
 
     async function simulateVoiceTranscription() {
@@ -1259,22 +1587,105 @@
       const textNode = document.getElementById('voice-btn-text');
       const iconNode = document.getElementById('voice-mic-icon');
 
-      textNode.textContent = "Streaming Speech Audio Engine Buffer (/ai/transcribe)...";
-      iconNode.className = "animate-ping text-rose-600";
+      btn.disabled = true;
+      textNode.textContent = 'Generating audio...';
+      iconNode.textContent = '⏳';
+
+      // Build spoken text from last analysis result, or fall back to current vitals
+      let ttsText = '';
+      if (appState.lastAnalysis) {
+        const risk = appState.lastAnalysis.overall_risk || appState.lastAnalysis.risk_level || 'unknown';
+        const score = appState.lastAnalysis.matri_score;
+        const flags = Array.isArray(appState.lastAnalysis.flagged_values)
+          ? appState.lastAnalysis.flagged_values.join('. ')
+          : '';
+        const explanations = Array.isArray(appState.lastAnalysis.explanations)
+          ? appState.lastAnalysis.explanations.join('. ')
+          : '';
+        ttsText = `Risk level: ${risk}.`;
+        if (score != null) ttsText += ` Matri Score: ${score}.`;
+        if (flags) ttsText += ` ${flags}.`;
+        if (explanations) ttsText += ` ${explanations}.`;
+      } else {
+        const hb = document.getElementById('input-hb')?.value;
+        const bp = document.getElementById('input-systolic')?.value;
+        const sugar = document.getElementById('input-sugar')?.value;
+        const parts = [];
+        if (hb) parts.push(`Hemoglobin ${hb} g/dL`);
+        if (bp) parts.push(`Systolic BP ${bp} mmHg`);
+        if (sugar) parts.push(`Blood sugar ${sugar} mg/dL`);
+        ttsText = parts.length > 0
+          ? `Current vitals: ${parts.join('. ')}.`
+          : 'No analysis data available. Please run risk analysis first.';
+      }
+
+      const lang = document.getElementById('careplan-lang')?.value || 'ta';
+      const payload = { text: ttsText, language: lang };
+      console.log('TTS payload', payload);
 
       try {
-        const response = await apiRequest('/ai/transcribe', {
+        const token = localStorage.getItem('maatri_token');
+        const response = await fetch(`${API_BASE}/ai/tts`, {
           method: 'POST',
-          body: JSON.stringify({ audioUrl: 'https://example.com/audio.wav' })
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
         });
-        console.log('Transcribe response:', response);
-        document.getElementById('symptom-headache').checked = true;
-        document.getElementById('symptom-vision').checked = true;
-        textNode.textContent = "Stream Complications Speech";
-        iconNode.className = "";
-        alert('Voice transcription request sent to the backend.');
-      } catch (error) {
-        alert(error.message || 'Transcription request failed.');
+
+        console.log('TTS response', response);
+
+        if (response.status === 401) {
+          localStorage.removeItem('maatri_token');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || errData.detail || `TTS request failed (${response.status})`);
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+
+        if (contentType.includes('audio/')) {
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.play();
+          audio.onended = () => URL.revokeObjectURL(audioUrl);
+        } else {
+          const data = await response.json().catch(() => ({}));
+
+          if (data.browser_tts_fallback) {
+            speakWithBrowser(ttsText, data.bcp47_language || lang);
+          } else {
+            const audioBase64 = data.audio || data.audio_base64 || data.data?.audio;
+            const audioUrl = data.audio_url || data.url || data.data?.audio_url;
+
+            if (audioUrl) {
+              new Audio(audioUrl).play();
+            } else if (audioBase64) {
+              const blob = base64ToBlob(audioBase64, 'audio/mpeg');
+              const blobUrl = URL.createObjectURL(blob);
+              const audio = new Audio(blobUrl);
+              audio.play();
+              audio.onended = () => URL.revokeObjectURL(blobUrl);
+            } else {
+              speakWithBrowser(ttsText, lang);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('TTS error:', err);
+        if (!speakWithBrowser(ttsText, lang)) {
+          alert(`Audio generation failed: ${err.message}`);
+        }
+      } finally {
+        btn.disabled = false;
+        textNode.textContent = 'Stream Complications Speech';
+        iconNode.textContent = '🎙️';
       }
 
       evaluateRiskScoreEngineRealtime();
@@ -1309,31 +1720,68 @@
       document.getElementById('input-hb').addEventListener('input', evaluateRiskScoreEngineRealtime);
       document.getElementById('input-systolic').addEventListener('input', evaluateRiskScoreEngineRealtime);
       document.getElementById('input-sugar').addEventListener('input', evaluateRiskScoreEngineRealtime);
+
+      // Stop any playing speech immediately when the language dropdown changes
+      document.getElementById('careplan-lang')?.addEventListener('change', () => {
+        window.speechSynthesis.cancel();
+      });
+
+      // IndexedDB init — load persisted queue count on startup
+      getOfflineDB()
+        .then(() => queueGetAll())
+        .then(q => { if (q.length > 0) updateQueueCountDisplay(q.length); })
+        .catch(err => console.warn('IndexedDB init failed:', err));
+
+      // Real network event listeners — sync automatically when connection is restored
+      window.addEventListener('offline', () => {
+        appState.isOnline = false;
+        const btn = document.getElementById('network-toggle-btn');
+        if (btn) { btn.textContent = 'Offline Mode Active'; btn.className = 'text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg'; }
+        document.getElementById('offline-banner').classList.remove('hidden');
+      });
+
+      window.addEventListener('online', () => {
+        appState.isOnline = true;
+        const btn = document.getElementById('network-toggle-btn');
+        if (btn) { btn.textContent = 'Online Mode'; btn.className = 'text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg'; }
+        document.getElementById('offline-banner').classList.add('hidden');
+        queueGetAll().then(q => {
+          if (q.length > 0) {
+            alert(`Connection restored. Auto-syncing ${q.length} queued record(s).`);
+            triggerManualSyncProcessing();
+          }
+        }).catch(() => {});
+      });
     });
 
     function evaluateRiskScoreEngineRealtime() {
       const hb = parseFloat(document.getElementById('input-hb').value);
       const bp = parseInt(document.getElementById('input-systolic').value);
       const sugar = parseInt(document.getElementById('input-sugar').value);
-      
+
       if(isNaN(hb) && isNaN(bp) && isNaN(sugar)) return;
-      
+      // Don't overwrite a completed AI analysis result with local threshold logic
+      if (appState.lastAnalysis) return;
+
       document.getElementById('ai-analysis-empty').classList.add('hidden');
       const loader = document.getElementById('ai-analysis-loading');
       const output = document.getElementById('ai-analysis-output');
-      
+
       loader.classList.remove('hidden');
       output.classList.add('hidden');
-      
+
       // Evaluate strict MOHFW Clinical thresholds criteria parameters sequentially
       setTimeout(() => {
+        // AI result may have arrived while we were waiting — respect it
+        if (appState.lastAnalysis) return;
+
         loader.classList.add('hidden');
         output.classList.remove('hidden');
-        
+
         const badge = document.getElementById('analysis-badge-target');
         const reasonsList = document.getElementById('analysis-reasons-list');
         reasonsList.innerHTML = '';
-        
+
         let calculatedRisk = "GREEN";
         let reasons = [];
         
@@ -1380,11 +1828,10 @@
       const txRecord = { motherId: pId, hb, systolic: bp, sugar, risk: determinedRisk, timestamp: new Date().toISOString() };
 
       if (!appState.isOnline) {
-        appState.offlineQueue.push(txRecord);
-        document.getElementById('queued-count').textContent = appState.offlineQueue.length;
-        document.getElementById('sync-telemetry-queued').textContent = appState.offlineQueue.length;
-        document.getElementById('stat-queued-count').textContent = appState.offlineQueue.length;
-        alert('System working offline: Transaction record batched safely to local processing cache.');
+        await queueSaveRecord(txRecord);
+        const allQueued = await queueGetAll();
+        updateQueueCountDisplay(allQueued.length);
+        alert('Offline: visit saved to IndexedDB. It will sync automatically when you reconnect.');
       } else {
         try {
           const visitPayload = {
@@ -1410,6 +1857,7 @@
         }
       }
 
+      appState.lastAnalysis = null;
       document.getElementById('anc-visit-form').reset();
       document.getElementById('ai-analysis-empty').classList.remove('hidden');
       document.getElementById('ai-analysis-output').classList.add('hidden');
@@ -1417,69 +1865,313 @@
     }
 
     async function triggerManualSyncProcessing() {
-      if (!appState.isOnline) { alert('Cannot initiate sync routines while offline network blockades remain active.'); return; }
-      if (appState.offlineQueue.length === 0) { alert('Cache data records queue dry. Zero syncing sequences required.'); return; }
+      if (!appState.isOnline) { alert('Cannot sync while offline.'); return; }
+
+      const queued = await queueGetAll();
+      if (queued.length === 0) { alert('No queued records to sync.'); return; }
+
+      const syncBtn = document.querySelector('#offline-sync button[onclick="triggerManualSyncProcessing()"]');
+      if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = 'Syncing...'; }
 
       try {
         const payload = {
-          visits: appState.offlineQueue.map(record => ({
+          visits: queued.map(record => ({
             patient_id: record.motherId,
             visit_date: record.timestamp.split('T')[0],
             hemoglobin: record.hb,
             systolic_bp: record.systolic,
-            notes: `Queued visit synced from doctor portal for patient ${record.motherId}`
+            // sugar stored in notes — medical_visits schema has no glucose column
+            notes: `Risk: ${record.risk}. Blood sugar: ${record.sugar != null ? record.sugar + ' mg/dL' : 'not recorded'}. Offline queue sync.`
           }))
         };
-        await apiRequest('/sync/batch', {
+
+        const result = await apiRequest('/sync/batch', {
           method: 'POST',
           body: JSON.stringify(payload)
         });
 
-        appState.offlineQueue = [];
-        document.getElementById('queued-count').textContent = '0';
-        document.getElementById('sync-telemetry-queued').textContent = '0';
-        document.getElementById('stat-queued-count').textContent = '0';
+        await queueClear();
+        updateQueueCountDisplay(0);
         document.getElementById('offline-banner').classList.add('hidden');
-        alert('Offline queue synced successfully to the backend.');
+
+        const summary = result?.summary || result;
+        const synced  = summary?.visits_synced ?? queued.length;
+        const skipped = summary?.visits_skipped ?? 0;
+        const failed  = summary?.visits_failed  ?? 0;
+        alert(`Sync complete: ${synced} synced, ${skipped} skipped (duplicates), ${failed} failed.`);
+
+        await loadPatients();
         renderANMDashboard();
       } catch (error) {
         alert(error.message || 'Unable to sync queued records.');
+      } finally {
+        if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = 'Force Transmission Synchronization Pipeline'; }
       }
     }
 
-    function triggerCarePlanGeneration() {
-      // TODO: This care-plan flow is not backed by a supported backend endpoint in the current contract.
+    async function triggerCarePlanGeneration() {
+      // Stop any speech that was playing before generating new content
+      window.speechSynthesis.cancel();
+
       const loader = document.getElementById('careplan-loading');
       const results = document.getElementById('careplan-results');
       const lang = document.getElementById('careplan-lang').value;
-      
+
       loader.classList.remove('hidden');
       results.classList.add('hidden');
-      
-      setTimeout(() => {
-        loader.classList.add('hidden');
+
+      try {
+        const patientId = document.getElementById('visit-patient-id')?.value || appState.activeProfileId;
+        const mother = appState.mothers.find(m => String(m.id) === String(patientId)) || {};
+
+        // Build proper CarePlanRequest for Matriscan-AI
+        const payload = {
+          patient: {
+            patient_id: String(patientId || 'unknown'),
+            age: mother.age || 25,
+            parity: 'G1P0',
+            language: lang
+          },
+          risk_result: appState.lastAnalysis || {},
+          language: lang
+        };
+
+        const result = await apiRequest('/ai/careplan', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        displayCarePlan(result, lang);
+
+      } catch (err) {
+        document.getElementById('careplan-txt-guidance').textContent = `Unable to generate care plan: ${err.message}`;
+        document.getElementById('careplan-txt-redflags').textContent = 'Please check your connection and retry.';
+        document.getElementById('careplan-referral-urgency').textContent = '—';
+        document.getElementById('careplan-followup-info').textContent = '—';
         results.classList.remove('hidden');
-        
-        const guidance = document.getElementById('careplan-txt-guidance');
-        const redflags = document.getElementById('careplan-txt-redflags');
-        
-        if(lang === 'ta') {
-          guidance.textContent = "[தமிழ்] தினசரி இரண்டு மாத்திரைகள் இரும்புச்சத்து எடுத்துக்கொள்ளவும். பால் மற்றும் கால்சியம் நிறைந்த உணவுகளை உட்கொள்ளவும்.";
-          redflags.textContent = "[தமிழ்] கடுமையான தலைவலி அல்லது கண்பார்வை மங்குதல் ஏற்பட்டால் உடனடியாக ஆரம்ப சுகாதார நிலையத்தை அணுகவும்.";
-        } else if(lang === 'hi') {
-          guidance.textContent = "[हिन्दी] रोजाना दो आयरन की गोलियां लें। हरी पत्तेदार सब्जियां खाएं और आराम करें।";
-          redflags.textContent = "[हिन्दी] यदि तेज सिरदर्द हो या धुंधला दिखाई दे, तो तुरंत डॉक्टर के पास जाएं।";
-        } else {
-          guidance.textContent = "[English AI output] Administer secondary iron supplementation metrics twice daily. Ensure strict tracking of dietary calcium inputs.";
-          redflags.textContent = "[English AI output] Severe flashing scotoma or unremitting headache requires direct triage escalation immediately.";
-        }
-      }, 1200);
+      } finally {
+        loader.classList.add('hidden');
+      }
     }
 
-    function playTTS(elementId) {
-      // TODO: Text-to-speech is not wired to a supported backend endpoint in the current contract.
-      const textText = document.getElementById(elementId).textContent;
-      alert(`Invoking Speech Synthesis Endpoint Core (/ai/tts) passing payload stream content: "${textText}"`);
+    function displayCarePlan(result, lang) {
+      document.getElementById('careplan-txt-guidance').textContent =
+        result.doctor_advice || result.guidance || result.clinical_guidance || 'Care plan generated.';
+
+      // local_counseling is patient-facing text — Matriscan-AI returns it in the local language
+      // (Tamil) regardless of the language param in mock mode. red_flags is an English array.
+      // When English is selected, prefer red_flags (English) over local_counseling (Tamil).
+      const redFlagsArr = Array.isArray(result.red_flags) ? result.red_flags.join(' • ') : '';
+      document.getElementById('careplan-txt-redflags').textContent = lang === 'en'
+        ? (redFlagsArr || result.local_counseling || 'Monitor closely for warning signs.')
+        : (result.local_counseling || redFlagsArr || 'Monitor closely for warning signs.');
+
+      document.getElementById('careplan-referral-urgency').textContent =
+        result.referral_urgency || result.urgency || '—';
+
+      // followup_days is an integer (0 = immediate follow-up)
+      const followupDays = result.followup_days;
+      let followupText;
+      if (followupDays === 0) {
+        followupText = 'Immediate follow-up required';
+      } else if (typeof followupDays === 'number' && followupDays > 0) {
+        followupText = `Follow up in ${followupDays} day${followupDays === 1 ? '' : 's'}`;
+      } else {
+        followupText = result.followup_info || result.follow_up || result.next_steps || '—';
+      }
+      document.getElementById('careplan-followup-info').textContent = followupText;
+
+      // Build English audio fallback from structured fields (used when Tamil/Hindi voice is absent).
+      // red_flags is always English from Matriscan-AI; urgency and followup_days are also English.
+      const urgency = result.referral_urgency || result.urgency || 'routine';
+      const flagsEn = Array.isArray(result.red_flags) && result.red_flags.length > 0
+        ? 'Warning signs to watch: ' + result.red_flags.join(', ') + '.'
+        : 'Monitor closely for warning signs.';
+      const followupEn = followupDays === 0
+        ? 'Immediate follow-up required.'
+        : typeof followupDays === 'number' && followupDays > 0
+          ? `Follow up in ${followupDays} day${followupDays === 1 ? '' : 's'}.`
+          : 'Schedule a follow-up visit.';
+      appState.lastCarePlanFallbackEn = `Care plan summary. Urgency: ${urgency}. ${followupEn} ${flagsEn}`;
+
+      document.getElementById('careplan-results').classList.remove('hidden');
+    }
+
+    async function playTTS(elementId) {
+      const textEl = document.getElementById(elementId);
+      if (!textEl) return;
+
+      const text = textEl.textContent.trim();
+      if (!text || text === '—') { alert('No text available to speak.'); return; }
+
+      const lang = document.getElementById('careplan-lang')?.value || 'ta';
+      const btn = document.querySelector(`button[onclick="playTTS('${elementId}')"]`);
+      if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+
+      try {
+        const token = localStorage.getItem('maatri_token');
+        const response = await fetch(`${API_BASE}/ai/tts`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ text, language: lang })
+        });
+
+        console.log('TTS response', response);
+
+        if (response.status === 401) {
+          localStorage.removeItem('maatri_token');
+          window.location.href = 'login.html';
+          return;
+        }
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.error || errData.detail || `TTS request failed (${response.status})`);
+        }
+
+        const contentType = response.headers.get('content-type') || '';
+
+        if (contentType.includes('audio/')) {
+          const audioBlob = await response.blob();
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.play();
+          audio.onended = () => URL.revokeObjectURL(audioUrl);
+        } else {
+          const data = await response.json().catch(() => ({}));
+
+          // browser_tts_fallback: server signalled that no audio file is available (mock mode)
+          // Use user-selected lang — data.bcp47_language is mock-hardcoded to 'ta' and ignored.
+          if (data.browser_tts_fallback) {
+            speakWithBrowser(text, lang);
+            return;
+          }
+
+          const audioBase64 = data.audio || data.audio_base64 || data.data?.audio;
+          const audioUrl = data.audio_url || data.url || data.data?.audio_url;
+
+          if (audioUrl) {
+            new Audio(audioUrl).play();
+          } else if (audioBase64) {
+            const blob = base64ToBlob(audioBase64, 'audio/mpeg');
+            const blobUrl = URL.createObjectURL(blob);
+            const audio = new Audio(blobUrl);
+            audio.play();
+            audio.onended = () => URL.revokeObjectURL(blobUrl);
+          } else {
+            // Last resort: browser speech synthesis
+            speakWithBrowser(text, lang);
+          }
+        }
+
+      } catch (err) {
+        console.error('TTS error:', err);
+        // Try browser synthesis before showing an error
+        if (!speakWithBrowser(text, lang)) {
+          alert(`Audio generation failed: ${err.message}`);
+        }
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🔊 Play Audio'; }
+      }
+    }
+
+    function base64ToBlob(base64, mimeType) {
+      const bytes = atob(base64);
+      const arr = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+      return new Blob([arr], { type: mimeType });
+    }
+
+    // Browser speech synthesis fallback — used when server audio file is unavailable (mock mode)
+    function speakWithBrowser(text, lang) {
+      if (!window.speechSynthesis) {
+        console.warn('[TTS] Web Speech API not supported in this browser');
+        return false;
+      }
+
+      const langMap = { en:'en-US', ta:'ta-IN', hi:'hi-IN', te:'te-IN', kn:'kn-IN', ml:'ml-IN', bn:'bn-IN', mr:'mr-IN', gu:'gu-IN', pa:'pa-IN', or:'or-IN' };
+      const targetBcp47 = langMap[lang] || lang;
+
+      console.log('[TTS] speakWithBrowser | dropdown lang:', lang, '| BCP-47:', targetBcp47);
+
+      function doSpeak() {
+        const voices = window.speechSynthesis.getVoices();
+        const uniqueLangs = voices.map(v => v.lang).filter((v, i, a) => a.indexOf(v) === i).slice(0, 12).join(', ');
+        console.log('[TTS] voices available:', voices.length, '| sample langs:', uniqueLangs || '(none)');
+
+        // Exact BCP-47 match → language-prefix match (e.g. 'ta' matches 'ta-IN')
+        let selected = voices.find(v => v.lang === targetBcp47)
+          || voices.find(v => v.lang.startsWith(targetBcp47.split('-')[0] + '-'))
+          || voices.find(v => v.lang.startsWith(targetBcp47.split('-')[0]));
+
+        if (selected) {
+          console.log('[TTS] selected voice:', selected.name, selected.lang);
+        } else if (lang !== 'en') {
+          // No native voice for this language.
+          // English TTS engine cannot pronounce Tamil/Hindi Unicode — it produces zero audio on Windows.
+          // Instead, speak the English care plan summary (red_flags + urgency + followup) which is
+          // always available in appState.lastCarePlanFallbackEn after a care plan is generated.
+          const langNames = { ta: 'Tamil', hi: 'Hindi', te: 'Telugu', kn: 'Kannada', ml: 'Malayalam', bn: 'Bengali', mr: 'Marathi', gu: 'Gujarati' };
+          const displayName = langNames[lang] || targetBcp47;
+          console.warn('[TTS] No', targetBcp47, 'voice — falling back to English audio summary');
+
+          const fallbackText = appState?.lastCarePlanFallbackEn
+            || `${displayName} voice is not installed. Care plan generated successfully. Install ${displayName} TTS from Windows language settings for native audio.`;
+
+          const engVoice = voices.find(v => v.lang === 'en-US')
+            || voices.find(v => v.lang.startsWith('en-'))
+            || voices.find(v => v.lang.startsWith('en'));
+
+          if (!engVoice) {
+            console.warn('[TTS] No English voice available — cannot produce audio on this device');
+            return;
+          }
+
+          console.log('[TTS] speaking English fallback:', fallbackText.substring(0, 80) + '...');
+          const fallbackUtter = new SpeechSynthesisUtterance(fallbackText);
+          fallbackUtter.lang = 'en-US';
+          fallbackUtter.voice = engVoice;
+          fallbackUtter.onerror = (e) => console.error('[TTS] fallback error:', e.error);
+          fallbackUtter.onstart = () => console.log('[TTS] English fallback started (', displayName, 'voice not installed)');
+          window.speechSynthesis.cancel();
+          setTimeout(() => window.speechSynthesis.speak(fallbackUtter), 50);
+          return;
+        } else {
+          // English requested but no English voice — use browser default
+          console.warn('[TTS] No English voice found — using browser default');
+        }
+
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = selected ? selected.lang : targetBcp47;
+        if (selected) utter.voice = selected;
+        utter.onerror = (e) => console.error('[TTS] SpeechSynthesisUtterance error:', e.error);
+        utter.onstart = () => console.log('[TTS] speech started | lang:', utter.lang, '| voice:', utter.voice?.name || '(default)');
+
+        // cancel() immediately before speak() is silently dropped in Chrome — delay 50ms
+        window.speechSynthesis.cancel();
+        setTimeout(() => window.speechSynthesis.speak(utter), 50);
+        console.log('[TTS] speak() queued for BCP-47:', utter.lang);
+      }
+
+      // getVoices() returns [] on first call in Chrome until the list loads asynchronously
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        doSpeak();
+      } else {
+        let spoke = false;
+        window.speechSynthesis.onvoiceschanged = () => {
+          if (spoke) return;
+          spoke = true;
+          window.speechSynthesis.onvoiceschanged = null;
+          doSpeak();
+        };
+        // onvoiceschanged may never fire if already loaded but empty — timeout fallback
+        setTimeout(() => { if (!spoke) { spoke = true; doSpeak(); } }, 300);
+      }
+
+      return true;
     }
 
     // ======================================================== -->

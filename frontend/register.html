@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maatri — Sign In</title>
+<title>Maatri — Create Account</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -33,7 +33,6 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  /* noise texture overlay */
   body::before {
     content: '';
     position: fixed;
@@ -72,16 +71,9 @@
     background: var(--white);
   }
 
-  .brand-logo svg {
-    width: 22px;
-    height: 22px;
-  }
+  .brand-logo svg { width: 22px; height: 22px; }
 
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
-  }
+  .brand-text { display: flex; flex-direction: column; line-height: 1; }
 
   .brand-devanagari {
     font-family: 'Playfair Display', serif;
@@ -100,7 +92,6 @@
     margin-top: 2px;
   }
 
-  /* hero copy */
   .hero-copy {
     flex: 1;
     display: flex;
@@ -141,15 +132,8 @@
     margin-bottom: 24px;
   }
 
-  .hero-headline em {
-    font-style: italic;
-    color: var(--teal-mid);
-  }
-
-  .hero-headline .blush {
-    font-style: italic;
-    color: var(--blush);
-  }
+  .hero-headline em { font-style: italic; color: var(--teal-mid); }
+  .hero-headline .blush { font-style: italic; color: var(--blush); }
 
   .hero-body {
     font-size: 15px;
@@ -160,24 +144,9 @@
     margin-bottom: 40px;
   }
 
-  /* trust pills */
-  .trust-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .trust-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .trust-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
+  .trust-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .trust-dots { display: flex; gap: 6px; }
+  .trust-dot { width: 10px; height: 10px; border-radius: 50%; }
 
   .trust-text {
     font-size: 11px;
@@ -187,13 +156,7 @@
     color: var(--text-mid);
   }
 
-  /* stat chips */
-  .stat-chips {
-    display: flex;
-    gap: 12px;
-    margin-top: 32px;
-    flex-wrap: wrap;
-  }
+  .stat-chips { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
 
   .chip {
     background: var(--white);
@@ -221,12 +184,7 @@
     color: var(--text-soft);
   }
 
-  /* footer */
-  .left-footer {
-    font-size: 11px;
-    color: var(--text-soft);
-    font-weight: 400;
-  }
+  .left-footer { font-size: 11px; color: var(--text-soft); font-weight: 400; }
 
   /* ── RIGHT PANEL ── */
   .right-panel {
@@ -238,12 +196,10 @@
     padding: 40px 48px;
     background: var(--white);
     border-left: 1px solid var(--border);
+    overflow-y: auto;
   }
 
-  .form-shell {
-    width: 100%;
-    max-width: 400px;
-  }
+  .form-shell { width: 100%; max-width: 400px; }
 
   .form-eyebrow {
     font-size: 10px;
@@ -263,16 +219,13 @@
     margin-bottom: 6px;
   }
 
-  .form-title em {
-    font-style: italic;
-    color: var(--blush);
-  }
+  .form-title em { font-style: italic; color: var(--blush); }
 
   .form-sub {
     font-size: 13px;
     font-weight: 300;
     color: var(--text-mid);
-    margin-bottom: 36px;
+    margin-bottom: 28px;
     line-height: 1.6;
   }
 
@@ -281,7 +234,17 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+  }
+
+  .role-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    display: block;
+    margin-bottom: 8px;
   }
 
   .role-btn {
@@ -316,28 +279,13 @@
     color: var(--white);
   }
 
-  .role-btn.active .role-dot {
-    background: var(--teal-light);
-  }
+  .role-btn.active .role-dot { background: var(--teal-light); }
+  .role-btn:hover:not(.active) { border-color: var(--teal-light); color: var(--teal-mid); }
 
-  .role-btn:hover:not(.active) {
-    border-color: var(--teal-light);
-    color: var(--teal-mid);
-  }
+  /* fields */
+  .field-group { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
 
-  /* form fields */
-  .field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 10px;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-  }
+  .field { display: flex; flex-direction: column; gap: 7px; }
 
   .field label {
     font-size: 10px;
@@ -361,10 +309,7 @@
     width: 100%;
   }
 
-  .field input::placeholder {
-    color: var(--text-soft);
-    font-weight: 300;
-  }
+  .field input::placeholder { color: var(--text-soft); font-weight: 300; }
 
   .field input:focus {
     border-color: var(--teal-mid);
@@ -372,14 +317,8 @@
     box-shadow: 0 0 0 3px rgba(175,201,191,0.2);
   }
 
-  /* password row */
-  .password-wrap {
-    position: relative;
-  }
-
-  .password-wrap input {
-    padding-right: 48px;
-  }
+  .password-wrap { position: relative; }
+  .password-wrap input { padding-right: 48px; }
 
   .toggle-pw {
     position: absolute;
@@ -395,29 +334,20 @@
   }
 
   .toggle-pw:hover { color: var(--teal-mid); }
-
   .toggle-pw svg { width: 18px; height: 18px; display: block; }
 
-  /* forgot */
-  .forgot-row {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 24px;
-    margin-top: 4px;
+  .field-error {
+    font-size: 11px;
+    color: #c4756a;
+    font-weight: 500;
+    display: none;
+    margin-top: -4px;
   }
 
-  .forgot-link {
-    font-size: 12px;
-    font-weight: 400;
-    color: var(--teal-mid);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+  .field.has-error input { border-color: var(--blush); box-shadow: 0 0 0 3px rgba(238,178,169,0.2); }
+  .field.has-error .field-error { display: block; }
 
-  .forgot-link:hover { color: var(--teal-dark); text-decoration: underline; }
-
-  /* sign in button */
-  .btn-signin {
+  .btn-submit {
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -433,14 +363,27 @@
     margin-bottom: 20px;
   }
 
-  .btn-signin:hover {
+  .btn-submit:hover {
     background: #2a4040;
     box-shadow: 0 6px 20px rgba(58,84,84,0.25);
     transform: translateY(-1px);
   }
 
+  .btn-submit:disabled { opacity: 0.65; transform: none; cursor: not-allowed; }
 
-  /* footer note */
+  .form-error {
+    display: none;
+    background: rgba(238,178,169,0.15);
+    border: 1.5px solid var(--blush);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #b05a50;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
   .form-footer {
     text-align: center;
     font-size: 12px;
@@ -449,52 +392,13 @@
     line-height: 1.6;
   }
 
-  .form-footer a {
-    color: var(--teal-mid);
-    font-weight: 500;
-    text-decoration: none;
-  }
-
+  .form-footer a { color: var(--teal-mid); font-weight: 500; text-decoration: none; }
   .form-footer a:hover { text-decoration: underline; }
 
-  /* error state (hidden by default) */
-  .field-error {
-    font-size: 11px;
-    color: #c4756a;
-    font-weight: 500;
-    display: none;
-    margin-top: -4px;
-  }
-
-  .field.has-error input {
-    border-color: var(--blush);
-    box-shadow: 0 0 0 3px rgba(238,178,169,0.2);
-  }
-
-  .field.has-error .field-error { display: block; }
-
-  /* registration success banner */
-  .reg-success {
-    display: none;
-    background: rgba(175,201,191,0.18);
-    border: 1.5px solid var(--teal-light);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--teal-dark);
-    font-weight: 500;
-    margin-bottom: 20px;
-    line-height: 1.5;
-  }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 860px) {
     body { grid-template-columns: 1fr; }
     .left-panel { display: none; }
-    .right-panel {
-      padding: 48px 28px;
-      border-left: none;
-    }
+    .right-panel { padding: 48px 28px; border-left: none; }
   }
 </style>
 </head>
@@ -503,8 +407,7 @@
 <!-- ══ LEFT PANEL ══ -->
 <div class="left-panel">
 
-  <!-- brand -->
-  <a href="#" class="brand">
+  <a href="login.html" class="brand">
     <div class="brand-logo">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="12" cy="12" r="9" stroke="#7E9595" stroke-width="1.5"/>
@@ -518,18 +421,17 @@
     </div>
   </a>
 
-  <!-- hero copy -->
   <div class="hero-copy">
     <div class="eyebrow">AI-Powered Maternal Health</div>
 
     <h1 class="hero-headline">
-      Welcome<br>
-      back to <em>safe</em><br>
-      <span class="blush">care.</span>
+      Join the<br>
+      <em>frontline</em> of<br>
+      <span class="blush">safe care.</span>
     </h1>
 
     <p class="hero-body">
-      Detect high-risk pregnancies in under 3 minutes — using voice input, OCR lab scanning, and real clinical data.
+      Register as an ANM or Doctor to access AI-powered risk screening, lab report OCR, and multilingual care plans for maternal health.
     </p>
 
     <div class="trust-row">
@@ -564,34 +466,41 @@
 <div class="right-panel">
   <div class="form-shell">
 
-    <p class="form-eyebrow">Secure Sign-In</p>
-    <h2 class="form-title">Sign in to <em>Maatri</em></h2>
-    <p class="form-sub">Enter your credentials to access your dashboard and patient records.</p>
+    <p class="form-eyebrow">New Account</p>
+    <h2 class="form-title">Create your <em>Maatri</em> account</h2>
+    <p class="form-sub">Fill in your details to register. You can sign in immediately after.</p>
 
     <!-- role selector -->
-    <div class="role-selector">
-      <button class="role-btn active" onclick="setRole(this)">
+    <span class="role-label">I am registering as</span>
+    <div class="role-selector" style="margin-bottom:28px;">
+      <button class="role-btn active" id="role-anm" type="button" onclick="setRole('anm', this)">
         <span class="role-dot"></span> ANM / ASHA
       </button>
-      <button class="role-btn" onclick="setRole(this)">
+      <button class="role-btn" id="role-doctor" type="button" onclick="setRole('doctor', this)">
         <span class="role-dot"></span> Doctor
       </button>
     </div>
 
-    <!-- fields -->
+    <!-- form fields -->
     <div class="field-group">
-      <div class="field" id="field-phone">
-        <label for="phone">Email Address</label>
-        <input type="email" id="phone" placeholder="you@example.com" autocomplete="email">
+      <div class="field" id="field-name">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Priya Sharma" autocomplete="name">
+        <span class="field-error">Please enter your full name.</span>
+      </div>
+
+      <div class="field" id="field-email">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
         <span class="field-error">Please enter a valid email address.</span>
       </div>
 
-      <div class="field" id="field-pass">
+      <div class="field" id="field-password">
         <label for="password">Password</label>
         <div class="password-wrap">
-          <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
-          <button class="toggle-pw" type="button" onclick="togglePassword()" aria-label="Show/hide password">
-            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password">
+          <button class="toggle-pw" type="button" onclick="togglePw('password', 'eye1')" aria-label="Show/hide password">
+            <svg id="eye1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>
             </svg>
@@ -599,43 +508,45 @@
         </div>
         <span class="field-error">Password must be at least 8 characters.</span>
       </div>
+
+      <div class="field" id="field-confirm">
+        <label for="confirm">Confirm Password</label>
+        <div class="password-wrap">
+          <input type="password" id="confirm" placeholder="Repeat your password" autocomplete="new-password">
+          <button class="toggle-pw" type="button" onclick="togglePw('confirm', 'eye2')" aria-label="Show/hide password">
+            <svg id="eye2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <span class="field-error">Passwords do not match.</span>
+      </div>
     </div>
 
-    <div class="forgot-row">
-      <a href="#" class="forgot-link">Forgot password?</a>
-    </div>
+    <div id="form-error" class="form-error" role="alert"></div>
 
-    <div id="reg-success" class="reg-success" role="status">
-      ✓ Account created. Sign in with your new credentials below.
-    </div>
-
-    <div id="login-error" role="alert" style="display:none; margin-bottom:12px; color:#b91c1c; font-size:14px;"></div>
-
-    <button class="btn-signin" onclick="handleSignIn()">Sign in &rarr;</button>
+    <button class="btn-submit" id="btn-submit" onclick="handleRegister()">Create account &rarr;</button>
 
     <p class="form-footer">
-      New to Maatri? <a href="register.html">Create an account &rarr;</a><br>
-      <span style="margin-top:6px; display:inline-block;">Having trouble? <a href="#">Contact your district coordinator</a></span>
+      Already have an account? <a href="login.html">Sign in &rarr;</a>
     </p>
 
   </div>
 </div>
 
 <script>
-  // Show success banner if redirected from register.html
-  if (new URLSearchParams(window.location.search).get('registered') === '1') {
-    document.getElementById('reg-success').style.display = 'block';
-  }
+  let selectedRole = 'anm';
 
-  function setRole(btn) {
+  function setRole(role, btn) {
+    selectedRole = role;
     document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    localStorage.setItem('maatri_role', btn.textContent.includes('Doctor') ? 'DOCTOR' : 'ANM');
   }
 
-  function togglePassword() {
-    const input = document.getElementById('password');
-    const icon  = document.getElementById('eye-icon');
+  function togglePw(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon  = document.getElementById(iconId);
     if (input.type === 'password') {
       input.type = 'text';
       icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
@@ -645,74 +556,85 @@
     }
   }
 
-  function handleSignIn() {
-    const phone = document.getElementById('phone').value.trim();
-    const pass = document.getElementById('password').value;
-    const errorBox = document.getElementById('login-error');
+  function clearErrors() {
+    ['field-name', 'field-email', 'field-password', 'field-confirm'].forEach(id => {
+      document.getElementById(id).classList.remove('has-error');
+    });
+    const formErr = document.getElementById('form-error');
+    formErr.style.display = 'none';
+    formErr.textContent = '';
+  }
+
+  function showFormError(msg) {
+    const el = document.getElementById('form-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  async function handleRegister() {
+    clearErrors();
+
+    const name     = document.getElementById('name').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirm  = document.getElementById('confirm').value;
+
     let valid = true;
 
-    const phoneField = document.getElementById('field-phone');
-    const passField = document.getElementById('field-pass');
-
-    phoneField.classList.remove('has-error');
-    passField.classList.remove('has-error');
-    errorBox.style.display = 'none';
-    errorBox.textContent = '';
-
-    if (!phone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(phone)) {
-      phoneField.classList.add('has-error');
-      valid = false;
-    }
-    if (pass.length < 6) {
-      passField.classList.add('has-error');
+    if (!name) {
+      document.getElementById('field-name').classList.add('has-error');
       valid = false;
     }
 
-    if (valid) {
-      const btn = document.querySelector('.btn-signin');
-      btn.textContent = 'Signing in…';
-      btn.style.opacity = '0.75';
-      btn.disabled = true;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('field-email').classList.add('has-error');
+      valid = false;
+    }
 
-      fetch("http://localhost:5000/api/auth/login", {
-         method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    email: phone,
-    password: pass
-  })
-})
-        .then(async (response) => {
-          const payload = await response.json().catch(() => ({}));
-          if (!response.ok || !payload.success) {
-            throw new Error(payload.error || 'Login failed');
-          }
+    if (password.length < 8) {
+      document.getElementById('field-password').classList.add('has-error');
+      valid = false;
+    }
 
-          const token = payload.data?.token;
-          if (!token) {
-            throw new Error('No authentication token returned');
-          }
+    if (confirm !== password || confirm.length === 0) {
+      document.getElementById('field-confirm').classList.add('has-error');
+      valid = false;
+    }
 
-          const backendRole = payload.data?.user?.role || '';
-          const role = backendRole.toLowerCase() === 'doctor' ? 'DOCTOR' : 'ANM';
+    if (!valid) return;
 
-          localStorage.setItem('maatri_token', token);
-          localStorage.setItem('maatri_role', role);
-          window.location.href = 'doctor.html';
-        })
-        .catch((err) => {
-          errorBox.textContent = err.message || 'Unable to sign in. Please try again.';
-          errorBox.style.display = 'block';
-        })
-        .finally(() => {
-          btn.textContent = 'Sign in →';
-          btn.style.opacity = '1';
-          btn.disabled = false;
-        });
+    const btn = document.getElementById('btn-submit');
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, role: selectedRole })
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || 'Registration failed. Please try again.');
+      }
+
+      // Success — redirect to login with registered=1 flag
+      window.location.href = 'login.html?registered=1';
+
+    } catch (err) {
+      showFormError(err.message || 'Unable to create account. Please try again.');
+    } finally {
+      btn.textContent = 'Create account →';
+      btn.disabled = false;
     }
   }
+
+  // Allow submit on Enter key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleRegister();
+  });
 </script>
 
 </body>

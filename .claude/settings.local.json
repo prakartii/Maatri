@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"static\\\\|StaticFiles\\\\|mount\")",
+      "Bash(curl *)"
+    ]
+  }
+}

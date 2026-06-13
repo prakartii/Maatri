@@ -21,7 +21,16 @@ export const uploadFile = async ({ file, folder, userId }) => {
       upsert: false,
     });
 
-  if (uploadError) throw uploadError;
+  if (uploadError) {
+    console.error("Supabase storage upload failed:", {
+      message: uploadError.message,
+      statusCode: uploadError.statusCode,
+      error: uploadError.error,
+      bucket: BUCKET,
+      path: storagePath,
+    });
+    throw uploadError;
+  }
 
   const { data: signed, error: signError } = await supabase.storage
     .from(BUCKET)
