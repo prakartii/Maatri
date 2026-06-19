@@ -174,16 +174,16 @@
     flex-shrink: 0;
   }
 
-  /* FIX: replaced broken conic-gradient var() with hex values */
   .risk-circle {
     width: 76px;
     height: 76px;
     border-radius: 50%;
-    background: conic-gradient(#EEB2A9 0% 68%, #D1DCDC 68% 100%);
+    background: #D1DCDC;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    font-size: 28px;
   }
 
   .risk-circle::before {
@@ -655,10 +655,10 @@
     </div>
 
     <div class="risk-badge">
-      <div class="risk-circle">
-        <span class="risk-number" id="risk-score">--</span>
+      <div class="risk-circle" id="risk-circle-el">
+        <span class="risk-number" id="risk-score">—</span>
       </div>
-      <span class="risk-label">Risk Score</span>
+      <span class="risk-label" id="risk-label-text">Risk Level</span>
     </div>
   </div>
 
@@ -697,9 +697,9 @@
       <div class="trimester-fill"></div>
     </div>
     <div class="trimester-labels">
-      <span class="lbl-start">Wk 1 &mdash; T1</span>
-      <span class="lbl-mid">&#9660; Week 24 (T2)</span>
-      <span class="lbl-end">T3 &mdash; Wk 40</span>
+      <span class="lbl-start">Wk 1 — T1</span>
+      <span class="lbl-mid" id="trimester-marker">—</span>
+      <span class="lbl-end">T3 — Wk 40</span>
     </div>
   </div>
 
@@ -867,7 +867,15 @@
     document.getElementById('patient-risk').textContent = `Risk ${patient.current_risk || 'GREEN'}`;
     document.getElementById('patient-village').textContent = patient.village ? `${patient.village}` : 'Village --';
     document.getElementById('patient-registered').textContent = `Registered ${formatDate(patient.created_at)}`;
-    document.getElementById('risk-score').textContent = patient.current_risk === 'HIGH' ? '84' : patient.current_risk === 'MEDIUM' ? '68' : '34';
+    const riskEmojis = { RED: '🔴', AMBER: '🟡', GREEN: '🟢' };
+    const riskBgColors = { RED: '#FEE2E2', AMBER: '#FEF3C7', GREEN: '#D1FAE5' };
+    const riskTextLabel = { RED: 'High Risk', AMBER: 'Moderate', GREEN: 'Low Risk' };
+    const riskKey = (patient.current_risk || 'GREEN').toUpperCase();
+    document.getElementById('risk-score').textContent = riskEmojis[riskKey] || '❓';
+    const circleEl = document.getElementById('risk-circle-el');
+    if (circleEl) circleEl.style.background = riskBgColors[riskKey] || '#D1DCDC';
+    const riskLabelEl = document.getElementById('risk-label-text');
+    if (riskLabelEl) riskLabelEl.textContent = riskTextLabel[riskKey] || 'Unknown';
 
     document.getElementById('gestational-age').innerHTML = `${patient.pregnancy_month || '--'}<span style="font-size:16px; font-family:'DM Sans'; color:var(--text-mid); margin-left:4px;">mos</span>`;
     document.getElementById('gestational-sub').textContent = `Due • ${patient.next_visit_date ? formatDate(patient.next_visit_date) : '--'}`;
@@ -875,8 +883,19 @@
     document.getElementById('anc-sub').textContent = `Next • ${patient.next_visit_date ? formatDate(patient.next_visit_date) : '--'}`;
     document.getElementById('last-visit').textContent = '--';
     document.getElementById('last-visit-sub').textContent = '--';
-    document.getElementById('trimester-label').textContent = getTrimesterLabel(patient.pregnancy_month || 6);
+    const trimesterLabel = getTrimesterLabel(patient.pregnancy_month || 6);
+    document.getElementById('trimester-label').textContent = trimesterLabel;
     document.getElementById('pregnancy-progress-text').textContent = `Month ${patient.pregnancy_month || '--'} of 9`;
+
+    // Update trimester fill bar dynamically
+    const month = Number(patient.pregnancy_month);
+    if (Number.isFinite(month) && month > 0) {
+      const pct = Math.min(100, Math.max(2, (month / 9) * 100));
+      const fillEl = document.querySelector('.trimester-fill');
+      if (fillEl) fillEl.style.width = `${pct.toFixed(1)}%`;
+      const markerEl = document.getElementById('trimester-marker');
+      if (markerEl) markerEl.textContent = `▼ Month ${month} (${trimesterLabel})`;
+    }
 
     document.getElementById('patient-phone').textContent = patient.phone || '--';
     document.getElementById('patient-village-info').textContent = patient.village || '--';

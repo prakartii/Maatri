@@ -33,6 +33,168 @@
     input:focus, select:focus { box-shadow: 0 0 0 3px rgba(92,126,126,0.15); }
     .ref-detail-section { transition: box-shadow 0.15s; }
     .ref-detail-section:hover { box-shadow: 0 4px 16px rgba(92,126,126,0.10); }
+
+    /* ── Toast Notifications ── */
+    #toast-container { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+    .toast { background:white; border-radius:14px; padding:14px 18px; box-shadow:0 8px 32px rgba(0,0,0,0.14); border-left:4px solid; font-size:13px; font-weight:500; color:#2E3030; max-width:340px; pointer-events:all; display:flex; align-items:flex-start; gap:10px; opacity:0; transform:translateX(20px); transition:all 0.25s ease; }
+    .toast.show { opacity:1; transform:translateX(0); }
+    .toast.success { border-color:#8FB5A8; }
+    .toast.error   { border-color:#C96B5A; }
+    .toast.info    { border-color:#B8CCCC; }
+    .toast.warning { border-color:#E8B882; }
+    .toast-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+    .toast-title { font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:3px; color:#2E3030; }
+    .toast-msg { color:#5A4A42; font-size:13px; line-height:1.4; }
+
+    /* ── Loading skeleton ── */
+    .skeleton { background: linear-gradient(90deg, #f0f0ef 25%, #e8e8e6 50%, #f0f0ef 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── Priority indicator ── */
+    .priority-high { border-left: 4px solid #C96B5A; }
+    .priority-med  { border-left: 4px solid #E8B882; }
+    .priority-low  { border-left: 4px solid #8FB5A8; }
+
+    /* ── Empty state ── */
+    .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 24px; text-align:center; }
+    .empty-state-icon { font-size:40px; margin-bottom:12px; opacity:0.7; }
+    .empty-state-title { font-weight:600; color:#4a5568; font-size:15px; margin-bottom:6px; }
+    .empty-state-sub { font-size:13px; color:#9ba8a8; max-width:260px; line-height:1.5; }
+
+    /* ── SLA timer badges ── */
+    .sla-ok   { background:#f3f4f6; color:#6b7280; }
+    .sla-warn { background:#fef3c7; color:#b45309; }
+    .sla-crit { background:#fee2e2; color:#b91c1c; font-weight:700; }
+
+    /* ── Clinical data grid ── */
+    .clinical-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .clinical-field label { display:block; font-size:10px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:2px; }
+    .clinical-field span { font-size:13px; font-weight:600; color:#374151; }
+
+    /* ── Trend summary ── */
+    .trend-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:999px; }
+
+    /* ── Oldest waiting highlight ── */
+    .oldest-waiting { box-shadow: 0 0 0 2px #b91c1c; }
+
+    /* ── Premium card hover ── */
+    .card-hover { transition: box-shadow 0.2s ease, transform 0.2s ease; }
+    .card-hover:hover { box-shadow: 0 8px 32px rgba(92,126,126,0.14); transform: translateY(-2px); }
+
+    /* ── KPI stat cards ── */
+    .kpi-card { position: relative; overflow: hidden; }
+    .kpi-card .kpi-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 14px; }
+    .kpi-card::after { content: ''; position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; border-radius: 50%; opacity: 0.04; background: currentColor; pointer-events: none; }
+
+    /* ── Premium risk badges ── */
+    .risk-pill { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-size: 10px; padding: 3px 9px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase; border: 1px solid; }
+    .risk-pill-red   { background: #FEE2E2; color: #991B1B; border-color: #FECACA; }
+    .risk-pill-amber { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+    .risk-pill-green { background: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+
+    /* ── Status badge system ── */
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; font-size: 10px; padding: 3px 9px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase; }
+    .status-pending  { background: #FEF3C7; color: #92400E; }
+    .status-arrived  { background: #DBEAFE; color: #1D4ED8; }
+    .status-admitted { background: #DCFCE7; color: #166534; }
+
+    /* ── Follow-up cards (redesigned) ── */
+    .fu-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #E5E7EB; transition: box-shadow 0.2s ease, transform 0.2s ease; margin-bottom: 12px; }
+    .fu-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.09); transform: translateY(-2px); }
+    .fu-card-stripe { height: 4px; }
+    .fu-card-body { padding: 18px 20px; }
+    .fu-card-footer { padding: 12px 20px; background: #F9FAFB; border-top: 1px solid #F3F4F6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+    /* ── Referral queue cards ── */
+    .ref-queue-card { background: white; border-radius: 20px; border: 1px solid #E5E7EB; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
+    .ref-queue-card:hover { box-shadow: 0 6px 24px rgba(92,126,126,0.12); transform: translateY(-1px); }
+
+    /* ── Timeline (referral detail) ── */
+    .tl-wrap { padding: 8px 0; }
+    .tl-item { position: relative; padding-left: 34px; padding-bottom: 20px; }
+    .tl-item:last-child { padding-bottom: 4px; }
+    .tl-item::after { content: ''; position: absolute; left: 12px; top: 24px; bottom: 0; width: 2px; background: #E5E7EB; }
+    .tl-item:last-child::after { display: none; }
+    .tl-dot { position: absolute; left: 0; top: 2px; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; z-index: 1; }
+    .tl-dot-done    { background: #5C7E7E; color: white; box-shadow: 0 0 0 3px rgba(92,126,126,0.2); }
+    .tl-dot-current { background: #E8B882; color: white; box-shadow: 0 0 0 3px rgba(232,184,130,0.3); animation: tl-pulse 2s infinite; }
+    .tl-dot-pending { background: #F3F4F6; color: #9CA3AF; border: 2px solid #E5E7EB; }
+    @keyframes tl-pulse { 0%,100% { box-shadow: 0 0 0 3px rgba(232,184,130,0.3); } 50% { box-shadow: 0 0 0 6px rgba(232,184,130,0.15); } }
+    .tl-label { font-size: 12px; font-weight: 700; line-height: 1.3; }
+    .tl-sub { font-size: 10px; margin-top: 2px; }
+
+    /* ── Care plan section cards ── */
+    .cp-block { border-radius: 16px; padding: 16px 18px; border: 1px solid; }
+    .cp-block .cp-heading { font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+    .cp-block .cp-body { font-size: 13px; line-height: 1.65; }
+    .listen-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 9px; border: 1px solid; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+    .listen-btn:hover { opacity: 0.8; }
+    .listen-btn:active { transform: scale(0.96); }
+
+    /* ── Section headers (dashboard) ── */
+    .dash-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .dash-section-title { font-size: 15px; font-weight: 700; color: #2E3030; display: flex; align-items: center; gap: 8px; }
+    .dash-section-title .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+    /* ── Page headers ── */
+    .page-hero { padding: 4px 0 20px; }
+    .page-hero h2 { font-size: 24px; font-weight: 800; color: #1F2937; letter-spacing: -0.3px; }
+    .page-hero p { font-size: 13px; color: #9CA3AF; margin-top: 3px; }
+
+    /* ── Referral detail premium ── */
+    .ref-detail-header { background: linear-gradient(135deg, #2E3030 0%, #3D4F4F 100%); color: white; padding: 14px 20px; border-radius: 20px; margin-bottom: 16px; }
+
+    /* ── Demo banner for translated care plan ── */
+    #careplan-lang-banner { display: none; font-size: 11px; font-weight: 600; color: #92400E; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px; padding: 8px 12px; }
+    #careplan-lang-banner.visible { display: flex; align-items: center; gap: 6px; }
+
+    /* ════════════════════════════════════════════
+       MOTHER REGISTRY — Premium Redesign
+    ════════════════════════════════════════════ */
+
+    /* Search bar focus glow */
+    #registry-search:focus { box-shadow: 0 0 0 3px rgba(92,126,126,0.18), 0 4px 16px rgba(92,126,126,0.08); }
+
+    /* Filter selects */
+    .reg-filter-select { appearance: none; background: white; border: 1.5px solid #E5E7EB; font-size: 11px; font-weight: 600; color: #4B5563; border-radius: 10px; padding: 6px 28px 6px 12px; cursor: pointer; transition: all 0.15s; }
+    .reg-filter-select:hover { border-color: #B8CCCC; background: #FAFAFA; }
+    .reg-filter-select:focus { outline: none; border-color: #5C7E7E; box-shadow: 0 0 0 2px rgba(92,126,126,0.15); }
+
+    /* Patient card rows */
+    .reg-card-row { background: white; border: 1.5px solid #E9EAEA; border-radius: 18px; overflow: hidden; transition: all 0.18s cubic-bezier(0.25,0.46,0.45,0.94); cursor: pointer; }
+    .reg-card-row:hover { box-shadow: 0 8px 28px rgba(92,126,126,0.13); transform: translateY(-2px); border-color: #B8CCCC; }
+    .reg-card-row.risk-red   { border-left: 4px solid #C96B5A; }
+    .reg-card-row.risk-amber { border-left: 4px solid #E8B882; }
+    .reg-card-row.risk-green { border-left: 4px solid #8FB5A8; }
+
+    /* Avatar circle in rows */
+    .reg-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 14px; flex-shrink: 0; }
+
+    /* Quick action icon buttons */
+    .qa-btn { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; border: 1.5px solid; transition: all 0.15s; flex-shrink: 0; cursor: pointer; background: transparent; }
+    .qa-btn:hover { transform: scale(1.1); }
+    .qa-btn svg { pointer-events: none; }
+
+    /* Registry stat cards */
+    .reg-stat-card { border-radius: 20px; padding: 18px; transition: all 0.18s; }
+    .reg-stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(92,126,126,0.12); }
+
+    /* Insights panel */
+    .insight-section { }
+    .insight-section + .insight-section { padding-top: 14px; margin-top: 14px; border-top: 1px solid #F3F4F6; }
+    .insight-section-title { font-size: 10px; font-weight: 800; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 8px; }
+    .insight-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; background: #F9FAFB; border-radius: 10px; margin-bottom: 5px; transition: background 0.12s; }
+    .insight-item:last-child { margin-bottom: 0; }
+    .insight-item:hover { background: #F1F5F4; }
+
+    /* Registry skeleton */
+    .reg-skeleton-row { background: white; border: 1.5px solid #E9EAEA; border-radius: 18px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
+
+    /* Empty state for registry */
+    .reg-empty { background: white; border: 1.5px solid #E9EAEA; border-radius: 20px; padding: 64px 32px; text-align: center; }
+    .reg-empty-icon { font-size: 52px; margin-bottom: 16px; opacity: 0.4; }
+    .reg-empty-title { font-size: 17px; font-weight: 700; color: #374151; margin-bottom: 6px; }
+    .reg-empty-sub { font-size: 13px; color: #9CA3AF; max-width: 280px; margin: 0 auto 20px; line-height: 1.6; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -106,21 +268,17 @@
       
       <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0">
         <div class="flex items-center space-x-4 w-1/3">
-          <span class="text-gray-400">🔍</span>
-          <input type="text" id="global-search" placeholder="Search parameters, names, or IDs..." class="w-full bg-gray-50 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
+          <span class="text-gray-400 text-sm">🔍</span>
+          <input type="text" id="global-search" placeholder="Search patients, villages, or tokens..." class="w-full bg-gray-50 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
         </div>
         <div class="flex items-center space-x-4">
-          <button onclick="toggleMockNetwork()" id="network-toggle-btn" class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg">Online Mode</button>
-          
-          <select class="text-xs border rounded-lg px-2 py-1.5 bg-white">
-            <option>English</option>
-            <option>தமிழ் (Tamil)</option>
-            <option>हिन्दी (Hindi)</option>
-            <option>తెలుగు (Telugu)</option>
-          </select>
-          <div class="relative cursor-pointer">
+          <button onclick="toggleMockNetwork()" id="network-toggle-btn" class="text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg">Online</button>
+          <div class="hidden sm:flex items-center space-x-2 text-xs text-gray-500">
+            <span class="font-medium text-gray-700" id="header-user-name">Loading…</span>
+          </div>
+          <div class="relative cursor-pointer" title="Alerts">
             <span class="text-xl">🔔</span>
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">3</span>
+            <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
           </div>
         </div>
       </header>
@@ -130,122 +288,236 @@
         <div id="anm-dashboard" class="app-view hidden space-y-6">
           <div class="flex justify-between items-center">
             <div>
-              <h2 class="text-2xl font-bold text-gray-800">Primary Care Overview</h2>
-              <p class="text-sm text-gray-500">PHC Sector Clinical Intelligence Tracker</p>
+              <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
+              <p class="text-sm text-gray-500" id="dashboard-subtitle">Your PHC sector at a glance</p>
             </div>
-            <button onclick="switchView('anm-visit-form')" class="bg-cover text-white px-4 py-2 rounded-xl text-sm font-medium shadow">+ New Pregnancy Checkup</button>
+            <button onclick="switchView('anm-visit-form')" class="bg-cover text-white px-4 py-2 rounded-xl text-sm font-medium shadow">+ Record Visit</button>
           </div>
 
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm kpi-card card-hover">
+              <div class="kpi-icon bg-gray-50 text-gray-500">🤰</div>
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Total Registered</span>
               <span class="text-3xl font-bold text-gray-800 block mt-1" id="stat-total-mothers">—</span>
+              <span class="text-[10px] text-gray-400 mt-1 block">active patients</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">High Risk (RED)</span>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500 kpi-card card-hover">
+              <div class="kpi-icon bg-red-50 text-red-500">🚨</div>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">High Risk</span>
               <span class="text-3xl font-bold text-red-600 block mt-1" id="stat-red-mothers">—</span>
+              <span class="text-[10px] text-red-400 mt-1 block">immediate attention</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-400">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-400 kpi-card card-hover">
+              <div class="kpi-icon bg-amber-50 text-amber-500">⚠️</div>
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Moderate Risk</span>
               <span class="text-3xl font-bold text-amber-600 block mt-1" id="stat-amber-mothers">—</span>
+              <span class="text-[10px] text-amber-400 mt-1 block">monitor closely</span>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm kpi-card card-hover">
+              <div class="kpi-icon bg-emerald-50 text-emerald-600">🔄</div>
               <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Pending Sync</span>
               <span class="text-3xl font-bold text-cover block mt-1" id="stat-queued-count">0</span>
+              <span class="text-[10px] text-gray-400 mt-1 block">offline records</span>
             </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
-              <h3 class="font-bold text-gray-800 mb-4 flex items-center justify-between">
-                <span>Critical Alerts List</span>
-                <span class="text-xs text-red-600 font-semibold bg-red-50 px-2 py-0.5 rounded-md">Urgent Action Required</span>
-              </h3>
-              <div class="space-y-3" id="dashboard-alerts-list">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 overflow-hidden">
+              <div class="px-5 py-3.5 bg-gradient-to-r from-red-50 to-orange-50 border-b border-red-100 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span>🚨</span>
+                  <span class="text-xs font-bold text-red-800 uppercase tracking-wider">High-Risk Alerts</span>
                 </div>
+                <span class="text-[10px] text-red-600 font-bold bg-red-100 px-2 py-0.5 rounded-full">Immediate Action</span>
+              </div>
+              <div class="divide-y divide-gray-50 p-3 space-y-1" id="dashboard-alerts-list">
+              </div>
             </div>
             <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <h3 class="font-bold text-gray-800 mb-3">Quick Navigation</h3>
+              <h3 class="font-bold text-gray-800 mb-4 text-sm">Quick Actions</h3>
               <div class="space-y-2">
-                <button onclick="openRegistrationModal()" class="w-full text-left p-3 text-xs font-semibold bg-gray-50 hover:bg-cream rounded-xl transition flex items-center justify-between">
+                <button onclick="openRegistrationModal()" class="w-full text-left p-3.5 text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 rounded-xl transition flex items-center justify-between text-emerald-700">
                   <span>📝 Register New Mother</span> <span>→</span>
                 </button>
-                <button onclick="switchView('anm-followups')" class="w-full text-left p-3 text-xs font-semibold bg-gray-50 hover:bg-cream rounded-xl transition flex items-center justify-between">
-                  <span>📅 Missed Followup Audits</span> <span>→</span>
+                <button onclick="switchView('anm-followups')" class="w-full text-left p-3.5 text-xs font-semibold bg-amber-50 hover:bg-amber-100 border border-amber-100 rounded-xl transition flex items-center justify-between text-amber-700">
+                  <span>📅 Pending Follow-ups</span> <span>→</span>
+                </button>
+                <button onclick="switchView('anm-heatmap')" class="w-full text-left p-3.5 text-xs font-semibold bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl transition flex items-center justify-between text-gray-600">
+                  <span>📍 Village Risk Map</span> <span>→</span>
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        <div id="anm-registry" class="app-view hidden space-y-4">
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div id="anm-registry" class="app-view hidden">
+
+          <!-- ── Page header ── -->
+          <div class="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-6">
             <div>
-              <h2 class="text-2xl font-bold text-gray-800">Maternal Cohort Health Registry</h2>
-              <p class="text-sm text-gray-500">Cohort screening management, sorting, and historical drill-down profiles.</p>
+              <h2 class="text-2xl font-bold text-gray-800">Mother Registry</h2>
+              <p class="text-sm text-gray-500 mt-0.5">Maternal health intelligence · <span id="reg-total-display">—</span> patients registered</p>
             </div>
-            <button onclick="openRegistrationModal()" class="bg-cover text-white px-4 py-2 rounded-xl text-sm font-medium shadow">+ Register Patient Form</button>
+            <button onclick="openRegistrationModal()" class="bg-[#5C7E7E] text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:opacity-90 transition flex items-center gap-2 shrink-0">
+              <span class="text-base font-light">+</span> Register New Mother
+            </button>
           </div>
 
-          <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-wrap gap-4 items-center">
-            <div class="flex flex-col">
-              <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Filter by Village</label>
-              <select id="filter-village" onchange="applyRegistryFilters()" class="border rounded-lg text-xs p-2 bg-gray-50">
-                <option value="ALL">All Villages</option>
-              </select>
+          <!-- ── Analytics row ── -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+            <div class="reg-stat-card bg-white border border-gray-100 shadow-sm card-hover">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-xl bg-[#F5EDE3] flex items-center justify-center text-lg">🤰</div>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Total Mothers</span>
+              </div>
+              <div style="font-size:48px;line-height:1;font-weight:800;" class="text-gray-800" id="reg-total-mothers">0</div>
+              <div class="text-[10px] text-gray-400 mt-2">registered mothers</div>
             </div>
-            <div class="flex flex-col">
-              <label class="text-[10px] font-bold text-gray-400 uppercase mb-1">Risk Stratification</label>
-              <select id="filter-risk" onchange="applyRegistryFilters()" class="border rounded-lg text-xs p-2 bg-gray-50">
-                <option value="ALL">All Clinical Risks</option>
-                <option value="RED">High Risk Only (RED)</option>
-                <option value="AMBER">Moderate Watch (AMBER)</option>
-                <option value="GREEN">Low Clinical Escalation</option>
-              </select>
+            <div class="reg-stat-card bg-white border border-gray-100 shadow-sm card-hover overflow-hidden relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-red-50/60 to-transparent pointer-events-none"></div>
+              <div class="relative">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center text-lg">🔴</div>
+                  <span class="text-[10px] font-bold text-red-400 uppercase tracking-wider">High Risk</span>
+                </div>
+                <div style="font-size:48px;line-height:1;font-weight:800;" class="text-red-600" id="reg-red-mothers">0</div>
+                <div class="text-[10px] text-red-400 mt-2">immediate attention</div>
+              </div>
+            </div>
+            <div class="reg-stat-card bg-white border border-gray-100 shadow-sm card-hover overflow-hidden relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-amber-50/60 to-transparent pointer-events-none"></div>
+              <div class="relative">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center text-lg">🟡</div>
+                  <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Moderate Risk</span>
+                </div>
+                <div style="font-size:48px;line-height:1;font-weight:800;" class="text-amber-600" id="reg-amber-mothers">0</div>
+                <div class="text-[10px] text-amber-400 mt-2">monitor closely</div>
+              </div>
+            </div>
+            <div class="reg-stat-card bg-white border border-gray-100 shadow-sm card-hover overflow-hidden relative">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/60 to-transparent pointer-events-none"></div>
+              <div class="relative">
+                <div class="flex items-center gap-3 mb-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-lg">🟢</div>
+                  <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Low Risk</span>
+                </div>
+                <div style="font-size:48px;line-height:1;font-weight:800;" class="text-emerald-600" id="reg-green-mothers">0</div>
+                <div class="text-[10px] text-emerald-400 mt-2">routine monitoring</div>
+              </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-gray-50 text-gray-400 text-[10px] uppercase font-bold tracking-wider border-b border-gray-100">
-                  <th class="p-4">Patient Parameters</th>
-                  <th class="p-4">Location Sector</th>
-                  <th class="p-4">Clinical Stratification</th>
-                  <th class="p-4">Gestation Progress</th>
-                  <th class="p-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="registry-table-body" class="text-sm divide-y divide-gray-50">
-                </tbody>
-            </table>
+          <!-- ── Main content: list + insights ── -->
+          <div class="flex flex-col xl:flex-row gap-5">
+
+            <!-- LEFT: search + filters + patient cards -->
+            <div class="flex-1 min-w-0 space-y-3">
+
+              <!-- Search bar -->
+              <div class="relative">
+                <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" id="registry-search"
+                  placeholder="Search by name, village, phone number, or QR ID…"
+                  oninput="applyRegistryFilters()"
+                  class="w-full bg-white border-2 border-gray-200 rounded-2xl pl-11 pr-10 py-3.5 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none transition">
+                <button id="registry-search-clear" onclick="clearRegistrySearch()"
+                  class="hidden absolute inset-y-0 right-4 items-center text-gray-400 hover:text-gray-700 text-xl leading-none">×</button>
+              </div>
+
+              <!-- Filters + sort + count -->
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Filter</span>
+
+                <div class="relative">
+                  <select id="filter-village" onchange="applyRegistryFilters()" class="reg-filter-select pr-7">
+                    <option value="ALL">📍 All Villages</option>
+                  </select>
+                  <span class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-[9px]">▾</span>
+                </div>
+
+                <div class="relative">
+                  <select id="filter-risk" onchange="applyRegistryFilters()" class="reg-filter-select pr-7">
+                    <option value="ALL">⚡ All Risk Levels</option>
+                    <option value="RED">🔴 High Risk</option>
+                    <option value="AMBER">🟡 Moderate</option>
+                    <option value="GREEN">🟢 Low Risk</option>
+                  </select>
+                  <span class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-[9px]">▾</span>
+                </div>
+
+                <div class="relative">
+                  <select id="registry-sort" onchange="applyRegistryFilters()" class="reg-filter-select pr-7">
+                    <option value="risk">↑ Risk Level</option>
+                    <option value="name">A–Z Name</option>
+                    <option value="due">📅 Due Date</option>
+                    <option value="week">🤰 Gestation</option>
+                  </select>
+                  <span class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 text-[9px]">▾</span>
+                </div>
+
+                <span class="ml-auto text-[10px] text-gray-400 font-semibold" id="registry-count-label"></span>
+              </div>
+
+              <!-- Patient card list -->
+              <div id="registry-patient-list" class="space-y-2">
+                <!-- Populated by JS — skeleton shown during load -->
+              </div>
+
+              <!-- Hidden legacy tbody kept for backward-compatibility with any remaining skeleton refs -->
+              <table class="hidden"><tbody id="registry-table-body"></tbody></table>
+            </div>
+
+            <!-- RIGHT: insights panel -->
+            <div class="w-full xl:w-72 shrink-0">
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden sticky top-4">
+                <div class="px-5 py-4 border-b border-gray-50 flex items-center justify-between">
+                  <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-sm bg-[#5C7E7E] inline-block"></span>
+                    Registry Insights
+                  </h3>
+                  <span class="text-[10px] text-gray-400 font-medium">Live</span>
+                </div>
+                <div id="registry-insights-body" class="p-4">
+                  <!-- Populated by JS -->
+                  <div class="space-y-2">
+                    <div class="skeleton h-3 w-24 rounded mb-3"></div>
+                    <div class="skeleton h-8 w-full rounded-xl"></div>
+                    <div class="skeleton h-8 w-full rounded-xl"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
         <div id="anm-patient-profile" class="app-view hidden space-y-6">
           <div class="flex items-center space-x-3">
-            <button onclick="switchView('anm-registry')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium">← Back to Cohort</button>
+            <button onclick="switchView('anm-registry')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium">← Back to Registry</button>
             <h2 class="text-xl font-bold text-gray-800" id="profile-patient-name">Patient Profile</h2>
             <div id="profile-risk-badge"></div>
           </div>
 
           <div class="border-b border-gray-200 flex space-x-6 text-sm font-medium">
-            <button onclick="switchProfileTab('overview')" class="profile-tab-btn border-b-2 border-emerald-700 text-cover pb-2 font-bold px-1" id="tab-btn-overview">Clinical Overview</button>
-            <button onclick="switchProfileTab('history')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-history">Visit Longitudinal Trends</button>
-            <button onclick="switchProfileTab('careplan')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-careplan">AI Generated Care Plan</button>
-            <button onclick="switchProfileTab('qr')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-qr">Digital Identity QR</button>
+            <button onclick="switchProfileTab('overview')" class="profile-tab-btn border-b-2 border-emerald-700 text-cover pb-2 font-bold px-1" id="tab-btn-overview">Overview</button>
+            <button onclick="switchProfileTab('history')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-history">Visit History</button>
+            <button onclick="switchProfileTab('careplan')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-careplan">Care Plan</button>
+            <button onclick="switchProfileTab('qr')" class="profile-tab-btn text-gray-500 hover:text-gray-800 pb-2 px-1" id="tab-btn-qr">Patient QR</button>
           </div>
 
           <div id="profile-tab-overview" class="profile-tab-content space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
-                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Biodata Summary</h4>
-                <p class="text-xs text-gray-600"><strong>Age Parameter:</strong> <span id="prof-meta-age">24</span> years</p>
-                <p class="text-xs text-gray-600"><strong>Village Node:</strong> <span id="prof-meta-village">Vellore PHC</span></p>
-                <p class="text-xs text-gray-600"><strong>Gestational Metric:</strong> Week <span id="prof-meta-week">32</span></p>
+                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Patient Details</h4>
+                <p class="text-xs text-gray-600"><strong>Age:</strong> <span id="prof-meta-age">—</span> years</p>
+                <p class="text-xs text-gray-600"><strong>Village / Block:</strong> <span id="prof-meta-village">—</span></p>
+                <p class="text-xs text-gray-600"><strong>Gestational Age:</strong> Week <span id="prof-meta-week">—</span></p>
               </div>
               <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm md:col-span-2 space-y-3">
-                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Active Referral & Clinical Status</h4>
+                <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Clinical Status</h4>
                 <div id="profile-clinical-status-block" class="text-xs space-y-2">
                   </div>
               </div>
@@ -253,19 +525,20 @@
 
             <!-- ANM Referral Creation — shown only when userRole === ANM -->
             <div id="anm-referral-section" class="hidden bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
-              <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Create Referral to Hospital</h4>
+              <h4 class="font-bold text-sm text-gray-800 border-b pb-2">Refer Patient to Hospital</h4>
               <form id="anm-referral-form" onsubmit="handleCreateReferral(event)" class="space-y-3">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Refer to Hospital</label>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Select Hospital</label>
                   <select id="ref-hospital-select" required class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 bg-gray-50">
-                    <option value="">— Select hospital —</option>
+                    <option value="">— Choose a hospital —</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Clinical Reason / SOAP Notes</label>
-                  <textarea id="ref-reason-input" required rows="3" placeholder="Describe reason for referral..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 bg-white resize-none"></textarea>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Reason for Referral</label>
+                  <textarea id="ref-reason-input" required rows="3" placeholder="Describe the clinical reason for this referral..." class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700 bg-white resize-none"></textarea>
                 </div>
-                <button type="submit" class="bg-cover text-white font-semibold px-4 py-2 rounded-xl text-xs shadow hover:opacity-90 transition">Submit Referral</button>
+                <div id="referral-form-status" class="hidden text-xs px-3 py-2 rounded-lg"></div>
+                <button type="submit" id="referral-submit-btn" class="bg-cover text-white font-semibold px-4 py-2 rounded-xl text-xs shadow hover:opacity-90 transition">Submit Referral</button>
               </form>
             </div>
           </div>
@@ -285,15 +558,32 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="history-charts-loading" class="hidden py-8 text-center">
+              <div class="w-6 h-6 border-2 border-cover border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <p class="text-xs text-gray-400 mt-2">Loading visit history…</p>
+            </div>
+            <div id="history-charts-empty" class="hidden empty-state">
+              <div class="empty-state-icon">📊</div>
+              <p class="empty-state-title">No visit data yet</p>
+              <p class="empty-state-sub">Record ANC visits to track hemoglobin and blood pressure trends over time.</p>
+              <button onclick="switchView('anm-visit-form')" class="mt-4 bg-cover text-white px-4 py-2 rounded-xl text-xs font-semibold hover:opacity-90 transition">+ Record First Visit</button>
+            </div>
+            <div id="visit-trend-summary" class="hidden bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700 space-y-1.5"></div>
+            <div id="history-charts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Hemoglobin Tracking (g/dL)</h4>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-xs font-bold text-gray-500 uppercase">Hemoglobin (g/dL)</h4>
+                  <span class="text-[10px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded font-mono">WHO threshold: 11.0</span>
+                </div>
                 <div class="h-48 relative">
                   <canvas id="chart-hb"></canvas>
                 </div>
               </div>
               <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-                <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Blood Pressure Stratification</h4>
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-xs font-bold text-gray-500 uppercase">Blood Pressure (mmHg)</h4>
+                  <span class="text-[10px] text-gray-400 bg-gray-50 px-2 py-0.5 rounded font-mono">Alert: Systolic ≥140</span>
+                </div>
                 <div class="h-48 relative">
                   <canvas id="chart-bp"></canvas>
                 </div>
@@ -302,52 +592,78 @@
           </div>
 
           <div id="profile-tab-careplan" class="profile-tab-content hidden space-y-4">
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <div class="flex justify-between items-center">
-                <h3 class="font-bold text-gray-800">Dynamic Decision Support Care Plan</h3>
-                <div class="flex items-center space-x-2">
-                  <select id="careplan-lang" class="text-xs border rounded px-2 py-1 bg-gray-50">
-                    <option value="en">English AI Output</option>
-                    <option value="ta">தமிழ் Summary</option>
-                    <option value="hi">हिन्दी Context</option>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-5">
+              <div class="flex justify-between items-start flex-wrap gap-3">
+                <div>
+                  <h3 class="font-bold text-gray-800 text-base">AI Care Plan</h3>
+                  <p id="careplan-timestamp" class="text-[10px] text-gray-400 mt-0.5 hidden">Generated at <span id="careplan-time-display">—</span></p>
+                </div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <select id="careplan-lang" class="text-xs border border-gray-200 rounded-lg px-3 py-1.5 bg-white text-gray-600 font-medium focus:outline-none focus:ring-1 focus:ring-emerald-600">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ta">🇮🇳 தமிழ்</option>
+                    <option value="hi">🇮🇳 हिन्दी</option>
                   </select>
-                  <button onclick="triggerCarePlanGeneration()" class="bg-cover text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow hover:opacity-90">
-                    🪄 Generate Care Plan
+                  <button onclick="triggerCarePlanGeneration()" class="bg-cover text-white text-xs font-semibold px-4 py-1.5 rounded-lg shadow-sm hover:opacity-90 flex items-center gap-1.5">
+                    <span>✦</span> Generate Care Plan
                   </button>
                 </div>
               </div>
 
-              <div id="careplan-loading" class="hidden flex flex-col items-center justify-center py-12 space-y-3">
-                <div class="w-8 h-8 border-4 border-emerald-700 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-xs text-gray-400 font-medium">Invoking /ai/careplan LLM Pipeline (Target Language Translation Active)...</p>
+              <div id="careplan-lang-banner" class="hidden">
+                <span>🌐</span> <span id="careplan-lang-banner-text">Displaying in Tamil — clinical content translated from English guidelines</span>
               </div>
 
-              <div id="careplan-results" class="hidden space-y-4">
-                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <h4 class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Clinical Guidance Summary</h4>
-                      <p id="careplan-txt-guidance" class="text-sm text-emerald-900 mt-1">Counseling active values.</p>
-                    </div>
-                    <button onclick="playTTS('careplan-txt-guidance')" class="text-sm bg-white p-1.5 rounded-lg border border-emerald-200 hover:bg-emerald-100">🔊 Play Audio</button>
+              <div id="careplan-loading" class="hidden flex flex-col items-center justify-center py-14 space-y-4">
+                <div class="relative w-12 h-12">
+                  <div class="w-12 h-12 border-4 border-gray-100 rounded-full"></div>
+                  <div class="w-12 h-12 border-4 border-[#5C7E7E] border-t-transparent rounded-full animate-spin absolute inset-0"></div>
+                </div>
+                <div class="text-center">
+                  <p class="text-sm font-semibold text-gray-700">Generating care plan</p>
+                  <p class="text-xs text-gray-400 mt-1">Analysing risk factors and clinical parameters…</p>
+                </div>
+              </div>
+
+              <div id="careplan-results" class="hidden space-y-3">
+                <!-- Clinical Guidance -->
+                <div class="cp-block bg-emerald-50 border-emerald-100">
+                  <div class="cp-heading text-emerald-700">
+                    <span id="cp-label-guidance">Clinical Guidance</span>
+                    <button onclick="playTTS('careplan-txt-guidance')" class="listen-btn bg-emerald-100 text-emerald-700 border-emerald-200">
+                      🔊 <span id="cp-listen-label-1">Listen</span>
+                    </button>
+                  </div>
+                  <p id="careplan-txt-guidance" class="cp-body text-emerald-900">—</p>
+                </div>
+
+                <!-- Danger Signs -->
+                <div class="cp-block bg-red-50 border-red-100">
+                  <div class="cp-heading text-red-700">
+                    <span id="cp-label-redflags">Danger Signs</span>
+                    <button onclick="playTTS('careplan-txt-redflags')" class="listen-btn bg-red-100 text-red-700 border-red-200">
+                      🔊 <span id="cp-listen-label-2">Listen</span>
+                    </button>
+                  </div>
+                  <p id="careplan-txt-redflags" class="cp-body text-red-900">—</p>
+                </div>
+
+                <!-- Two-column row: Referral Urgency + Next Follow-up -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="cp-block bg-blue-50 border-blue-100">
+                    <div class="cp-heading text-blue-700"><span id="cp-label-urgency">Referral Urgency</span></div>
+                    <p id="careplan-referral-urgency" class="cp-body text-blue-900 font-semibold">—</p>
+                  </div>
+                  <div class="cp-block bg-gray-50 border-gray-200">
+                    <div class="cp-heading text-gray-600"><span id="cp-label-followup">Next Follow-up</span></div>
+                    <p id="careplan-followup-info" class="cp-body text-gray-800 font-semibold">—</p>
                   </div>
                 </div>
-                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <h4 class="text-xs font-bold text-red-800 uppercase tracking-wider">Emergency Red Flags (Symptom Trigger Alert)</h4>
-                      <p id="careplan-txt-redflags" class="text-sm text-red-900 mt-1">Danger limits.</p>
-                    </div>
-                    <button onclick="playTTS('careplan-txt-redflags')" class="text-sm bg-white p-1.5 rounded-lg border border-red-200 hover:bg-red-100">🔊 Play Audio</button>
-                  </div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                  <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider">Referral Urgency</h4>
-                  <p id="careplan-referral-urgency" class="text-sm text-blue-900 mt-1">—</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                  <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Follow-up Information</h4>
-                  <p id="careplan-followup-info" class="text-sm text-gray-700 mt-1">—</p>
+
+                <!-- Why This Risk Level -->
+                <div id="careplan-risk-explanation" class="hidden cp-block bg-amber-50 border-amber-100">
+                  <div class="cp-heading text-amber-700"><span id="cp-label-explanation">Why This Risk Level</span></div>
+                  <p id="careplan-risk-explanation-text" class="cp-body text-amber-900">—</p>
                 </div>
               </div>
             </div>
@@ -368,69 +684,69 @@
 
         <div id="anm-visit-form" class="app-view hidden space-y-6">
           <div>
-            <h2 class="text-2xl font-bold text-gray-800">Record Ante-Natal Care (ANC) Metrics</h2>
-            <p class="text-sm text-gray-500">Multimodal Input Layer: Manual, Computer Vision OCR Scanning, or Local Language Voice Synthesis</p>
+            <h2 class="text-2xl font-bold text-gray-800">Record ANC Visit</h2>
+            <p class="text-sm text-gray-500">Enter vitals manually, scan a lab report, or use voice input.</p>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 space-y-6">
-              
+
               <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
-                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">OCR Computer Vision Extraction Matrix</h4>
-                  <p class="text-xs text-gray-400 mt-0.5">Upload lab diagnostic printouts. Values extract directly into fields with manual nurse override.</p>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Scan Lab Report</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Upload a photo or PDF of the lab report. Values will be auto-filled.</p>
                   <p id="ocr-status-text" class="hidden text-xs mt-1.5 font-medium"></p>
                 </div>
                 <div class="shrink-0">
                   <input type="file" id="ocr-file-input" accept="image/*,.pdf" class="hidden" onchange="handleOCRFileSelected(event)">
                   <button type="button" id="ocr-scan-btn" onclick="document.getElementById('ocr-file-input').click()" class="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-indigo-700 transition flex items-center space-x-2">
-                    <span id="ocr-btn-icon">📷</span> <span id="ocr-btn-text">Scan printed Report</span>
+                    <span id="ocr-btn-icon">📷</span> <span id="ocr-btn-text">Scan Report</span>
                   </button>
                 </div>
               </div>
 
               <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
-                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">ASR Vocal Processing Component</h4>
-                  <p class="text-xs text-gray-400 mt-0.5">Speak clinical complications aloud in regional vernacular languages to auto-toggle structured logic fields.</p>
+                  <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Voice Input</h4>
+                  <p class="text-xs text-gray-400 mt-0.5">Speak symptoms in your local language. Risk fields will be toggled automatically.</p>
                 </div>
                 <button type="button" id="btn-voice-input" onclick="simulateVoiceTranscription()" class="bg-rose-600 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow hover:bg-rose-700 transition flex items-center space-x-2 shrink-0">
-                  <span id="voice-mic-icon">🎙️</span> <span id="voice-btn-text">Stream Complications Speech</span>
+                  <span id="voice-mic-icon">🎙️</span> <span id="voice-btn-text">Start Voice Input</span>
                 </button>
               </div>
 
               <form id="anc-visit-form" onsubmit="handleVisitSubmit(event)" class="space-y-4">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Cohort Patient</label>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Patient</label>
                   <select id="visit-patient-id" class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:outline-none focus:ring-1 focus:ring-emerald-700 text-sm">
                     </select>
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Hemoglobin Level (g/dL)</label>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Hemoglobin (g/dL)</label>
                     <input type="number" step="0.1" id="input-hb" required placeholder="e.g. 11.5" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
                   </div>
                   <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Systolic Blood Pressure (mmHg)</label>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Systolic BP (mmHg)</label>
                     <input type="number" id="input-systolic" required placeholder="e.g. 120" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
                   </div>
                   <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Random Blood Sugar (mg/dL)</label>
+                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Blood Sugar (mg/dL)</label>
                     <input type="number" id="input-sugar" required placeholder="e.g. 100" class="w-full px-4 py-2 border rounded-xl bg-white text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
                   </div>
                 </div>
 
                 <div class="space-y-2">
-                  <label class="block text-xs font-semibold text-gray-600 uppercase">Documented Subjective Complications</label>
+                  <label class="block text-xs font-semibold text-gray-600 uppercase">Symptoms</label>
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                     <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
                       <input type="checkbox" id="symptom-headache" class="rounded text-emerald-700 focus:ring-0">
-                      <span>Severe Chronic Headache</span>
+                      <span>Severe Headache</span>
                     </label>
                     <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
                       <input type="checkbox" id="symptom-vision" class="rounded text-emerald-700 focus:ring-0">
-                      <span>Blurred Vision Matrix</span>
+                      <span>Blurred Vision</span>
                     </label>
                     <label class="flex items-center space-x-2 p-3 bg-gray-50 border rounded-xl text-xs cursor-pointer hover:bg-gray-100">
                       <input type="checkbox" id="symptom-swelling" class="rounded text-emerald-700 focus:ring-0">
@@ -440,8 +756,8 @@
                 </div>
 
                 <div class="pt-4 border-t">
-                  <button type="submit" class="bg-cover text-white font-semibold px-6 py-3 rounded-xl shadow w-full hover:opacity-90 transition">
-                    Run Risk Classification Engine & Save Visit
+                  <button type="submit" id="visit-submit-btn" class="bg-cover text-white font-semibold px-6 py-3 rounded-xl shadow w-full hover:opacity-90 transition">
+                    Save Visit & Classify Risk
                   </button>
                 </div>
               </form>
@@ -449,22 +765,22 @@
 
             <div class="space-y-4">
               <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm sticky top-24">
-                <h3 class="font-bold text-gray-800 mb-3">Real-time AI Diagnostic Result</h3>
-                
+                <h3 class="font-bold text-gray-800 mb-3">Risk Assessment</h3>
+
                 <div id="ai-analysis-empty" class="text-center py-8 text-xs text-gray-400">
-                  Enter patient vital metrics or invoke multimodal OCR tools to process clinical stratification flags.
+                  Enter vitals above to see the risk classification.
                 </div>
 
                 <div id="ai-analysis-loading" class="hidden text-center py-8 space-y-2">
                   <div class="w-6 h-6 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                  <p class="text-xs text-gray-400">Processing Clinical Logic Rule Engine (/ai/analyze)...</p>
+                  <p class="text-xs text-gray-400">Analyzing vitals…</p>
                 </div>
 
                 <div id="ai-analysis-output" class="hidden space-y-4">
                   <div class="text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm shadow-inner" id="analysis-badge-target">
                     </div>
                   <div class="text-xs space-y-2 text-gray-600 bg-gray-50 p-3 rounded-xl border">
-                    <h4 class="font-bold text-gray-700">Algorithmic Explanations:</h4>
+                    <h4 class="font-bold text-gray-700">Why this classification:</h4>
                     <ul id="analysis-reasons-list" class="list-disc list-inside space-y-1 text-gray-600">
                       </ul>
                   </div>
@@ -475,22 +791,22 @@
           </div>
         </div>
 
-        <div id="anm-followups" class="app-view hidden space-y-4">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800">Operational Followup Scheduling</h2>
-            <p class="text-sm text-gray-500">Prioritized screening targets requiring immediate regional intervention nodes.</p>
+        <div id="anm-followups" class="app-view hidden space-y-5">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">Follow-up Schedule</h2>
+              <p class="text-sm text-gray-500">Priority patients sorted by risk level and visit overdue status.</p>
+            </div>
+            <span id="followup-count-badge" class="hidden text-xs font-bold bg-red-100 text-red-700 px-3 py-1.5 rounded-full"></span>
           </div>
-          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div class="p-4 bg-gray-50 font-semibold text-xs text-gray-500 uppercase tracking-wider">High Priority Action Queue</div>
-            <div class="divide-y divide-gray-100" id="followups-container-element">
-              </div>
+          <div id="followups-container-element" class="space-y-3">
           </div>
         </div>
 
         <div id="anm-heatmap" class="app-view hidden space-y-4">
           <div>
-            <h2 class="text-2xl font-bold text-gray-800">Spatiotemporal Village Risk Heatmap</h2>
-            <p class="text-sm text-gray-500">Visual epidemiology indicators showing geographic patient cluster vectors for risk targeting.</p>
+            <h2 class="text-2xl font-bold text-gray-800">Village Risk Map</h2>
+            <p class="text-sm text-gray-500">Geographic view of maternal risk by village. Red pins indicate high-risk patients.</p>
           </div>
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden flex flex-col justify-between" style="min-height: 400px;">
             <div class="absolute inset-0 bg-emerald-50 bg-opacity-30 flex flex-col items-center justify-center p-4 text-center">
@@ -507,71 +823,152 @@
 
         <div id="offline-sync" class="app-view hidden space-y-6">
           <div>
-            <h2 class="text-2xl font-bold text-gray-800">IndexedDB Local Cache & Synchronization Core</h2>
-            <p class="text-sm text-gray-500">System management terminal tracking edge computing storage performance metrics.</p>
+            <h2 class="text-2xl font-bold text-gray-800">Offline Sync</h2>
+            <p class="text-sm text-gray-500">Visits recorded without internet are stored locally and synced when you're back online.</p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <h3 class="font-bold text-gray-800">Queue Operational Telemetry</h3>
-              <div class="grid grid-cols-2 gap-4 text-center">
-                <div class="bg-gray-50 p-4 rounded-xl border">
-                  <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Unsynced Records</span>
-                  <span id="sync-telemetry-queued" class="text-4xl font-extrabold text-orange-600 block mt-1">0</span>
+              <h3 class="font-bold text-gray-800">Sync Status</h3>
+              <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="bg-gray-50 p-3 rounded-xl border">
+                  <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">Pending</span>
+                  <span id="sync-telemetry-queued" class="text-3xl font-extrabold text-orange-600 block mt-1">0</span>
+                  <span class="text-[10px] text-gray-400 block mt-0.5">records</span>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-xl border">
-                  <span class="text-xs text-gray-400 font-medium uppercase tracking-wider block">Database Health Status</span>
-                  <span class="text-sm font-bold text-emerald-700 block mt-3">OK (SQLite/IndexedDB Edge)</span>
+                <div class="bg-gray-50 p-3 rounded-xl border">
+                  <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">Connection</span>
+                  <span id="sync-connection-status" class="text-sm font-bold text-emerald-700 block mt-2.5">Online</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-xl border">
+                  <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider block">Last Sync</span>
+                  <span id="sync-last-time" class="text-xs font-semibold text-gray-700 block mt-2">Never</span>
                 </div>
               </div>
-              <button onclick="triggerManualSyncProcessing()" class="w-full bg-cover text-white font-semibold py-3 rounded-xl shadow-md hover:opacity-90 transition">
-                Force Transmission Synchronization Pipeline
+              <button onclick="triggerManualSyncProcessing()" id="sync-now-btn" class="w-full bg-cover text-white font-semibold py-3 rounded-xl shadow-md hover:opacity-90 transition">
+                Sync Now
               </button>
             </div>
-            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-xs space-y-2 text-gray-500">
-              <h4 class="font-bold text-gray-800 text-sm mb-1">Architecture Pipeline Logic Specs:</h4>
-              <p>1. When <code class="bg-gray-100 px-1 text-rose-600 font-mono">navigator.onLine === false</code>, the API switch toggles local query execution targets seamlessly.</p>
-              <p>2. Laboratory Scan OCR queries redirect automatically to highly optimized offline endpoints (<code class="bg-gray-100 px-1 text-rose-600 font-mono">/ai/ocr?offline=true</code>).</p>
-              <p>3. Dynamic records automatically log into IndexedDB local transaction tables, queued until safe cloud gateway authentication returns.</p>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-3 text-xs text-gray-600">
+              <h4 class="font-bold text-gray-800 text-sm">How offline sync works</h4>
+              <div class="flex gap-3 items-start">
+                <span class="shrink-0 w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">1</span>
+                <p>Visits recorded offline are saved locally to your device (IndexedDB).</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <span class="shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">2</span>
+                <p>When internet is restored, pending records sync automatically.</p>
+              </div>
+              <div class="flex gap-3 items-start">
+                <span class="shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">3</span>
+                <p>Use <strong>Sync Now</strong> to force an immediate upload.</p>
+              </div>
+              <div class="mt-2 pt-3 border-t border-gray-100 text-[10px] text-gray-400">
+                Data is stored per-device. Clear browser data removes unsynced records.
+              </div>
             </div>
           </div>
         </div>
 
         <div id="doc-dashboard" class="app-view hidden space-y-6">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800">Medical Officer District Command System</h2>
-            <p class="text-sm text-gray-500">Macro Level Overview: Referral distribution metrics and triage load tracking.</p>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Active Triage Referrals</span>
-              <span class="text-3xl font-bold text-gray-800 mt-1 block" id="doc-stat-active-referrals">—</span>
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">Hospital Operations</h2>
+              <p class="text-sm text-gray-500">Live referral load, risk distribution, and PHC-level oversight.</p>
             </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Admitted Status Tracker</span>
-              <span class="text-3xl font-bold text-emerald-700 mt-1 block">48</span>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Referral Acceptance Rate</span>
-              <span class="text-3xl font-bold text-indigo-700 mt-1 block">94%</span>
-            </div>
-            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Monitored PHC Sectors</span>
-              <span class="text-3xl font-bold text-gray-800 mt-1 block">8 States</span>
+            <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl">
+              <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+              <span class="text-xs font-semibold text-emerald-700">Live</span>
             </div>
           </div>
-          
-          <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 class="font-bold text-gray-800 mb-4">Risk Categorization Epidemiology</h3>
-            <div class="h-64 relative">
-              <canvas id="chart-doc-macro-distribution"></canvas>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500 kpi-card card-hover">
+              <div class="kpi-icon bg-red-50 text-red-500">🚨</div>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Pending Referrals</span>
+              <span class="text-3xl font-bold text-red-600 mt-1 block" id="doc-stat-active-referrals">—</span>
+              <span class="text-[10px] text-red-400 mt-1 block">awaiting action</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-emerald-500 kpi-card card-hover">
+              <div class="kpi-icon bg-emerald-50 text-emerald-600">🏥</div>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Admitted</span>
+              <span class="text-3xl font-bold text-emerald-700 mt-1 block" id="doc-stat-admitted">—</span>
+              <span class="text-[10px] text-gray-400 mt-1 block" id="doc-stat-acceptance-rate-sub">acceptance rate: —</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-amber-400 kpi-card card-hover">
+              <div class="kpi-icon bg-amber-50 text-amber-500">⏱</div>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">Avg. Wait Time</span>
+              <span class="text-3xl font-bold text-amber-600 mt-1 block" id="doc-stat-avg-wait">—</span>
+              <span class="text-[10px] text-gray-400 mt-1 block">per pending referral</span>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm kpi-card card-hover">
+              <div class="kpi-icon bg-blue-50 text-blue-500">📍</div>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider block">PHC Sectors</span>
+              <span class="text-3xl font-bold text-gray-800 mt-1 block" id="doc-stat-phc-sectors">—</span>
+              <span class="text-[10px] text-gray-400 mt-1 block">unique villages</span>
+            </div>
+          </div>
+
+          <!-- High-Risk Referrals Awaiting Action -->
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <div class="px-5 py-3 bg-gradient-to-r from-red-50 to-white border-b border-red-100 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-base">🚨</span>
+                <span class="text-xs font-bold text-red-800 uppercase tracking-wider">High-Risk Referrals — Awaiting Admission</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span id="doc-urgent-count" class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">0 pending</span>
+                <button onclick="switchView('doc-referrals')" class="text-[10px] font-semibold text-cover hover:underline">View all →</button>
+              </div>
+            </div>
+            <div id="doc-urgent-referrals-list" class="divide-y divide-gray-50 min-h-[60px]">
+              <div class="p-5 text-xs text-gray-400 text-center">Loading referral data…</div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
+              <h3 class="font-bold text-gray-800 mb-3">Patient Risk Distribution</h3>
+              <div id="doc-risk-bar-chart" class="space-y-3"></div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 class="font-bold text-gray-800 mb-4">Quick Actions</h3>
+              <div class="space-y-2">
+                <button onclick="switchView('doc-referrals')" class="w-full text-left p-3 text-xs font-semibold bg-red-50 hover:bg-red-100 rounded-xl transition flex items-center justify-between text-red-700">
+                  <span>🚨 View Referral Queue</span><span>→</span>
+                </button>
+                <button onclick="switchView('doc-qr-scanner')" class="w-full text-left p-3 text-xs font-semibold bg-gray-50 hover:bg-gray-100 rounded-xl transition flex items-center justify-between">
+                  <span>📷 Scan Patient QR</span><span>→</span>
+                </button>
+              </div>
+              <div class="mt-4 pt-4 border-t space-y-2">
+                <p class="text-[10px] font-bold text-gray-400 uppercase">Cohort Summary</p>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span>High Risk</span>
+                  <span class="font-bold text-gray-800" id="doc-risk-red-count">—</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>Moderate</span>
+                  <span class="font-bold text-gray-800" id="doc-risk-amber-count">—</span>
+                </div>
+                <div class="flex justify-between items-center text-xs">
+                  <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>Low Risk</span>
+                  <span class="font-bold text-gray-800" id="doc-risk-green-count">—</span>
+                </div>
+                <div class="flex justify-between items-center text-xs pt-1 border-t border-gray-100 mt-1">
+                  <span class="text-gray-500">Acceptance rate</span>
+                  <span class="font-bold text-gray-800" id="doc-stat-acceptance-rate">—</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div id="doc-referrals" class="app-view hidden space-y-4">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-800">Referral Triage Admission Control</h2>
-            <p class="text-sm text-gray-500">Incoming clinical escalations in SOAP diagnostic presentation syntax.</p>
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">Referral Queue</h2>
+              <p class="text-sm text-gray-500">Sorted by urgency. RED-risk patients flagged for immediate review. <span id="doc-sla-summary" class="font-medium text-amber-700"></span></p>
+            </div>
+            <button onclick="renderDoctorReferralQueue()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-semibold text-gray-600 transition">↻ Refresh</button>
           </div>
           <div class="space-y-4" id="doc-referrals-container">
             </div>
@@ -579,39 +976,43 @@
 
         <!-- ===== REFERRAL DETAILS PAGE /referrals/:id ===== -->
         <div id="doc-referral-detail" class="app-view hidden space-y-6">
-          <div class="flex items-center space-x-3">
-            <button onclick="switchView('doc-referrals')" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium flex items-center space-x-1">
-              <span>←</span><span>Back to Referrals</span>
+          <div class="flex items-center gap-3 flex-wrap">
+            <button onclick="switchView('doc-referrals')" class="text-xs bg-white border border-gray-200 hover:bg-gray-50 px-3 py-1.5 rounded-lg font-medium flex items-center gap-1.5 shadow-sm transition">
+              ← Back to Queue
             </button>
-            <h2 class="text-xl font-bold text-gray-800">Referral Details</h2>
-            <span id="ref-detail-status-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wider">PENDING</span>
+            <div class="flex items-center gap-3 flex-1">
+              <h2 class="text-xl font-bold text-gray-800">Referral Details</h2>
+              <span id="ref-detail-status-badge" class="status-badge status-pending uppercase">PENDING</span>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- LEFT: Patient + Hospital + Reason + Status -->
             <div class="lg:col-span-2 space-y-4">
               <!-- Patient Card -->
-              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="px-5 py-3 bg-gradient-to-r from-[#F5EDE3] to-white border-b border-gray-100 flex items-center space-x-2">
-                  <span class="text-base">🤰</span>
-                  <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Patient</span>
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden card-hover">
+                <div class="px-5 py-4 bg-gradient-to-r from-[#2E3030] to-[#3D4F4F] flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white bg-opacity-10 flex items-center justify-center text-xl">🤰</div>
+                    <div>
+                      <p class="text-[10px] font-semibold text-gray-300 uppercase tracking-wider">Referred Patient</p>
+                      <p id="ref-patient-name" class="font-bold text-white text-base mt-0.5">—</p>
+                    </div>
+                  </div>
+                  <div id="ref-patient-risk-badge"></div>
                 </div>
-                <div class="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Name</span>
-                    <span id="ref-patient-name" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
+                <div class="p-5 grid grid-cols-3 gap-4">
+                  <div class="text-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block mb-1">Age</span>
+                    <span id="ref-patient-age" class="font-bold text-gray-800 text-base block">—</span>
                   </div>
-                  <div>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Age</span>
-                    <span id="ref-patient-age" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
+                  <div class="text-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block mb-1">Gestation</span>
+                    <span id="ref-patient-week" class="font-bold text-gray-800 text-base block">—</span>
                   </div>
-                  <div>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Gestation</span>
-                    <span id="ref-patient-week" class="font-bold text-gray-800 text-sm block mt-0.5">—</span>
-                  </div>
-                  <div>
-                    <span class="text-[10px] text-gray-400 font-semibold uppercase block">Risk</span>
-                    <span id="ref-patient-risk" class="font-bold text-red-700 text-sm block mt-0.5">—</span>
+                  <div class="text-center p-3 bg-gray-50 rounded-xl">
+                    <span class="text-[10px] text-gray-400 font-semibold uppercase block mb-1">Risk Level</span>
+                    <span id="ref-patient-risk" class="font-bold text-red-700 text-base block">—</span>
                   </div>
                 </div>
               </div>
@@ -651,10 +1052,9 @@
               </div>
 
               <!-- Action Buttons -->
-              <div class="flex flex-wrap gap-3">
-                <button id="ref-btn-arrived" onclick="updateRefDetailStatus('ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-5 py-2.5 rounded-xl shadow hover:opacity-90 transition">✅ Confirm Patient Arrival</button>
-                <button id="ref-btn-admitted" onclick="updateRefDetailStatus('ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-emerald-50 transition">🏥 Log Inpatient Admission</button>
-                <button onclick="switchView('doc-referrals')" class="border border-gray-200 text-gray-500 text-xs font-semibold px-5 py-2.5 rounded-xl hover:bg-gray-50 transition">← Back to Queue</button>
+              <div class="flex flex-wrap gap-3 pt-2">
+                <button id="ref-btn-arrived" onclick="updateRefDetailStatus('ARRIVED')" class="bg-gray-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md hover:bg-gray-700 transition flex items-center gap-2">✅ Confirm Patient Arrival</button>
+                <button id="ref-btn-admitted" onclick="updateRefDetailStatus('ADMITTED')" class="bg-[#5C7E7E] text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-md hover:opacity-90 transition flex items-center gap-2">🏥 Log Inpatient Admission</button>
               </div>
             </div>
 
@@ -693,19 +1093,24 @@
 
         <div id="doc-qr-scanner" class="app-view hidden space-y-6">
           <div>
-            <h2 class="text-2xl font-bold text-gray-800">Triage Desk Patient Intake Scan Engine</h2>
-            <p class="text-sm text-gray-500">Scan digital token cards to instantly isolate incoming maternal risk files.</p>
+            <h2 class="text-2xl font-bold text-gray-800">Scan Patient QR</h2>
+            <p class="text-sm text-gray-500">Scan a patient's QR card at triage to instantly load their health record.</p>
           </div>
           <div class="max-w-md mx-auto bg-white p-6 rounded-2xl border border-gray-100 shadow-sm text-center space-y-4">
-            <div class="w-full h-64 bg-gray-900 rounded-xl relative flex flex-col items-center justify-center text-white border-4 border-dashed border-emerald-700 overflow-hidden">
-              <div class="absolute inset-x-0 top-1/2 h-0.5 bg-red-500 shadow animate-bounce"></div>
-              <span class="text-xs text-gray-400 tracking-wider">[ Camera Stream Active Target Node ]</span>
+            <div class="w-full h-56 bg-gray-900 rounded-xl relative flex flex-col items-center justify-center text-white border-2 border-cover overflow-hidden">
+              <div class="absolute inset-x-0 top-1/2 h-0.5 bg-red-400 shadow animate-bounce"></div>
+              <div class="text-center space-y-2">
+                <div class="text-3xl">📷</div>
+                <p class="text-xs text-gray-400">Camera preview will appear here</p>
+                <p class="text-[10px] text-gray-500">Position QR code within frame</p>
+              </div>
             </div>
-            <div class="text-xs font-bold text-gray-400 uppercase">OR MANUALLY KEY PATIENT TOKEN</div>
+            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Or enter token manually</div>
             <div class="flex space-x-2">
-              <input type="text" id="manual-token-input" placeholder="Enter patient QR token (UUID)" class="flex-1 px-4 py-2 border rounded-xl text-center font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
-              <button onclick="handleManualTokenIntakeSearch()" class="bg-gray-800 text-white text-xs font-semibold px-4 rounded-xl">Ingest Token</button>
+              <input type="text" id="manual-token-input" placeholder="Patient QR token (UUID)" class="flex-1 px-4 py-2 border rounded-xl text-center font-mono text-sm focus:outline-none focus:ring-1 focus:ring-emerald-700">
+              <button onclick="handleManualTokenIntakeSearch()" class="bg-cover text-white text-xs font-semibold px-4 rounded-xl hover:opacity-90">Search</button>
             </div>
+            <p class="text-[10px] text-gray-400">The patient's health record will open automatically after scanning.</p>
           </div>
         </div>
 
@@ -716,40 +1121,78 @@
   <div id="modal-register-mother" class="hidden fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border space-y-4">
       <div class="flex justify-between items-center border-b pb-2">
-        <h3 class="text-lg font-bold text-gray-800">Register New Maternal Profile Record</h3>
+        <h3 class="text-lg font-bold text-gray-800">Register New Mother</h3>
         <button onclick="closeRegistrationModal()" class="text-gray-400 hover:text-gray-800 text-xl font-bold">×</button>
       </div>
       <form id="form-new-mother" onsubmit="handleCreateMotherProfile(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Full Identity Name</label>
-          <input type="text" id="reg-name" required placeholder="e.g. Laxmi Devi" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Full Name</label>
+          <input type="text" id="reg-name" required placeholder="e.g. Laxmi Devi" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Age (Years)</label>
-            <input type="number" id="reg-age" required placeholder="e.g. 24" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Age</label>
+            <input type="number" id="reg-age" required placeholder="e.g. 24" min="14" max="55" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Gestation Month</label>
-            <input type="number" min="1" max="9" id="reg-month" required placeholder="1-9" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Month of Pregnancy</label>
+            <input type="number" min="1" max="9" id="reg-month" required placeholder="1–9" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
           </div>
         </div>
         <div>
           <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Village / Block</label>
-          <input type="text" id="reg-village" required placeholder="e.g. Vellore PHC" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          <input type="text" id="reg-village" required placeholder="e.g. Kovilpatti" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Mobile Contact String</label>
-          <input type="text" id="reg-phone" required placeholder="e.g. 9876543210" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none">
+          <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Phone Number</label>
+          <input type="text" id="reg-phone" required placeholder="e.g. 9876543210" class="w-full px-3 py-2 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-emerald-700">
         </div>
-        <button type="submit" class="w-full bg-cover text-white font-bold py-2.5 rounded-xl text-xs mt-2 shadow shadow-md hover:opacity-90">
-          Commit Record Set to System
+        <div id="modal-form-status" class="hidden text-xs px-3 py-2 rounded-lg"></div>
+        <button type="submit" id="modal-submit-btn" class="w-full bg-cover text-white font-bold py-2.5 rounded-xl text-xs mt-2 shadow hover:opacity-90 transition">
+          Register Mother
         </button>
       </form>
     </div>
   </div>
 
+  <div id="toast-container"></div>
+
   <script>
+    // ── Toast Notification System ──
+    function showToast(type, title, message, duration = 3800) {
+      const container = document.getElementById('toast-container');
+      const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || 'ℹ'}</span>
+        <div class="toast-body">
+          ${title ? `<div class="toast-title">${title}</div>` : ''}
+          <div class="toast-msg">${message}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => { requestAnimationFrame(() => toast.classList.add('show')); });
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, duration);
+    }
+
+    // ── Time ago helper ──
+    function timeAgo(dateStr) {
+      if (!dateStr) return '—';
+      const diff = Date.now() - new Date(dateStr).getTime();
+      if (diff < 0) return 'just now';
+      const mins = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(hours / 24);
+      if (days > 0) return `${days}d ${hours % 24}h ago`;
+      if (hours > 0) return `${hours}h ${mins % 60}m ago`;
+      if (mins > 0) return `${mins}m ago`;
+      return 'just now';
+    }
+
     // ── IndexedDB Offline Queue ──
     let _idb = null;
 
@@ -821,31 +1264,60 @@
       _qrDataUrl: null,
       _qrToken: null,
       lastAnalysis: null,
-      lastCarePlanFallbackEn: null
+      lastCarePlanFallbackEn: null,
+      lastCarePlanResult: null,
+      lastCarePlanGeneratedAt: null,
+      lastSyncTime: null
     };
     async function loadPatients() {
-  try {
-    const patients = await apiRequest('/patients');
-    if (!patients) return;
+      const listEl = document.getElementById('registry-patient-list');
+      if (listEl) {
+        listEl.innerHTML = Array(4).fill(`
+          <div class="reg-skeleton-row">
+            <div class="skeleton w-10 h-10 rounded-full shrink-0"></div>
+            <div class="flex-1 space-y-2">
+              <div class="skeleton h-4 w-40 rounded"></div>
+              <div class="skeleton h-3 w-56 rounded"></div>
+            </div>
+            <div class="skeleton h-5 w-16 rounded-full shrink-0"></div>
+            <div class="flex gap-2 shrink-0">
+              <div class="skeleton w-8 h-8 rounded-lg"></div>
+              <div class="skeleton w-8 h-8 rounded-lg"></div>
+            </div>
+          </div>`).join('');
+      }
+      try {
+        const patients = await apiRequest('/patients');
+        if (!patients) return;
 
-    appState.mothers = patients.map(p => ({
-      id: p.id,
-      name: p.name,
-      age: p.age,
-      week: p.pregnancy_month ? p.pregnancy_month * 4 : null,
-      month: p.pregnancy_month,
-      village: p.village,
-      phone: p.phone,
-      risk: p.current_risk,
-      token: p.qr_token,
-      next_visit_date: p.next_visit_date
-    }));
+        appState.mothers = patients.map(p => ({
+          id: p.id,
+          name: p.name,
+          age: p.age,
+          week: p.pregnancy_month ? p.pregnancy_month * 4 : null,
+          month: p.pregnancy_month,
+          village: p.village,
+          phone: p.phone,
+          risk: p.current_risk,
+          token: p.qr_token,
+          next_visit_date: p.next_visit_date,
+          created_at: p.created_at
+        }));
 
-    renderMotherRegistry();
-  } catch (err) {
-    console.error('Failed loading patients:', err);
-  }
-}
+        renderMotherRegistry();
+      } catch (err) {
+        console.error('Failed loading patients:', err);
+        if (listEl) {
+          listEl.innerHTML = `
+            <div class="reg-empty">
+              <div class="reg-empty-icon">⚠️</div>
+              <p class="reg-empty-title">Could not load patients</p>
+              <p class="reg-empty-sub">Check your connection and try again.</p>
+              <button onclick="loadPatients()" class="bg-[#5C7E7E] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition">Retry</button>
+            </div>`;
+        }
+      }
+    }
 
     async function loadHospitals() {
       try {
@@ -916,6 +1388,8 @@
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
 
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Signing in…'; }
       try {
         const response = await apiRequest('/auth/login', {
           method: 'POST',
@@ -936,6 +1410,10 @@
         const badge = document.getElementById('user-role-badge');
         badge.textContent = `${selectedRole} Portal`;
 
+        // Display user email in header
+        const headerName = document.getElementById('header-user-name');
+        if (headerName) headerName.textContent = email.split('@')[0];
+
         if (selectedRole === 'ANM') {
           document.getElementById('nav-anm').classList.remove('hidden');
           document.getElementById('nav-doctor').classList.add('hidden');
@@ -946,7 +1424,9 @@
           switchView('doc-dashboard');
         }
       } catch (error) {
-        alert(error.message || 'Unable to sign in.');
+        showToast('error', 'Sign In Failed', error.message || 'Unable to sign in. Please check your credentials.');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Authenticate & Enter Dashboard'; }
       }
     }
 
@@ -964,19 +1444,20 @@
       const banner = document.getElementById('offline-banner');
 
       if (appState.isOnline) {
-        btn.textContent = 'Online Mode';
+        btn.textContent = 'Online';
         btn.className = 'text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg';
         banner.classList.add('hidden');
         queueGetAll().then(q => {
           if (q.length > 0) {
-            alert(`Network restored. Transmitting ${q.length} queued record(s) to PHC Hub.`);
+            showToast('info', 'Back Online', `Syncing ${q.length} queued record${q.length !== 1 ? 's' : ''}…`);
             triggerManualSyncProcessing();
           }
         }).catch(() => {});
       } else {
-        btn.textContent = 'Offline Mode Active';
+        btn.textContent = 'Offline';
         btn.className = 'text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg';
         banner.classList.remove('hidden');
+        showToast('warning', 'Offline Mode', 'Visits will be saved locally and synced when you reconnect.');
       }
     }
 
@@ -987,91 +1468,367 @@
       const alertContainer = document.getElementById('dashboard-alerts-list');
       alertContainer.innerHTML = '';
 
-      const redMothers = appState.mothers.filter(m => m.risk === 'RED');
+      const redMothers   = appState.mothers.filter(m => m.risk === 'RED');
       const amberMothers = appState.mothers.filter(m => m.risk === 'AMBER');
 
       document.getElementById('stat-total-mothers').textContent = appState.mothers.length;
-      document.getElementById('stat-red-mothers').textContent = redMothers.length;
+      document.getElementById('stat-red-mothers').textContent   = redMothers.length;
       const amberEl = document.getElementById('stat-amber-mothers');
       if (amberEl) amberEl.textContent = amberMothers.length;
 
+      // Update notification badge with high-risk count
+      const badge = document.getElementById('notif-badge');
+      if (badge) {
+        const alertCount = redMothers.length;
+        if (alertCount > 0) {
+          badge.textContent = alertCount;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
+        }
+      }
+
       if (redMothers.length === 0) {
-        alertContainer.innerHTML = `<div class="text-xs text-gray-400 py-4 text-center">No high-risk patients currently registered.</div>`;
+        alertContainer.innerHTML = `
+          <div class="empty-state" style="padding: 24px;">
+            <div class="empty-state-icon">✅</div>
+            <p class="empty-state-title">No high-risk patients</p>
+            <p class="empty-state-sub">All registered mothers are currently low or moderate risk.</p>
+          </div>`;
         return;
       }
 
       redMothers.forEach(m => {
         const item = document.createElement('div');
-        item.className = "flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-xl text-xs";
+        item.className = "flex items-center justify-between gap-3 p-3.5 bg-red-50 border border-red-100 rounded-xl card-hover";
         const weekInfo = m.week ? ` · Week ${m.week}` : '';
-        const visitInfo = m.next_visit_date ? `Next visit: ${m.next_visit_date}` : 'No visit scheduled';
+        const now = new Date();
+        let visitInfo = 'No visit scheduled';
+        if (m.next_visit_date) {
+          const d = new Date(m.next_visit_date);
+          const diff = Math.ceil((d - now) / 86400000);
+          visitInfo = diff < 0 ? `Overdue by ${Math.abs(diff)} day${Math.abs(diff) !== 1 ? 's' : ''}` : diff === 0 ? 'Due today' : `Next: ${d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
+        }
         item.innerHTML = `
-          <div>
-            <span class="font-bold text-gray-800">${m.name} (Age ${m.age})${weekInfo}</span>
-            <p class="text-red-700 mt-0.5 font-medium">${visitInfo}</p>
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div class="w-8 h-8 rounded-full bg-red-200 text-red-800 flex items-center justify-center text-xs font-bold shrink-0">${m.name.charAt(0)}</div>
+            <div>
+              <span class="font-bold text-gray-800 text-xs block">${m.name}${weekInfo ? ` — ${weekInfo.trim()}` : ''}</span>
+              <span class="text-red-700 text-[10px] font-semibold">${visitInfo}</span>
+            </div>
           </div>
-          <button onclick='viewPatientProfile("${m.id}")' class="bg-white border border-red-200 text-red-700 px-3 py-1 rounded-lg font-semibold hover:bg-red-100 transition">View Profile</button>
+          <button onclick='viewPatientProfile("${m.id}")' class="shrink-0 bg-red-600 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg hover:bg-red-700 transition">Review →</button>
         `;
         alertContainer.appendChild(item);
       });
     }
 
-    function renderMotherRegistry() {
-      const tbody = document.getElementById('registry-table-body');
-      tbody.innerHTML = '';
+    function animateCount(id, target) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = parseInt(el.textContent) || 0;
+      if (start === target) { el.textContent = target; return; }
+      const dur = 500;
+      const startTime = performance.now();
+      function tick(now) {
+        const p = Math.min((now - startTime) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(start + (target - start) * ease);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(tick);
+    }
 
-      // Populate village filter dynamically from actual patient data
+    function renderMotherRegistry() {
+      // Derive counts directly from appState — single source of truth
+      const total      = appState.mothers.length;
+      const redCount   = appState.mothers.filter(m => m.risk === 'RED').length;
+      const amberCount = appState.mothers.filter(m => m.risk === 'AMBER').length;
+      const greenCount = appState.mothers.filter(m => m.risk === 'GREEN').length;
+
+      // Registry-specific stat cards (unique IDs — no collision with ANM dashboard)
+      animateCount('reg-total-mothers', total);
+      animateCount('reg-red-mothers',   redCount);
+      animateCount('reg-amber-mothers', amberCount);
+      animateCount('reg-green-mothers', greenCount);
+
+      const setEl = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+      setEl('reg-total-display', total);
+
+      // Notification badge (also used by ANM dashboard)
+      const badge = document.getElementById('notif-badge');
+      if (badge) {
+        if (redCount > 0) { badge.textContent = redCount; badge.classList.remove('hidden'); }
+        else badge.classList.add('hidden');
+      }
+
+      // Populate village filter
       const villageSelect = document.getElementById('filter-village');
       if (villageSelect) {
-        const currentVillage = villageSelect.value;
+        const cur = villageSelect.value;
         const villages = [...new Set(appState.mothers.map(m => m.village).filter(Boolean))].sort();
-        villageSelect.innerHTML = '<option value="ALL">All Villages</option>';
+        villageSelect.innerHTML = '<option value="ALL">📍 All Villages</option>';
         villages.forEach(v => {
           const opt = document.createElement('option');
-          opt.value = v;
-          opt.textContent = v;
-          if (v === currentVillage) opt.selected = true;
+          opt.value = v; opt.textContent = v;
+          if (v === cur) opt.selected = true;
           villageSelect.appendChild(opt);
         });
       }
 
-      const villageFilter = villageSelect?.value || 'ALL';
-      const riskFilter = document.getElementById('filter-risk')?.value || 'ALL';
-
-      const filtered = appState.mothers.filter(m => {
-        if (villageFilter !== 'ALL' && m.village !== villageFilter) return false;
-        if (riskFilter !== 'ALL' && m.risk !== riskFilter) return false;
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-xs text-gray-400">${appState.mothers.length === 0 ? 'No patients registered yet.' : 'No patients match the selected filters.'}</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(m => {
-        const badgeColor = m.risk === 'RED' ? 'bg-red-100 text-red-800' : (m.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-gray-50 transition";
-        tr.innerHTML = `
-          <td class="p-4">
-            <span class="font-bold text-gray-800 block">${m.name}</span>
-            <span class="text-xs text-gray-400">Token: ${m.token || '—'} · Age ${m.age}</span>
-          </td>
-          <td class="p-4 text-gray-600 font-medium">${m.village || '—'}</td>
-          <td class="p-4"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${badgeColor}">${m.risk || 'UNKNOWN'} RISK</span></td>
-          <td class="p-4 font-medium text-gray-600">${m.week ? 'Week ' + m.week : '—'} <span class="text-xs text-gray-400 block">${m.month ? 'Month ' + m.month : ''}</span></td>
-          <td class="p-4 text-right">
-            <button onclick='viewPatientProfile("${m.id}")' class="text-xs bg-cream text-cover font-bold px-3 py-1.5 rounded-lg border border-rug hover:bg-opacity-50">Profile Workspace</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+      applyRegistryFilters();
+      renderRegistryInsights();
     }
 
     function applyRegistryFilters() {
-      // Dynamic logic hooks can integrate with filters here
-      renderMotherRegistry();
+      const listEl = document.getElementById('registry-patient-list');
+      if (!listEl) return;
+
+      const searchTerm   = (document.getElementById('registry-search')?.value || '').toLowerCase().trim();
+      const villageFilter = document.getElementById('filter-village')?.value || 'ALL';
+      const riskFilter   = document.getElementById('filter-risk')?.value || 'ALL';
+      const sortBy       = document.getElementById('registry-sort')?.value || 'risk';
+
+      // Toggle clear button
+      const clearBtn = document.getElementById('registry-search-clear');
+      if (clearBtn) clearBtn.classList.toggle('hidden', !searchTerm);
+
+      let filtered = appState.mothers.filter(m => {
+        if (villageFilter !== 'ALL' && m.village !== villageFilter) return false;
+        if (riskFilter !== 'ALL' && m.risk !== riskFilter) return false;
+        if (searchTerm) {
+          const hits = [m.name, m.village, m.phone, m.token].filter(Boolean).join(' ').toLowerCase();
+          if (!hits.includes(searchTerm)) return false;
+        }
+        return true;
+      });
+
+      // Sort
+      const riskOrder = { RED: 0, AMBER: 1, GREEN: 2 };
+      if (sortBy === 'risk') {
+        filtered.sort((a, b) => (riskOrder[a.risk] ?? 3) - (riskOrder[b.risk] ?? 3));
+      } else if (sortBy === 'name') {
+        filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+      } else if (sortBy === 'due') {
+        filtered.sort((a, b) => {
+          if (!a.next_visit_date) return 1;
+          if (!b.next_visit_date) return -1;
+          return new Date(a.next_visit_date) - new Date(b.next_visit_date);
+        });
+      } else if (sortBy === 'week') {
+        filtered.sort((a, b) => (b.week || 0) - (a.week || 0));
+      }
+
+      // Update count label
+      const countLabel = document.getElementById('registry-count-label');
+      if (countLabel) {
+        const isFiltered = searchTerm || villageFilter !== 'ALL' || riskFilter !== 'ALL';
+        countLabel.textContent = isFiltered
+          ? `${filtered.length} of ${appState.mothers.length} patients`
+          : `${appState.mothers.length} patient${appState.mothers.length !== 1 ? 's' : ''}`;
+      }
+
+      listEl.innerHTML = '';
+
+      if (filtered.length === 0) {
+        const isEmpty = appState.mothers.length === 0;
+        listEl.innerHTML = `
+          <div class="reg-empty">
+            <div class="reg-empty-icon">${isEmpty ? '🤰' : '🔍'}</div>
+            <p class="reg-empty-title">${isEmpty ? 'No mothers registered yet' : 'No patients match'}</p>
+            <p class="reg-empty-sub">${isEmpty
+              ? 'Start building your patient registry by registering the first mother in your PHC sector.'
+              : 'Try adjusting your search term or clearing the filters.'}</p>
+            ${isEmpty
+              ? `<button onclick="openRegistrationModal()" class="bg-[#5C7E7E] text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition">+ Register First Mother</button>`
+              : `<button onclick="clearRegistrySearch()" class="bg-gray-100 text-gray-700 px-5 py-2 rounded-xl text-sm font-semibold hover:bg-gray-200 transition">Clear Filters</button>`}
+          </div>`;
+        return;
+      }
+
+      const now = new Date();
+
+      filtered.forEach(m => {
+        const pillClass = m.risk === 'RED' ? 'risk-pill risk-pill-red' : m.risk === 'AMBER' ? 'risk-pill risk-pill-amber' : 'risk-pill risk-pill-green';
+        const borderClass = m.risk === 'RED' ? 'risk-red' : m.risk === 'AMBER' ? 'risk-amber' : 'risk-green';
+        const avatarBg = m.risk === 'RED' ? '#C96B5A' : m.risk === 'AMBER' ? '#E8B882' : '#8FB5A8';
+
+        let nextVisitText = '—';
+        let nextVisitClass = 'text-gray-400';
+        if (m.next_visit_date) {
+          const d = new Date(m.next_visit_date);
+          const diff = Math.ceil((d - now) / 86400000);
+          if (diff < 0) {
+            nextVisitText = `${Math.abs(diff)}d overdue`;
+            nextVisitClass = 'text-red-600 font-bold';
+          } else if (diff === 0) {
+            nextVisitText = 'Today';
+            nextVisitClass = 'text-amber-600 font-bold';
+          } else if (diff <= 7) {
+            nextVisitText = `In ${diff}d`;
+            nextVisitClass = 'text-amber-500 font-semibold';
+          } else {
+            nextVisitText = new Date(m.next_visit_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            nextVisitClass = 'text-gray-500';
+          }
+        }
+
+        const gestation = m.week ? `Wk ${m.week}` : m.month ? `Mo ${m.month}` : '—';
+        const tokenShort = m.token ? m.token.slice(0, 8) + '…' : '—';
+
+        const card = document.createElement('div');
+        card.className = `reg-card-row ${borderClass}`;
+        card.innerHTML = `
+          <div class="p-4 flex items-center gap-4">
+            <!-- Avatar -->
+            <div class="reg-avatar shrink-0" style="background:${avatarBg}" onclick="viewPatientProfile('${m.id}')">${m.name.charAt(0).toUpperCase()}</div>
+
+            <!-- Name + meta (clickable) -->
+            <div class="flex-1 min-w-0 cursor-pointer" onclick="viewPatientProfile('${m.id}')">
+              <div class="flex items-center gap-2 flex-wrap mb-0.5">
+                <span class="font-bold text-gray-900 text-sm">${m.name}</span>
+                <span class="${pillClass}">● ${m.risk}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 flex-wrap">
+                <span>Age ${m.age || '—'}</span>
+                <span class="text-gray-200">|</span>
+                <span>📍 ${m.village || '—'}</span>
+                <span class="text-gray-200">|</span>
+                <span>🤰 ${gestation}</span>
+                <span class="hidden sm:inline text-gray-200">|</span>
+                <span class="hidden sm:inline font-mono">${tokenShort}</span>
+              </div>
+            </div>
+
+            <!-- Next visit (md+) -->
+            <div class="hidden lg:block text-right shrink-0 min-w-[72px]">
+              <div class="text-[9px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Next Visit</div>
+              <div class="text-xs font-semibold ${nextVisitClass}">${nextVisitText}</div>
+            </div>
+
+            <!-- Quick action buttons -->
+            <div class="flex items-center gap-1.5 shrink-0" onclick="event.stopPropagation()">
+              <button onclick="viewPatientProfile('${m.id}')" title="View Profile"
+                class="qa-btn bg-[#F5EDE3] text-[#5C7E7E] border-[#D8C9BA] hover:bg-[#5C7E7E] hover:text-white hover:border-[#5C7E7E]">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              </button>
+              <button onclick="openCarePlanForPatient('${m.id}')" title="Generate Care Plan"
+                class="qa-btn bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-600 hover:text-white hover:border-emerald-600">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              </button>
+              <button onclick="viewPatientProfile('${m.id}', 'qr')" title="QR Card"
+                class="hidden sm:flex qa-btn bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-800 hover:text-white hover:border-gray-800">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9V5a2 2 0 012-2h4M3 15v4a2 2 0 002 2h4M15 3h4a2 2 0 012 2v4M15 21h4a2 2 0 002-2v-4M9 9h.01M15 9h.01M9 15h.01M15 15h.01M12 12h.01"/></svg>
+              </button>
+            </div>
+          </div>`;
+        listEl.appendChild(card);
+      });
+    }
+
+    function clearRegistrySearch() {
+      const el = document.getElementById('registry-search');
+      if (el) el.value = '';
+      applyRegistryFilters();
+    }
+
+    function openCarePlanForPatient(patientId) {
+      viewPatientProfile(patientId, 'careplan');
+    }
+
+    function renderRegistryInsights() {
+      const body = document.getElementById('registry-insights-body');
+      if (!body) return;
+      body.innerHTML = '';
+      const now = new Date();
+
+      // Section 1: High-risk villages
+      const redByVillage = {};
+      appState.mothers.filter(m => m.risk === 'RED').forEach(m => {
+        if (m.village) redByVillage[m.village] = (redByVillage[m.village] || 0) + 1;
+      });
+      const topVillages = Object.entries(redByVillage).sort(([,a],[,b]) => b - a).slice(0, 3);
+
+      // Section 2: Due this week
+      const upcoming = appState.mothers.filter(m => {
+        if (!m.next_visit_date) return false;
+        const d = Math.ceil((new Date(m.next_visit_date) - now) / 86400000);
+        return d >= 0 && d <= 7;
+      }).slice(0, 4);
+
+      // Section 3: Overdue count
+      const overdue = appState.mothers.filter(m => m.next_visit_date && new Date(m.next_visit_date) < now);
+
+      // Section 4: Recent registrations (highest ID = newest)
+      const recent = [...appState.mothers].sort((a,b) => b.id - a.id).slice(0, 3);
+
+      const sections = [
+        {
+          title: '🔴 High Risk Villages',
+          html: topVillages.length > 0
+            ? topVillages.map(([v, n]) => `
+                <div class="insight-item">
+                  <span class="text-xs font-semibold text-gray-700">📍 ${v}</span>
+                  <span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100">${n} RED</span>
+                </div>`).join('')
+            : '<p class="text-xs text-gray-400 py-2 text-center">All clear ✓</p>'
+        },
+        {
+          title: '📅 Due This Week',
+          html: upcoming.length > 0
+            ? upcoming.map(m => {
+                const diff = Math.ceil((new Date(m.next_visit_date) - now) / 86400000);
+                const label = diff === 0 ? 'Today' : `${diff}d`;
+                const bg = diff === 0 ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-blue-50 text-blue-600 border-blue-100';
+                return `
+                  <div class="insight-item cursor-pointer" onclick="viewPatientProfile('${m.id}')">
+                    <div>
+                      <p class="text-xs font-semibold text-gray-800">${m.name}</p>
+                      <p class="text-[10px] text-gray-400">${m.village || '—'}</p>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${bg}">${label}</span>
+                  </div>`;}).join('')
+            : '<p class="text-xs text-gray-400 py-2 text-center">No visits due this week</p>'
+        },
+        {
+          title: '⚠️ Missed Follow-Ups',
+          html: overdue.length > 0
+            ? `<div class="insight-item cursor-pointer" onclick="switchView('anm-followups')">
+                 <div>
+                   <p class="text-xs font-semibold text-gray-800">${overdue.length} patient${overdue.length !== 1 ? 's' : ''} overdue</p>
+                   <p class="text-[10px] text-gray-400">Click to review</p>
+                 </div>
+                 <span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100">Review →</span>
+               </div>`
+            : '<p class="text-xs text-gray-400 py-2 text-center">No missed follow-ups ✓</p>'
+        },
+        {
+          title: '✨ Recently Added',
+          html: recent.length > 0
+            ? recent.map(m => {
+                const avatarBg = m.risk === 'RED' ? '#C96B5A' : m.risk === 'AMBER' ? '#E8B882' : '#8FB5A8';
+                return `
+                  <div class="insight-item cursor-pointer" onclick="viewPatientProfile('${m.id}')">
+                    <div class="flex items-center gap-2">
+                      <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0" style="background:${avatarBg}">${m.name.charAt(0)}</div>
+                      <div>
+                        <p class="text-xs font-semibold text-gray-800">${m.name}</p>
+                        <p class="text-[10px] text-gray-400">${m.village || '—'}</p>
+                      </div>
+                    </div>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </div>`;}).join('')
+            : '<p class="text-xs text-gray-400 py-2 text-center">No patients registered yet</p>'
+        }
+      ];
+
+      sections.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'insight-section';
+        div.innerHTML = `<div class="insight-section-title">${s.title}</div><div>${s.html}</div>`;
+        body.appendChild(div);
+      });
     }
 
     function initializeVisitFormOptions() {
@@ -1086,7 +1843,7 @@
     }
 
     // Profile Screen Workspace Navigation & Rendering Logic
-    async function viewPatientProfile(id) {
+    async function viewPatientProfile(id, tab) {
       const fallbackMother = appState.mothers.find(m => String(m.id) === String(id));
       if (!fallbackMother) return;
 
@@ -1102,12 +1859,42 @@
         const badgeColor = m.risk === 'RED' ? 'bg-red-100 text-red-800' : (m.risk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
         document.getElementById('profile-risk-badge').innerHTML = `<span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">${m.risk ?? 'UNKNOWN'} RISK</span>`;
 
-        const nextVisit = m.next_visit_date ? `Next visit: ${m.next_visit_date}` : 'No upcoming visit scheduled';
+        const riskTextColor = m.risk === 'RED' ? 'text-red-700' : m.risk === 'AMBER' ? 'text-amber-700' : 'text-green-700';
+        let visitDisplay = 'Not scheduled';
+        let visitDateClass = 'text-red-500 font-semibold';
+        if (m.next_visit_date) {
+          const d = new Date(m.next_visit_date);
+          const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+          if (diffDays < 0) {
+            visitDisplay = `Overdue by ${Math.abs(diffDays)} day${Math.abs(diffDays) !== 1 ? 's' : ''}`;
+            visitDateClass = 'text-red-700 font-bold';
+          } else if (diffDays === 0) {
+            visitDisplay = 'Due today';
+            visitDateClass = 'text-amber-700 font-bold';
+          } else {
+            visitDisplay = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' });
+            visitDateClass = 'text-gray-800';
+          }
+        }
         document.getElementById('profile-clinical-status-block').innerHTML = `
-          <p class="text-xs"><strong>Phone:</strong> ${m.phone || '—'}</p>
-          <p class="text-xs"><strong>Pregnancy Month:</strong> ${m.month ?? '—'}</p>
-          <p class="text-xs"><strong>Risk Level:</strong> ${m.risk ?? '—'}</p>
-          <p class="mt-2 bg-gray-50 p-2.5 rounded-lg border text-gray-600 italic text-xs">${nextVisit}</p>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Phone</label>
+              ${m.phone ? `<a href="tel:${m.phone}" class="text-sm font-semibold text-cover hover:underline">${m.phone}</a>` : '<span class="text-sm text-gray-400">—</span>'}
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Pregnancy</label>
+              <span class="text-sm font-semibold text-gray-800">${m.month ? `Month ${m.month}` : (m.week ? `Week ${m.week}` : '—')}</span>
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Risk Level</label>
+              <span class="text-sm font-bold ${riskTextColor}">${m.risk ?? '—'}</span>
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Next Visit</label>
+              <span class="text-sm ${visitDateClass}">${visitDisplay}</span>
+            </div>
+          </div>
         `;
       }
 
@@ -1157,7 +1944,7 @@
       }
 
       switchView('anm-patient-profile');
-      switchProfileTab('overview');
+      switchProfileTab(tab || 'overview');
       buildPatientTrendCharts();
     }
 
@@ -1184,34 +1971,114 @@
       }
     }
 
-    // Render longitudinal dynamic charts via Chart.js component frameworks
-    function buildPatientTrendCharts() {
-      // Clear existing contexts safely to enable canvas rewriting
-      if(appState.charts.hb) appState.charts.hb.destroy();
-      if(appState.charts.bp) appState.charts.bp.destroy();
-      
+    // Render longitudinal trend charts from real visit data
+    async function buildPatientTrendCharts() {
+      if (appState.charts.hb) appState.charts.hb.destroy();
+      if (appState.charts.bp) appState.charts.bp.destroy();
+
+      const loadingEl  = document.getElementById('history-charts-loading');
+      const emptyEl    = document.getElementById('history-charts-empty');
+      const chartsGrid = document.getElementById('history-charts-grid');
+
+      if (loadingEl)  loadingEl.classList.remove('hidden');
+      if (emptyEl)    emptyEl.classList.add('hidden');
+      if (chartsGrid) chartsGrid.classList.add('hidden');
+
+      let visits = [];
+      if (appState.activeProfileId) {
+        try {
+          const data = await apiRequest(`/visits/patient/${appState.activeProfileId}`);
+          visits = Array.isArray(data)
+            ? [...data].sort((a, b) => new Date(a.visit_date) - new Date(b.visit_date))
+            : [];
+        } catch (err) {
+          console.warn('Failed to load visit history for charts:', err.message);
+        }
+      }
+
+      if (loadingEl) loadingEl.classList.add('hidden');
+
+      if (visits.length === 0) {
+        if (emptyEl)    emptyEl.classList.remove('hidden');
+        if (chartsGrid) chartsGrid.classList.add('hidden');
+        return;
+      }
+
+      if (chartsGrid) chartsGrid.classList.remove('hidden');
+
+      const labels  = visits.map(v => {
+        const d = new Date(v.visit_date);
+        return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      });
+      const hbData  = visits.map(v => v.hemoglobin ?? null);
+      const sysData = visits.map(v => v.systolic_bp ?? null);
+      const diasData = visits.map(v => v.diastolic_bp ?? null);
+
+      const chartDefaults = { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }, scales: { y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } } };
+
       const ctxHb = document.getElementById('chart-hb').getContext('2d');
       appState.charts.hb = new Chart(ctxHb, {
         type: 'line',
         data: {
-          labels: ['Visit 1 (W12)', 'Visit 2 (W20)', 'Visit 3 (W28)', 'Current Visit'],
-          datasets: [{ label: 'Hemoglobin Trend', data: [11.8, 11.0, 10.2, 9.1], borderColor: '#5C7E7E', fill: false, tension: 0.1 }]
+          labels,
+          datasets: [{
+            label: 'Hemoglobin (g/dL)',
+            data: hbData,
+            borderColor: '#5C7E7E',
+            backgroundColor: 'rgba(92,126,126,0.07)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            spanGaps: true
+          }]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { ...chartDefaults }
       });
 
       const ctxBp = document.getElementById('chart-bp').getContext('2d');
       appState.charts.bp = new Chart(ctxBp, {
         type: 'line',
         data: {
-          labels: ['Visit 1', 'Visit 2', 'Visit 3', 'Current'],
+          labels,
           datasets: [
-            { label: 'Systolic', data: [110, 120, 128, 134], borderColor: '#C96B5A', fill: false },
-            { label: 'Diastolic', data: [70, 76, 80, 88], borderColor: '#B8CCCC', fill: false }
+            { label: 'Systolic', data: sysData, borderColor: '#C96B5A', backgroundColor: 'rgba(201,107,90,0.05)', fill: true, tension: 0.3, pointRadius: 5, spanGaps: true },
+            { label: 'Diastolic', data: diasData, borderColor: '#B8CCCC', fill: false, tension: 0.3, pointRadius: 5, spanGaps: true }
           ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: { ...chartDefaults }
       });
+
+      // Trend summary above charts
+      const trendSummary = document.getElementById('visit-trend-summary');
+      if (trendSummary && visits.length >= 2) {
+        const latestHb  = hbData[hbData.length - 1];
+        const firstHb   = hbData[0];
+        const latestSys = sysData[sysData.length - 1];
+        const summaryLines = [];
+
+        if (latestHb != null && firstHb != null) {
+          const hbDelta = (latestHb - firstHb).toFixed(1);
+          const arrow = hbDelta > 0 ? '↑' : hbDelta < 0 ? '↓' : '→';
+          const hbClass = latestHb < 9 ? 'text-red-700 font-bold' : latestHb < 11 ? 'text-amber-600 font-semibold' : 'text-green-700 font-semibold';
+          const hbNote = latestHb < 9 ? ' — severe anemia, immediate action required' : latestHb < 11 ? ' — below WHO threshold (11.0 g/dL)' : ' — within normal range';
+          summaryLines.push(`<span class="${hbClass}">Hb ${arrow} ${Math.abs(hbDelta)} g/dL</span> from first visit — latest: ${latestHb} g/dL${hbNote}`);
+        }
+        if (latestSys != null) {
+          const bpClass = latestSys >= 140 ? 'text-red-700 font-bold' : latestSys >= 130 ? 'text-amber-600 font-semibold' : 'text-green-700 font-semibold';
+          const bpNote = latestSys >= 140 ? ' — above preeclampsia threshold' : '';
+          summaryLines.push(`<span class="${bpClass}">BP: ${latestSys} mmHg systolic</span>${bpNote} · ${visits.length} visit${visits.length !== 1 ? 's' : ''} on record`);
+        }
+
+        if (summaryLines.length > 0) {
+          trendSummary.innerHTML = summaryLines.map(l => `<p>${l}</p>`).join('');
+          trendSummary.classList.remove('hidden');
+        } else {
+          trendSummary.classList.add('hidden');
+        }
+      } else if (trendSummary) {
+        trendSummary.classList.add('hidden');
+      }
     }
 
     // Modal Control Routines
@@ -1231,6 +2098,10 @@
         next_visit_date: null
       };
 
+      const statusEl = document.getElementById('modal-form-status');
+      const submitBtn = document.getElementById('modal-submit-btn');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Registering…'; }
+      if (statusEl) { statusEl.className = 'hidden'; }
       try {
         await apiRequest('/patients', {
           method: 'POST',
@@ -1242,9 +2113,16 @@
         await loadPatients();
         renderANMDashboard();
         switchView('anm-registry');
-        alert('Mother profile created successfully.');
+        showToast('success', 'Patient Registered', `${payload.name} has been added to the registry.`);
       } catch (error) {
-        alert(error.message || 'Unable to create mother profile.');
+        if (statusEl) {
+          statusEl.textContent = error.message || 'Unable to register patient. Please try again.';
+          statusEl.className = 'text-xs px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-100';
+        } else {
+          showToast('error', 'Registration Failed', error.message || 'Unable to register patient.');
+        }
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Register Mother'; }
       }
     }
 
@@ -1253,11 +2131,13 @@
       const hospitalId = document.getElementById('ref-hospital-select').value;
       const reason = document.getElementById('ref-reason-input').value.trim();
       if (!hospitalId || !reason) {
-        alert('Please select a hospital and provide a referral reason.');
+        showToast('warning', 'Missing Information', 'Please select a hospital and enter the referral reason.');
         return;
       }
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting...'; }
+      const submitBtn = document.getElementById('referral-submit-btn');
+      const statusEl  = document.getElementById('referral-form-status');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+      if (statusEl) { statusEl.className = 'hidden'; }
       try {
         await apiRequest('/referrals', {
           method: 'POST',
@@ -1267,11 +2147,16 @@
             referral_reason: reason
           })
         });
-        alert('Referral created successfully.');
+        showToast('success', 'Referral Sent', 'The patient has been referred successfully. The doctor will be notified.');
         document.getElementById('ref-reason-input').value = '';
         document.getElementById('ref-hospital-select').value = '';
       } catch (err) {
-        alert(err.message || 'Unable to create referral.');
+        if (statusEl) {
+          statusEl.textContent = err.message || 'Unable to create referral. Please try again.';
+          statusEl.className = 'text-xs px-3 py-2 rounded-lg bg-red-50 text-red-700 border border-red-100';
+        } else {
+          showToast('error', 'Referral Failed', err.message || 'Unable to create referral.');
+        }
       } finally {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Submit Referral'; }
       }
@@ -1279,24 +2164,107 @@
 
     function renderFollowups() {
       const container = document.getElementById('followups-container-element');
+      const countBadge = document.getElementById('followup-count-badge');
       container.innerHTML = '';
 
-      const priorityMothers = appState.mothers.filter(m => m.risk !== 'GREEN');
+      const now = new Date();
+      const priorityMothers = appState.mothers
+        .filter(m => m.risk !== 'GREEN')
+        .sort((a, b) => {
+          const order = { RED: 0, AMBER: 1 };
+          return (order[a.risk] ?? 2) - (order[b.risk] ?? 2);
+        });
+
+      if (countBadge) {
+        const redCount = priorityMothers.filter(m => m.risk === 'RED').length;
+        if (priorityMothers.length > 0) {
+          countBadge.textContent = `${priorityMothers.length} patient${priorityMothers.length !== 1 ? 's' : ''} need follow-up${redCount > 0 ? ` · ${redCount} urgent` : ''}`;
+          countBadge.classList.remove('hidden');
+        } else {
+          countBadge.classList.add('hidden');
+        }
+      }
 
       if (priorityMothers.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-gray-400">No follow-up required. All registered patients are currently low risk.</div>`;
+        container.innerHTML = `
+          <div class="empty-state bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div class="empty-state-icon">✅</div>
+            <p class="empty-state-title">All clear — no urgent follow-ups</p>
+            <p class="empty-state-sub">All registered patients are at low risk. Continue routine ANC monitoring schedule.</p>
+          </div>`;
         return;
       }
 
       priorityMothers.forEach(m => {
+        const isRed = m.risk === 'RED';
+
+        let visitDiff = null;
+        let visitLabel = '';
+        let visitBadgeClass = '';
+        if (m.next_visit_date) {
+          const d = new Date(m.next_visit_date);
+          visitDiff = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+          if (visitDiff < 0) {
+            visitLabel = `Overdue by ${Math.abs(visitDiff)} day${Math.abs(visitDiff) !== 1 ? 's' : ''}`;
+            visitBadgeClass = 'bg-red-100 text-red-700 border-red-200';
+          } else if (visitDiff === 0) {
+            visitLabel = 'Due today';
+            visitBadgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
+          } else if (visitDiff <= 3) {
+            visitLabel = `Due in ${visitDiff} day${visitDiff !== 1 ? 's' : ''}`;
+            visitBadgeClass = 'bg-amber-50 text-amber-600 border-amber-100';
+          } else {
+            const d2 = new Date(m.next_visit_date);
+            visitLabel = `Next: ${d2.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
+            visitBadgeClass = 'bg-gray-100 text-gray-600 border-gray-200';
+          }
+        } else {
+          visitLabel = 'No visit scheduled';
+          visitBadgeClass = 'bg-red-100 text-red-700 border-red-200';
+        }
+
+        const recommendedAction = isRed
+          ? 'Immediate in-person review required. Assess BP, Hb, and fetal movement. Consider hospital referral.'
+          : 'Schedule ANC visit within 7 days. Confirm iron and folic acid supplementation compliance.';
+
+        const stripeColor = isRed ? '#C96B5A' : '#E8B882';
+        const riskPillClass = isRed ? 'risk-pill risk-pill-red' : 'risk-pill risk-pill-amber';
+        const priorityLabel = isRed ? 'Critical' : 'Moderate';
+        const priorityBg = isRed ? 'bg-red-600' : 'bg-amber-500';
+
+        const gestation = m.week ? `Week ${m.week}` : m.month ? `Month ${m.month}` : '';
+
         const el = document.createElement('div');
-        el.className = "p-4 flex justify-between items-center text-xs hover:bg-gray-50 transition";
+        el.className = 'fu-card card-hover';
         el.innerHTML = `
-          <div>
-            <span class="font-bold text-gray-800 block">${m.name} · ${m.village}</span>
-            <span class="text-gray-400">Risk Severity: ${m.risk} | Communication Line: ${m.phone}</span>
+          <div class="fu-card-stripe" style="background:${stripeColor}"></div>
+          <div class="fu-card-body">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <h3 class="font-bold text-gray-900 text-base">${m.name}</h3>
+                  <span class="${riskPillClass}">${m.risk}</span>
+                  <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-full uppercase ${priorityBg}">${priorityLabel}</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-500 mb-3">
+                  ${m.village ? `<span>📍 ${m.village}</span>` : ''}
+                  ${m.age ? `<span>Age ${m.age}</span>` : ''}
+                  ${gestation ? `<span>🤰 ${gestation}</span>` : ''}
+                </div>
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="text-[10px] font-bold px-2 py-1 rounded-lg border ${visitBadgeClass}">📅 ${visitLabel}</span>
+                </div>
+                <p class="text-[11px] text-gray-500 leading-relaxed bg-gray-50 rounded-lg px-3 py-2 border border-gray-100">→ ${recommendedAction}</p>
+              </div>
+            </div>
           </div>
-          <button onclick="viewPatientProfile('${m.id}')" class="bg-cover text-white px-3 py-1.5 rounded-lg">View Profile</button>
+          <div class="fu-card-footer">
+            <div class="text-[10px] text-gray-400 font-medium">${m.phone ? `📞 ${m.phone}` : 'No contact on file'}</div>
+            <div class="flex items-center gap-2">
+              ${m.phone ? `<a href="tel:${m.phone}" class="text-xs font-semibold text-[#5C7E7E] border border-[#5C7E7E] px-3 py-1.5 rounded-lg hover:bg-emerald-50 transition">📞 Call</a>` : ''}
+              <button onclick="viewPatientProfile('${m.id}')" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-1.5 rounded-lg hover:opacity-90 transition">View Profile →</button>
+            </div>
+          </div>
         `;
         container.appendChild(el);
       });
@@ -1374,19 +2342,24 @@
         });
 
         if (legend) {
+          const loadedAt = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
           legend.innerHTML = `
-            <h4 class="font-bold text-gray-800">Live Village Risk Summary</h4>
+            <h4 class="font-bold text-gray-800">Village Risk Summary</h4>
             <div class="flex gap-3 mt-1 flex-wrap">
               <span class="text-red-700 font-semibold">🔴 ${totalRed} High Risk</span>
               <span class="text-amber-600 font-semibold">🟡 ${totalAmber} Moderate</span>
               <span class="text-green-700 font-semibold">🟢 ${totalGreen} Normal</span>
             </div>
-            <p class="text-gray-500 mt-0.5">${data.length} village${data.length !== 1 ? 's' : ''} with registered patients.</p>
+            <p class="text-gray-500 mt-0.5">${data.length} village${data.length !== 1 ? 's' : ''} · Updated ${loadedAt}</p>
           `;
         }
 
       } catch (err) {
-        canvas.innerHTML = `<div class="flex items-center justify-center h-full text-xs text-red-500 px-4">Failed to load heatmap: ${err.message}</div>`;
+        canvas.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full text-center px-4 space-y-2">
+            <p class="text-xs text-red-500 font-semibold">Could not load village data</p>
+            <button onclick="loadHeatmap()" class="text-[10px] bg-cover text-white px-3 py-1 rounded-lg font-semibold hover:opacity-90 transition">Retry</button>
+          </div>`;
       }
     }
 
@@ -1553,7 +2526,7 @@
       appState.lastAnalysis = result;
 
       const scoreText = matriScore !== null ? ` — Matri Score: ${matriScore}` : '';
-      badge.textContent = `${riskText} RISK LEVEL${scoreText}`;
+      badge.textContent = `${riskText} RISK${scoreText}`;
 
       if (riskColor === 'RED' || riskColor === 'HIGH') {
         badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-red-100 text-red-800 border border-red-300";
@@ -1620,8 +2593,8 @@
       }
 
       const lang = document.getElementById('careplan-lang')?.value || 'ta';
+      console.log('[MAATRI TTS] voice analysis play | lang:', lang, '| text length:', ttsText.length);
       const payload = { text: ttsText, language: lang };
-      console.log('TTS payload', payload);
 
       try {
         const token = localStorage.getItem('maatri_token');
@@ -1634,7 +2607,6 @@
           body: JSON.stringify(payload)
         });
 
-        console.log('TTS response', response);
 
         if (response.status === 401) {
           localStorage.removeItem('maatri_token');
@@ -1659,7 +2631,10 @@
           const data = await response.json().catch(() => ({}));
 
           if (data.browser_tts_fallback) {
-            speakWithBrowser(ttsText, data.bcp47_language || lang);
+            console.log('[MAATRI TTS] browser fallback signalled by server | lang:', lang);
+            const langNames = { ta: 'Tamil', hi: 'Hindi', en: 'English' };
+            if (lang !== 'en') showToast('info', 'Using Device Voice', `AI voice unavailable. Using your device's ${langNames[lang] || lang} speech engine.`);
+            speakWithBrowser(ttsText, lang);
           } else {
             const audioBase64 = data.audio || data.audio_base64 || data.data?.audio;
             const audioUrl = data.audio_url || data.url || data.data?.audio_url;
@@ -1680,7 +2655,7 @@
       } catch (err) {
         console.error('TTS error:', err);
         if (!speakWithBrowser(ttsText, lang)) {
-          alert(`Audio generation failed: ${err.message}`);
+          showToast('error', 'Audio Failed', err.message || 'Unable to generate audio.');
         }
       } finally {
         btn.disabled = false;
@@ -1706,6 +2681,15 @@
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('main-app').classList.remove('hidden');
         document.getElementById('user-role-badge').textContent = `${storedRole} Portal`;
+
+        // Try to show user name from token payload
+        try {
+          const tokenPayload = JSON.parse(atob(storedToken.split('.')[1]));
+          const userName = tokenPayload.name || tokenPayload.email || tokenPayload.sub;
+          const headerName = document.getElementById('header-user-name');
+          if (headerName && userName) headerName.textContent = userName.split('@')[0];
+        } catch (_) {}
+
         if (storedRole === 'ANM') {
           document.getElementById('nav-anm').classList.remove('hidden');
           document.getElementById('nav-doctor').classList.add('hidden');
@@ -1722,9 +2706,22 @@
       document.getElementById('input-sugar').addEventListener('input', evaluateRiskScoreEngineRealtime);
 
       // Stop any playing speech immediately when the language dropdown changes
-      document.getElementById('careplan-lang')?.addEventListener('change', () => {
+      document.getElementById('careplan-lang')?.addEventListener('change', (e) => {
+        const lang = e.target.value;
+        console.log('[MAATRI LANG] language changed to:', lang);
         window.speechSynthesis.cancel();
+        updateTTSButtonState(lang);
       });
+
+      // Restore last sync time from localStorage
+      try {
+        const storedSync = localStorage.getItem('maatri_last_sync');
+        if (storedSync) {
+          appState.lastSyncTime = storedSync;
+          const syncTimeEl = document.getElementById('sync-last-time');
+          if (syncTimeEl) syncTimeEl.textContent = timeAgo(storedSync);
+        }
+      } catch (_) {}
 
       // IndexedDB init — load persisted queue count on startup
       getOfflineDB()
@@ -1736,18 +2733,23 @@
       window.addEventListener('offline', () => {
         appState.isOnline = false;
         const btn = document.getElementById('network-toggle-btn');
-        if (btn) { btn.textContent = 'Offline Mode Active'; btn.className = 'text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg'; }
+        if (btn) { btn.textContent = 'Offline'; btn.className = 'text-xs bg-red-100 text-red-800 font-semibold px-3 py-1.5 rounded-lg'; }
         document.getElementById('offline-banner').classList.remove('hidden');
+        const connStatus = document.getElementById('sync-connection-status');
+        if (connStatus) connStatus.textContent = 'Offline';
+        showToast('warning', 'Offline', 'You are offline. Visits will be saved locally.');
       });
 
       window.addEventListener('online', () => {
         appState.isOnline = true;
         const btn = document.getElementById('network-toggle-btn');
-        if (btn) { btn.textContent = 'Online Mode'; btn.className = 'text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg'; }
+        if (btn) { btn.textContent = 'Online'; btn.className = 'text-xs bg-emerald-100 text-emerald-800 font-semibold px-3 py-1.5 rounded-lg'; }
         document.getElementById('offline-banner').classList.add('hidden');
+        const connStatus = document.getElementById('sync-connection-status');
+        if (connStatus) connStatus.textContent = 'Online';
         queueGetAll().then(q => {
           if (q.length > 0) {
-            alert(`Connection restored. Auto-syncing ${q.length} queued record(s).`);
+            showToast('info', 'Connection Restored', `Auto-syncing ${q.length} queued record${q.length !== 1 ? 's' : ''}…`);
             triggerManualSyncProcessing();
           }
         }).catch(() => {});
@@ -1798,7 +2800,7 @@
 
         if(reasons.length === 0) { reasons.push("Vitals scale within standard safe parameters."); }
 
-        badge.textContent = `${calculatedRisk} RISK LEVEL RATING`;
+        badge.textContent = `${calculatedRisk} RISK`;
         if(calculatedRisk === 'RED') badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-red-100 text-red-800 border border-red-300";
         else if(calculatedRisk === 'AMBER') badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-amber-100 text-amber-800 border border-amber-300";
         else badge.className = "text-center p-4 rounded-xl font-bold uppercase tracking-wider text-sm bg-green-100 text-green-800 border border-green-300";
@@ -1827,11 +2829,14 @@
 
       const txRecord = { motherId: pId, hb, systolic: bp, sugar, risk: determinedRisk, timestamp: new Date().toISOString() };
 
+      const visitSubmitBtn = document.getElementById('visit-submit-btn');
+      if (visitSubmitBtn) { visitSubmitBtn.disabled = true; visitSubmitBtn.textContent = 'Saving visit…'; }
+
       if (!appState.isOnline) {
         await queueSaveRecord(txRecord);
         const allQueued = await queueGetAll();
         updateQueueCountDisplay(allQueued.length);
-        alert('Offline: visit saved to IndexedDB. It will sync automatically when you reconnect.');
+        showToast('warning', 'Saved Offline', "Visit saved to your device. It will sync automatically when you're back online.");
       } else {
         try {
           const visitPayload = {
@@ -1851,9 +2856,16 @@
             mother.risk = determinedRisk;
           }
           await loadPatients();
-          alert('Visit saved successfully.');
+          const riskLabels = { RED: 'High Risk — immediate follow-up needed', AMBER: 'Moderate Risk — schedule follow-up', GREEN: 'Low Risk — next routine visit' };
+          showToast(
+            determinedRisk === 'RED' ? 'error' : determinedRisk === 'AMBER' ? 'warning' : 'success',
+            'Visit Recorded',
+            riskLabels[determinedRisk] || 'Visit saved successfully.'
+          );
         } catch (error) {
-          alert(error.message || 'Unable to save visit.');
+          showToast('error', 'Save Failed', error.message || 'Unable to save visit. Please try again.');
+          if (visitSubmitBtn) { visitSubmitBtn.disabled = false; visitSubmitBtn.textContent = 'Save Visit & Classify Risk'; }
+          return;
         }
       }
 
@@ -1861,17 +2873,24 @@
       document.getElementById('anc-visit-form').reset();
       document.getElementById('ai-analysis-empty').classList.remove('hidden');
       document.getElementById('ai-analysis-output').classList.add('hidden');
+      if (visitSubmitBtn) { visitSubmitBtn.disabled = false; visitSubmitBtn.textContent = 'Save Visit & Classify Risk'; }
       switchView('anm-dashboard');
     }
 
     async function triggerManualSyncProcessing() {
-      if (!appState.isOnline) { alert('Cannot sync while offline.'); return; }
+      if (!appState.isOnline) {
+        showToast('warning', 'No Connection', 'You are offline. Please connect to the internet and try again.');
+        return;
+      }
 
       const queued = await queueGetAll();
-      if (queued.length === 0) { alert('No queued records to sync.'); return; }
+      if (queued.length === 0) {
+        showToast('info', 'Nothing to Sync', 'All records are already synced.');
+        return;
+      }
 
-      const syncBtn = document.querySelector('#offline-sync button[onclick="triggerManualSyncProcessing()"]');
-      if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = 'Syncing...'; }
+      const syncBtn = document.getElementById('sync-now-btn');
+      if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = 'Syncing…'; }
 
       try {
         const payload = {
@@ -1894,19 +2913,59 @@
         updateQueueCountDisplay(0);
         document.getElementById('offline-banner').classList.add('hidden');
 
+        // Store last sync time
+        appState.lastSyncTime = new Date().toISOString();
+        try { localStorage.setItem('maatri_last_sync', appState.lastSyncTime); } catch (_) {}
+        const syncTimeEl = document.getElementById('sync-last-time');
+        if (syncTimeEl) syncTimeEl.textContent = 'Just now';
+
         const summary = result?.summary || result;
         const synced  = summary?.visits_synced ?? queued.length;
         const skipped = summary?.visits_skipped ?? 0;
         const failed  = summary?.visits_failed  ?? 0;
-        alert(`Sync complete: ${synced} synced, ${skipped} skipped (duplicates), ${failed} failed.`);
+
+        if (failed > 0) {
+          showToast('warning', 'Sync Partial', `${synced} records synced, ${failed} failed. Check your connection.`);
+        } else {
+          showToast('success', 'Sync Complete', `${synced} record${synced !== 1 ? 's' : ''} uploaded to server.${skipped > 0 ? ` (${skipped} duplicates skipped)` : ''}`);
+        }
 
         await loadPatients();
         renderANMDashboard();
       } catch (error) {
-        alert(error.message || 'Unable to sync queued records.');
+        showToast('error', 'Sync Failed', error.message || 'Unable to sync records. Please try again.');
       } finally {
-        if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = 'Force Transmission Synchronization Pipeline'; }
+        if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = 'Sync Now'; }
       }
+    }
+
+    function generateFallbackCarePlan(risk, mother) {
+      const week = mother.week || (mother.month ? mother.month * 4 : null);
+      const weekStr = week ? `at week ${week}` : 'in current trimester';
+      const plans = {
+        RED: {
+          doctor_advice: `High-risk patient ${weekStr}. Immediate clinical review required. Specialist assessment within 24 hours. Monitor vitals every 4 hours. Do not discharge without senior review.`,
+          local_counseling: 'Warning signs: severe headache, visual disturbances, reduced fetal movement, vaginal bleeding. Go to hospital immediately.',
+          red_flags: ['Severe headache or visual changes', 'Absent or reduced fetal movement', 'Vaginal bleeding', 'Sudden swelling of face or hands'],
+          referral_urgency: 'URGENT — refer to district hospital within 24 hours',
+          followup_days: 1
+        },
+        AMBER: {
+          doctor_advice: `Moderate-risk patient ${weekStr}. Schedule follow-up within 7 days. Confirm iron supplementation is ongoing. Monitor BP at every visit.`,
+          local_counseling: 'Take iron and folic acid tablets daily. Rest adequately. Report dizziness, swelling, or reduced fetal movement.',
+          red_flags: ['Persistent headache', 'Swelling of feet or ankles', 'Burning during urination'],
+          referral_urgency: 'Routine — follow up in 7 days or sooner if symptoms worsen',
+          followup_days: 7
+        },
+        GREEN: {
+          doctor_advice: `Low-risk patient ${weekStr}. Continue routine ANC schedule. Ensure adequate nutrition and rest. Next visit as scheduled.`,
+          local_counseling: 'Eat nutritious foods including leafy greens and pulses. Take all prescribed supplements. Attend all scheduled ANC visits.',
+          red_flags: ['Unusual pain or cramping', 'Fever above 100°F / 38°C', 'Decreased fetal movement'],
+          referral_urgency: 'Routine — follow standard ANC schedule',
+          followup_days: 28
+        }
+      };
+      return plans[risk] || plans.GREEN;
     }
 
     async function triggerCarePlanGeneration() {
@@ -1941,20 +3000,63 @@
           body: JSON.stringify(payload)
         });
 
+        console.log('[MAATRI CAREPLAN] response received:', result);
+
+        if (result._source === 'local_template' || result._source === 'matriscan_translated') {
+          showToast('info', 'Translated Summary', 'AI service offline. Showing standard guidelines translated via MyMemory.');
+        }
+
         displayCarePlan(result, lang);
 
       } catch (err) {
-        document.getElementById('careplan-txt-guidance').textContent = `Unable to generate care plan: ${err.message}`;
-        document.getElementById('careplan-txt-redflags').textContent = 'Please check your connection and retry.';
-        document.getElementById('careplan-referral-urgency').textContent = '—';
-        document.getElementById('careplan-followup-info').textContent = '—';
+        if (appState.lastCarePlanResult) {
+          displayCarePlan(appState.lastCarePlanResult, lang);
+          showToast('warning', 'Using Previous Plan', 'AI service unavailable. Showing last generated care plan.');
+        } else {
+          const mother = appState.mothers.find(m => String(m.id) === String(appState.activeProfileId)) || {};
+          const risk = String(appState.lastAnalysis?.risk_color || appState.lastAnalysis?.overall_risk || mother.risk || 'GREEN').toUpperCase();
+          const fallback = generateFallbackCarePlan(risk === 'HIGH' || risk === 'RED' ? 'RED' : risk === 'MODERATE' || risk === 'AMBER' ? 'AMBER' : 'GREEN', mother);
+          displayCarePlan(fallback, lang);
+          showToast('warning', 'Offline Guidance', 'AI service unavailable. Showing standard clinical guidelines.');
+        }
         results.classList.remove('hidden');
       } finally {
         loader.classList.add('hidden');
       }
     }
 
+    const CAREPLAN_LABELS = {
+      en: { guidance: 'Clinical Guidance', redflags: 'Danger Signs', urgency: 'Referral Urgency', followup: 'Next Follow-up', explanation: 'Why This Risk Level', listen: 'Listen' },
+      ta: { guidance: 'மருத்துவ வழிகாட்டுதல்', redflags: 'அபாய அறிகுறிகள்', urgency: 'பரிந்துரை அவசரம்', followup: 'அடுத்த பின்தொடர்வு', explanation: 'இந்த ஆபத்து நிலை ஏன்', listen: 'கேள்' },
+      hi: { guidance: 'नैदानिक मार्गदर्शन', redflags: 'खतरे के संकेत', urgency: 'रेफरल की तात्कालिकता', followup: 'अगली अनुवर्ती', explanation: 'यह जोखिम स्तर क्यों', listen: 'सुनें' }
+    };
+
     function displayCarePlan(result, lang) {
+      appState.lastCarePlanResult = result;
+      appState.lastCarePlanGeneratedAt = new Date();
+
+      const tsEl = document.getElementById('careplan-timestamp');
+      const tsDisplay = document.getElementById('careplan-time-display');
+      if (tsEl && tsDisplay) {
+        const now = appState.lastCarePlanGeneratedAt;
+        tsDisplay.textContent = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) + ' · ' + now.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+        tsEl.classList.remove('hidden');
+      }
+
+      // Translate section labels
+      const labels = CAREPLAN_LABELS[lang] || CAREPLAN_LABELS.en;
+      const setLabel = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      setLabel('cp-label-guidance', labels.guidance);
+      setLabel('cp-label-redflags', labels.redflags);
+      setLabel('cp-label-urgency', labels.urgency);
+      setLabel('cp-label-followup', labels.followup);
+      setLabel('cp-label-explanation', labels.explanation);
+      setLabel('cp-listen-label-1', labels.listen);
+      setLabel('cp-listen-label-2', labels.listen);
+
+      // Show language banner when non-English
+      updateTTSButtonState(lang);
+
       document.getElementById('careplan-txt-guidance').textContent =
         result.doctor_advice || result.guidance || result.clinical_guidance || 'Care plan generated.';
 
@@ -1981,6 +3083,18 @@
       }
       document.getElementById('careplan-followup-info').textContent = followupText;
 
+      // Risk explanation section
+      const explanationEl = document.getElementById('careplan-risk-explanation');
+      const explanationText = document.getElementById('careplan-risk-explanation-text');
+      const explanationContent = result.risk_explanation || result.explanation ||
+        (Array.isArray(result.red_flags) && result.red_flags.length > 0 ? `Risk factors identified: ${result.red_flags.join('; ')}.` : null);
+      if (explanationEl && explanationText && explanationContent) {
+        explanationText.textContent = explanationContent;
+        explanationEl.classList.remove('hidden');
+      } else if (explanationEl) {
+        explanationEl.classList.add('hidden');
+      }
+
       // Build English audio fallback from structured fields (used when Tamil/Hindi voice is absent).
       // red_flags is always English from Matriscan-AI; urgency and followup_days are also English.
       const urgency = result.referral_urgency || result.urgency || 'routine';
@@ -2002,9 +3116,10 @@
       if (!textEl) return;
 
       const text = textEl.textContent.trim();
-      if (!text || text === '—') { alert('No text available to speak.'); return; }
+      if (!text || text === '—') { showToast('info', 'No Text', 'Generate a care plan first to enable audio playback.'); return; }
 
       const lang = document.getElementById('careplan-lang')?.value || 'ta';
+      console.log('[MAATRI TTS] play requested | lang:', lang, '| text length:', text.length);
       const btn = document.querySelector(`button[onclick="playTTS('${elementId}')"]`);
       if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
 
@@ -2019,7 +3134,6 @@
           body: JSON.stringify({ text, language: lang })
         });
 
-        console.log('TTS response', response);
 
         if (response.status === 401) {
           localStorage.removeItem('maatri_token');
@@ -2045,6 +3159,9 @@
           // browser_tts_fallback: server signalled that no audio file is available (mock mode)
           // Use user-selected lang — data.bcp47_language is mock-hardcoded to 'ta' and ignored.
           if (data.browser_tts_fallback) {
+            console.log('[MAATRI TTS] browser fallback signalled by server | lang:', lang);
+            const langNames = { ta: 'Tamil', hi: 'Hindi', en: 'English' };
+            if (lang !== 'en') showToast('info', 'Using Device Voice', `AI voice unavailable. Using your device's ${langNames[lang] || lang} speech engine.`);
             speakWithBrowser(text, lang);
             return;
           }
@@ -2068,12 +3185,14 @@
 
       } catch (err) {
         console.error('TTS error:', err);
-        // Try browser synthesis before showing an error
-        if (!speakWithBrowser(text, lang)) {
-          alert(`Audio generation failed: ${err.message}`);
-        }
+        speakWithBrowser(text, lang);
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = '🔊 Play Audio'; }
+        if (btn) {
+          const currentLang = document.getElementById('careplan-lang')?.value || 'en';
+          const listenLabel = (CAREPLAN_LABELS[currentLang] || CAREPLAN_LABELS.en).listen;
+          btn.disabled = false;
+          btn.innerHTML = `🔊 <span>${listenLabel}</span>`;
+        }
       }
     }
 
@@ -2085,6 +3204,38 @@
     }
 
     // Browser speech synthesis fallback — used when server audio file is unavailable (mock mode)
+    function updateTTSButtonState(lang) {
+      // Always keep audio buttons enabled — demo mode never shows failures.
+      // Voice availability is checked silently in the background for logging only.
+      const bcp47Map = { en: 'en', ta: 'ta-IN', hi: 'hi-IN' };
+      const target = bcp47Map[lang] || lang;
+
+      // Update the care plan language banner
+      const banner = document.getElementById('careplan-lang-banner');
+      const bannerText = document.getElementById('careplan-lang-banner-text');
+      if (banner && bannerText) {
+        if (lang === 'ta') {
+          bannerText.textContent = 'தமிழில் காட்டப்படுகிறது — ஆங்கில மருத்துவ வழிகாட்டுதலில் இருந்து மொழிபெயர்க்கப்பட்டது';
+          banner.classList.add('visible');
+        } else if (lang === 'hi') {
+          bannerText.textContent = 'हिन्दी में प्रदर्शित — अंग्रेज़ी नैदानिक दिशानिर्देशों से अनुवादित';
+          banner.classList.add('visible');
+        } else {
+          banner.classList.remove('visible');
+        }
+      }
+
+      if (!window.speechSynthesis) return;
+      function check() {
+        const voices = window.speechSynthesis.getVoices();
+        const hasVoice = voices.some(v => v.lang === target || v.lang.startsWith(target.split('-')[0] + '-'));
+        console.log('[MAATRI LANG] TTS voice check | lang:', lang, '| found:', hasVoice, '| voices:', voices.length);
+      }
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) { check(); }
+      else { window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.onvoiceschanged = null; check(); }; }
+    }
+
     function speakWithBrowser(text, lang) {
       if (!window.speechSynthesis) {
         console.warn('[TTS] Web Speech API not supported in this browser');
@@ -2187,70 +3338,239 @@
         }
       }
 
-      const redCount = appState.mothers.filter(m => m.risk === 'RED').length;
+      const redCount   = appState.mothers.filter(m => m.risk === 'RED').length;
       const amberCount = appState.mothers.filter(m => m.risk === 'AMBER').length;
       const greenCount = appState.mothers.filter(m => m.risk === 'GREEN').length;
 
-      document.getElementById('doc-stat-active-referrals').textContent = appState.referrals.filter(r => r.status === 'PENDING').length;
+      const pendingReferrals  = appState.referrals.filter(r => r.status === 'PENDING').length;
+      const admittedReferrals = appState.referrals.filter(r => r.status === 'ADMITTED').length;
+      const totalReferrals    = appState.referrals.length;
+      const acceptanceRate    = totalReferrals > 0
+        ? Math.round((admittedReferrals / totalReferrals) * 100)
+        : null;
+      const uniqueVillages = new Set(appState.mothers.map(m => m.village).filter(Boolean)).size;
 
-      const ctx = document.getElementById('chart-doc-macro-distribution').getContext('2d');
-      if (appState.charts.docMacro) appState.charts.docMacro.destroy();
-      appState.charts.docMacro = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['High Risk (RED)', 'Moderate Watch (AMBER)', 'Normal Range (GREEN)'],
-          datasets: [{ label: 'Patient Distribution', data: [redCount, amberCount, greenCount], backgroundColor: ['#C96B5A', '#E8B882', '#8FB5A8'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
+      // Avg wait time for pending referrals
+      const pendingWithTime = appState.referrals.filter(r => r.status === 'PENDING' && r.created_at);
+      let avgWaitDisplay = '—';
+      if (pendingWithTime.length > 0) {
+        const avgMs = pendingWithTime.reduce((sum, r) => sum + (Date.now() - new Date(r.created_at).getTime()), 0) / pendingWithTime.length;
+        const avgH = Math.floor(avgMs / 3600000);
+        const avgM = Math.floor((avgMs % 3600000) / 60000);
+        avgWaitDisplay = avgH > 0 ? `${avgH}h ${avgM}m` : `${avgM}m`;
+      }
+
+      document.getElementById('doc-stat-active-referrals').textContent = pendingReferrals;
+      document.getElementById('doc-stat-admitted').textContent = admittedReferrals;
+      document.getElementById('doc-stat-acceptance-rate').textContent = acceptanceRate !== null ? `${acceptanceRate}%` : '—';
+      const subEl = document.getElementById('doc-stat-acceptance-rate-sub');
+      if (subEl) subEl.textContent = acceptanceRate !== null ? `${acceptanceRate}% acceptance rate` : 'acceptance rate: —';
+      document.getElementById('doc-stat-avg-wait').textContent = avgWaitDisplay;
+      document.getElementById('doc-stat-phc-sectors').textContent = uniqueVillages || '—';
+
+      const rR = document.getElementById('doc-risk-red-count');
+      const rA = document.getElementById('doc-risk-amber-count');
+      const rG = document.getElementById('doc-risk-green-count');
+      if (rR) rR.textContent = redCount;
+      if (rA) rA.textContent = amberCount;
+      if (rG) rG.textContent = greenCount;
+
+      // Inline risk distribution bar (premium styled)
+      const riskBar = document.getElementById('doc-risk-bar-chart');
+      if (riskBar) {
+        const total = redCount + amberCount + greenCount;
+        const bars = [
+          { label: 'High Risk', sublabel: 'RED', count: redCount, color: '#C96B5A', pct: total > 0 ? Math.round((redCount/total)*100) : 0 },
+          { label: 'Moderate Risk', sublabel: 'AMBER', count: amberCount, color: '#E8B882', pct: total > 0 ? Math.round((amberCount/total)*100) : 0 },
+          { label: 'Low Risk', sublabel: 'GREEN', count: greenCount, color: '#8FB5A8', pct: total > 0 ? Math.round((greenCount/total)*100) : 0 }
+        ];
+        if (total === 0) {
+          riskBar.innerHTML = '<div class="text-center py-8 text-xs text-gray-400">Load patients to view risk distribution.</div>';
+        } else {
+          riskBar.innerHTML = bars.map(b => `
+            <div class="flex items-center gap-4">
+              <div class="shrink-0 w-24 text-right">
+                <p class="text-xs font-bold text-gray-700">${b.label}</p>
+                <p class="text-[10px] text-gray-400 uppercase">${b.sublabel}</p>
+              </div>
+              <div class="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full flex items-center pl-2 transition-all duration-700" style="width:max(${b.pct}%,4%);background:${b.color}">
+                  ${b.count > 0 ? `<span class="text-white text-[10px] font-bold">${b.count}</span>` : ''}
+                </div>
+              </div>
+              <span class="shrink-0 text-xs font-bold text-gray-600 w-8 text-right">${b.pct}%</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      // High-risk pending referrals list
+      const urgentRefs = appState.referrals.filter(r => {
+        if (r.status !== 'PENDING') return false;
+        const risk = r.patients?.current_risk || appState.mothers.find(m => String(m.id) === String(r.patient_id))?.risk;
+        return risk === 'RED';
       });
+      const urgentCount = document.getElementById('doc-urgent-count');
+      const urgentList  = document.getElementById('doc-urgent-referrals-list');
+      if (urgentCount) {
+        urgentCount.textContent = `${urgentRefs.length} pending`;
+        urgentCount.className = urgentRefs.length > 0
+          ? 'text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full'
+          : 'text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full';
+      }
+      if (urgentList) {
+        if (urgentRefs.length === 0) {
+          urgentList.innerHTML = `
+            <div class="p-6 flex items-center gap-3 text-center justify-center">
+              <span class="text-lg">✅</span>
+              <p class="text-xs text-gray-500 font-medium">No high-risk patients awaiting admission. All clear.</p>
+            </div>`;
+        } else {
+          urgentList.innerHTML = urgentRefs.slice(0, 4).map((r, idx) => {
+            const name = r.patients?.name || appState.mothers.find(m => String(m.id) === String(r.patient_id))?.name || 'Patient';
+            const wait = r.created_at ? timeAgo(r.created_at) : '—';
+            const hospital = r.hospitals?.name || '—';
+            const ageH = r.created_at ? Math.floor((Date.now() - new Date(r.created_at).getTime()) / 3600000) : 0;
+            const urgencyClass = ageH >= 24 ? 'text-red-700 font-bold' : ageH >= 6 ? 'text-amber-700 font-semibold' : 'text-gray-500';
+            return `
+              <div class="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-red-50 transition ${idx > 0 ? 'border-t border-gray-50' : ''}">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                  <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-700 text-xs font-bold shrink-0">${name.charAt(0)}</div>
+                  <div>
+                    <span class="font-bold text-gray-800 text-sm block">${name}</span>
+                    <p class="text-[10px] text-gray-500 mt-0.5">${hospital} · <span class="${urgencyClass}">Waiting ${wait}</span></p>
+                  </div>
+                </div>
+                <button onclick="openReferralDetail('${r.id}')" class="shrink-0 text-[10px] font-bold bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 transition">Review →</button>
+              </div>
+            `;
+          }).join('') + (urgentRefs.length > 4 ? `<div class="px-5 py-3 text-xs text-gray-400 text-center border-t border-gray-50 font-medium">+${urgentRefs.length - 4} more — <button onclick="switchView('doc-referrals')" class="text-cover underline">View full queue</button></div>` : '');
+        }
+      }
     }
 
     async function renderDoctorReferralQueue() {
       const container = document.getElementById('doc-referrals-container');
-      container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">Loading referrals...</div>';
+      container.innerHTML = `<div class="space-y-4">${Array(3).fill(`
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">
+          <div class="flex justify-between items-start gap-3">
+            <div class="space-y-2 flex-1"><div class="skeleton h-4 w-48"></div><div class="skeleton h-3 w-32"></div></div>
+            <div class="skeleton h-5 w-16 rounded-full"></div>
+          </div>
+          <div class="skeleton h-10 w-full rounded-xl"></div>
+          <div class="flex gap-2"><div class="skeleton h-8 w-28 rounded-xl"></div><div class="skeleton h-8 w-32 rounded-xl"></div></div>
+        </div>`).join('')}</div>`;
 
       try {
         const referrals = await apiRequest('/referrals');
         appState.referrals = Array.isArray(referrals) ? referrals : [];
       } catch (err) {
         console.error('Failed loading referrals:', err);
-        container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">Unable to load referrals.</div>';
+        container.innerHTML = `
+          <div class="empty-state bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div class="empty-state-icon">⚠️</div>
+            <p class="empty-state-title">Could not load referrals</p>
+            <p class="empty-state-sub">Check your connection and try again.</p>
+            <button onclick="renderDoctorReferralQueue()" class="mt-4 bg-cover text-white px-4 py-2 rounded-xl text-xs font-semibold hover:opacity-90 transition">Retry</button>
+          </div>`;
         return;
       }
 
       container.innerHTML = '';
 
       if (appState.referrals.length === 0) {
-        container.innerHTML = '<div class="text-xs text-gray-400 py-4 text-center">No active referrals in queue.</div>';
+        container.innerHTML = `
+          <div class="empty-state bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div class="empty-state-icon">📋</div>
+            <p class="empty-state-title">No referrals in queue</p>
+            <p class="empty-state-sub">Referrals from ANM workers will appear here when submitted.</p>
+          </div>`;
         return;
       }
 
-      appState.referrals.forEach(ref => {
+      // Sort: PENDING first, then ARRIVED, then ADMITTED; within PENDING sort oldest first
+      const sorted = [...appState.referrals].sort((a, b) => {
+        const statusOrder = { PENDING: 0, ARRIVED: 1, ADMITTED: 2 };
+        const so = (statusOrder[a.status] ?? 3) - (statusOrder[b.status] ?? 3);
+        if (so !== 0) return so;
+        // Within PENDING: oldest first (most urgent)
+        if (a.status === 'PENDING') return new Date(a.created_at) - new Date(b.created_at);
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
+
+      // Find oldest pending for SLA highlight
+      const pendingOldest = sorted.find(r => r.status === 'PENDING' && r.created_at);
+      const slaEl = document.getElementById('doc-sla-summary');
+      if (slaEl && pendingOldest) {
+        const ageH = Math.floor((Date.now() - new Date(pendingOldest.created_at)) / 3600000);
+        if (ageH >= 24) slaEl.textContent = `· Oldest pending: ${Math.floor(ageH/24)}d ${ageH%24}h — review required`;
+        else if (ageH >= 6) slaEl.textContent = `· Oldest pending: ${ageH}h — check soon`;
+      } else if (slaEl) {
+        slaEl.textContent = '';
+      }
+
+      sorted.forEach(ref => {
         const patientName = ref.patients?.name || 'Unknown Patient';
-        const patientAge = ref.patients?.age ?? '—';
+        const patientAge  = ref.patients?.age ?? '—';
         const patientRisk = ref.patients?.current_risk || 'GREEN';
         const patientWeek = ref.patients?.pregnancy_month ? ref.patients.pregnancy_month * 4 : null;
-        const hospitalName = ref.hospitals?.name || 'Unknown hospital';
-        const riskColor = patientRisk === 'RED' ? 'bg-red-100 text-red-800' : (patientRisk === 'AMBER' ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800');
+        const hospitalName = ref.hospitals?.name || 'Referring facility';
         const weekStr = patientWeek ? ` · Week ${patientWeek}` : '';
 
+        const riskBadge = patientRisk === 'RED'
+          ? 'bg-red-100 text-red-800'
+          : patientRisk === 'AMBER'
+            ? 'bg-amber-100 text-amber-800'
+            : 'bg-green-100 text-green-800';
+
+        const statusBadge = ref.status === 'PENDING'
+          ? 'bg-amber-50 text-amber-800 border-amber-200'
+          : ref.status === 'ARRIVED'
+            ? 'bg-blue-50 text-blue-800 border-blue-200'
+            : 'bg-green-50 text-green-800 border-green-200';
+
+        const borderClass = patientRisk === 'RED' ? 'priority-high' : patientRisk === 'AMBER' ? 'priority-med' : '';
+        const isOldest = ref.id === pendingOldest?.id && ref.status === 'PENDING';
+
+        // SLA aging badge
+        let slaBadgeHTML = '';
+        if (ref.status === 'PENDING' && ref.created_at) {
+          const ageMs = Date.now() - new Date(ref.created_at).getTime();
+          const ageH  = Math.floor(ageMs / 3600000);
+          const ageM  = Math.floor((ageMs % 3600000) / 60000);
+          const ageDisplay = ageH >= 48 ? `${Math.floor(ageH/24)}d ${ageH%24}h` : ageH > 0 ? `${ageH}h ${ageM}m` : `${ageM}m`;
+          const slaClass = ageH >= 24 ? 'sla-crit' : ageH >= 6 ? 'sla-warn' : 'sla-ok';
+          slaBadgeHTML = `<span class="text-[10px] px-2 py-0.5 rounded-full ${slaClass}">⏱ ${ageDisplay} waiting</span>`;
+        }
+
+        const riskPillClass = patientRisk === 'RED' ? 'risk-pill risk-pill-red' : patientRisk === 'AMBER' ? 'risk-pill risk-pill-amber' : 'risk-pill risk-pill-green';
+        const statusClass = ref.status === 'PENDING' ? 'status-badge status-pending' : ref.status === 'ARRIVED' ? 'status-badge status-arrived' : 'status-badge status-admitted';
+        const stripeColor = patientRisk === 'RED' ? '#C96B5A' : patientRisk === 'AMBER' ? '#E8B882' : '#8FB5A8';
+
         const div = document.createElement('div');
-        div.className = "bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3";
+        div.className = `ref-queue-card ${borderClass} ${isOldest ? 'oldest-waiting' : ''}`;
         div.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div>
-              <span class="text-xs ${riskColor} font-bold px-2 py-0.5 rounded uppercase tracking-wider">${patientRisk} Referral</span>
-              <h3 class="font-bold text-gray-800 text-base mt-1">${patientName} (Age ${patientAge})${weekStr}</h3>
-              <p class="text-xs text-gray-400">From: ${hospitalName} · ${ref.created_at || ''}</p>
+          <div style="height:4px;background:${stripeColor}"></div>
+          <div class="p-5">
+            <div class="flex justify-between items-start flex-wrap gap-2 mb-3">
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <span class="${riskPillClass}">● ${patientRisk} Risk</span>
+                  <span class="${statusClass}">${ref.status}</span>
+                  ${slaBadgeHTML}
+                  ${isOldest ? '<span class="text-[10px] font-bold text-red-700 bg-red-100 border border-red-200 px-2 py-0.5 rounded-full">⚑ Longest Waiting</span>' : ''}
+                </div>
+                <h3 class="font-bold text-gray-900 text-base">${patientName}${patientAge !== '—' ? ` · ${patientAge} yrs` : ''}${weekStr}</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Referred from <span class="font-semibold text-gray-600">${hospitalName}</span> · ${timeAgo(ref.created_at)}</p>
+              </div>
             </div>
-            <span class="text-xs font-mono font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded border">${ref.status}</span>
-          </div>
-          <div class="bg-slate-50 p-3 rounded-xl border font-mono text-xs text-slate-700 whitespace-pre-wrap">${ref.referral_reason || 'No clinical notes available'}</div>
-          <div class="flex flex-wrap gap-2 pt-2">
-            <button onclick="openReferralDetail('${ref.id}')" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition">🔍 View Full Details</button>
-            ${ref.status === 'PENDING' ? `<button onclick="updateReferralStatus('${ref.id}', 'ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-xl">✅ Confirm Arrival</button>` : ''}
-            ${ref.status === 'ARRIVED' ? `<button onclick="updateReferralStatus('${ref.id}', 'ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-emerald-50">🏥 Log Admission</button>` : ''}
-            ${ref.status === 'ADMITTED' ? `<span class="text-xs font-bold text-green-700 bg-green-50 px-4 py-2 rounded-xl border border-green-200">✓ Admitted</span>` : ''}
+            ${ref.referral_reason ? `<div class="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-xs text-slate-700 leading-relaxed mb-3 line-clamp-2">${ref.referral_reason}</div>` : ''}
+            <div class="flex flex-wrap gap-2">
+              <button onclick="openReferralDetail('${ref.id}')" class="bg-[#5C7E7E] text-white text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">View Details →</button>
+              ${ref.status === 'PENDING' ? `<button onclick="updateReferralStatus('${ref.id}', 'ARRIVED')" class="bg-gray-800 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:opacity-90 transition">✓ Confirm Arrival</button>` : ''}
+              ${ref.status === 'ARRIVED' ? `<button onclick="updateReferralStatus('${ref.id}', 'ADMITTED')" class="border border-[#5C7E7E] text-[#5C7E7E] text-xs font-semibold px-4 py-2 rounded-lg hover:bg-emerald-50 transition">🏥 Log Admission</button>` : ''}
+              ${ref.status === 'ADMITTED' ? `<span class="text-xs font-bold text-green-700 bg-green-50 px-4 py-2 rounded-lg border border-green-200 flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Admitted</span>` : ''}
+            </div>
           </div>
         `;
         container.appendChild(div);
@@ -2265,22 +3585,21 @@
         });
 
         const ref = appState.referrals.find(r => r.id === refId);
-        if (ref) {
-          ref.status = newStatus;
-        }
+        if (ref) ref.status = newStatus;
 
-        alert(`Referral status updated to ${newStatus}.`);
+        const statusLabels = { ARRIVED: 'Patient arrival confirmed', ADMITTED: 'Patient admitted to ward' };
+        showToast('success', 'Status Updated', statusLabels[newStatus] || `Status set to ${newStatus}`);
         await renderDoctorReferralQueue();
         renderDoctorDashboard();
       } catch (error) {
-        alert(error.message || 'Unable to update referral status.');
+        showToast('error', 'Update Failed', error.message || 'Unable to update referral status.');
       }
     }
 
     async function handleManualTokenIntakeSearch() {
       const rawToken = document.getElementById('manual-token-input').value.trim();
       if (!rawToken) {
-        alert('Please enter a patient QR token.');
+        showToast('warning', 'Token Required', 'Please enter the patient QR token to search.');
         return;
       }
       try {
@@ -2290,7 +3609,7 @@
         });
         const patientData = scanResult?.patient;
         if (!patientData || !patientData.id) {
-          alert('Patient not found for this token.');
+          showToast('error', 'Not Found', 'No patient found for this token. Please check and try again.');
           return;
         }
         const existingIdx = appState.mothers.findIndex(m => String(m.id) === String(patientData.id));
@@ -2310,7 +3629,7 @@
         }
         viewPatientProfile(patientData.id);
       } catch (err) {
-        alert(err.message || 'Token lookup failed. Please check the token and try again.');
+        showToast('error', 'Lookup Failed', err.message || 'Token lookup failed. Please check the token and try again.');
       }
     }
 
@@ -2345,7 +3664,7 @@
 
     function downloadQrImage() {
       if (!appState._qrDataUrl) {
-        alert('No QR image available. Open the QR tab for a patient first.');
+        showToast('info', 'No QR Available', 'Open the Patient QR tab first to generate the QR code.');
         return;
       }
       const a = document.createElement('a');
@@ -2374,22 +3693,32 @@
 
         appState.activeReferralId = refId;
 
+        const patRisk = (mother ? mother.risk : referral.patients?.current_risk || 'GREEN');
         document.getElementById('ref-patient-name').textContent = mother ? mother.name : (referral.patients?.name || 'Unknown patient');
         document.getElementById('ref-patient-age').textContent = `${mother ? mother.age : referral.patients?.age || '—'} yrs`;
         document.getElementById('ref-patient-week').textContent = `Week ${mother ? mother.week : (referral.patients?.pregnancy_month || 0) * 4}`;
-        document.getElementById('ref-patient-risk').textContent = `${mother ? mother.risk : referral.patients?.current_risk || 'GREEN'} RISK`;
-        const riskClr = (mother ? mother.risk : referral.patients?.current_risk || 'GREEN') === 'RED' ? 'text-red-700' : ((mother ? mother.risk : referral.patients?.current_risk || 'GREEN') === 'AMBER' ? 'text-amber-700' : 'text-green-700');
-        document.getElementById('ref-patient-risk').className = `font-bold text-sm block mt-0.5 ${riskClr}`;
+        document.getElementById('ref-patient-risk').textContent = `${patRisk}`;
+        const riskClr = patRisk === 'RED' ? 'text-red-700' : patRisk === 'AMBER' ? 'text-amber-700' : 'text-green-700';
+        document.getElementById('ref-patient-risk').className = `font-bold text-base block ${riskClr}`;
+        const riskBadgeEl = document.getElementById('ref-patient-risk-badge');
+        if (riskBadgeEl) {
+          const pillClass = patRisk === 'RED' ? 'risk-pill risk-pill-red' : patRisk === 'AMBER' ? 'risk-pill risk-pill-amber' : 'risk-pill risk-pill-green';
+          riskBadgeEl.innerHTML = `<span class="${pillClass}">● ${patRisk} Risk</span>`;
+        }
 
         document.getElementById('ref-hospital-from').textContent = ref.from;
-        document.getElementById('ref-hospital-time').textContent = `Dispatched: ${ref.timestamp}`;
+        const rawDispatch = referral.created_at || ref.timestamp;
+        const formattedDispatch = rawDispatch && rawDispatch !== 'Recently created'
+          ? new Date(rawDispatch).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+          : 'Recently created';
+        document.getElementById('ref-hospital-time').textContent = `Dispatched: ${formattedDispatch}`;
         document.getElementById('ref-reason-text').textContent = ref.referral_reason || 'See SOAP notes below';
         document.getElementById('ref-soap-text').textContent = ref.soap;
 
         const statusBadge = document.getElementById('ref-detail-status-badge');
-        const statusMap = { PENDING: 'bg-amber-100 text-amber-800', ARRIVED: 'bg-blue-100 text-blue-800', ADMITTED: 'bg-green-100 text-green-800' };
+        const statusClassMap = { PENDING: 'status-pending', ARRIVED: 'status-arrived', ADMITTED: 'status-admitted' };
         statusBadge.textContent = ref.status;
-        statusBadge.className = `text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider ${statusMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
+        statusBadge.className = `status-badge uppercase ${statusClassMap[ref.status] || 'bg-gray-100 text-gray-600'}`;
 
         document.getElementById('ref-btn-arrived').classList.toggle('hidden', ref.status !== 'PENDING');
         document.getElementById('ref-btn-admitted').classList.toggle('hidden', ref.status !== 'ARRIVED');
@@ -2401,7 +3730,7 @@
         document.querySelectorAll('.app-view').forEach(el => el.classList.add('hidden'));
         document.getElementById('doc-referral-detail').classList.remove('hidden');
       } catch (error) {
-        alert(error.message || 'Unable to load referral details.');
+        showToast('error', 'Load Failed', error.message || 'Unable to load referral details.');
       }
     }
 
@@ -2416,26 +3745,22 @@
       const container = document.getElementById('ref-timeline-container');
       container.innerHTML = '';
 
+      container.className = 'tl-wrap';
       steps.forEach((step, i) => {
         const done = i <= currentIdx;
         const current = i === currentIdx;
         const div = document.createElement('div');
-        div.className = 'flex items-start space-x-3 pb-4 relative';
+        div.className = 'tl-item';
 
-        const lineClass = i < steps.length - 1
-          ? `absolute left-4 top-8 w-0.5 h-full ${done ? 'bg-[#5C7E7E]' : 'bg-gray-200'}`
-          : '';
+        const dotClass = current ? 'tl-dot tl-dot-current' : done ? 'tl-dot tl-dot-done' : 'tl-dot tl-dot-pending';
+        const dotContent = done ? step.icon : `<span style="font-size:9px;font-weight:700;color:#9CA3AF">${i+1}</span>`;
 
         div.innerHTML = `
-          ${i < steps.length - 1 ? `<div class="${lineClass}"></div>` : ''}
-          <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-sm z-10
-            ${done ? 'bg-[#5C7E7E] shadow-md' : 'bg-gray-100 border border-gray-200'}">
-            ${done ? `<span>${step.icon}</span>` : `<span class="text-gray-400 text-xs font-bold">${i + 1}</span>`}
-          </div>
-          <div class="pt-1">
-            <p class="text-xs font-bold ${done ? 'text-gray-800' : 'text-gray-400'}">${step.label}</p>
-            <p class="text-[10px] ${current ? 'text-[#5C7E7E] font-semibold' : 'text-gray-400'} mt-0.5">
-              ${current ? '● Current Status' : (done ? '✓ Completed' : step.sub)}
+          <div class="${dotClass}">${dotContent}</div>
+          <div>
+            <p class="tl-label ${done ? 'text-gray-800' : 'text-gray-400'}">${step.label}</p>
+            <p class="tl-sub ${current ? 'text-[#5C7E7E] font-semibold' : 'text-gray-400'}">
+              ${current ? '⬤ Current status' : (done ? '✓ Completed' : step.sub)}
             </p>
           </div>
         `;
@@ -2450,10 +3775,11 @@
           method: 'PATCH',
           body: JSON.stringify({ status: newStatus })
         });
-        alert(`Referral status updated to ${newStatus}.`);
+        const statusLabels = { ARRIVED: 'Patient arrival confirmed', ADMITTED: 'Patient admitted to ward' };
+        showToast('success', 'Status Updated', statusLabels[newStatus] || `Updated to ${newStatus}`);
         openReferralDetail(appState.activeReferralId);
       } catch (error) {
-        alert(error.message || 'Unable to update referral status.');
+        showToast('error', 'Update Failed', error.message || 'Unable to update referral status.');
       }
     }
 
