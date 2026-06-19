@@ -621,6 +621,7 @@
     .vitals-grid { grid-template-columns: 1fr; }
   }
 </style>
+<script src="js/config.js"></script>
 </head>
 <body>
 
@@ -818,7 +819,7 @@
 
 <script>
   const patientId = new URLSearchParams(window.location.search).get('id') || localStorage.getItem('selectedPatientId');
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('maatri_token');
   const visitForm = document.getElementById('visit-form');
   const visitStatus = document.getElementById('visit-status');
   const pageStatus = document.getElementById('page-status');
@@ -956,8 +957,8 @@
     try {
       showStatus(pageStatus, 'Loading patient profile…', '');
       const [patientResponse, visitsResponse] = await Promise.all([
-        fetch(`/api/patients/${patientId}`, { headers }),
-        fetch(`/api/visits/patient/${patientId}`, { headers }),
+        fetch(`${API_BASE_URL}/api/patients/${patientId}`, { headers }),
+        fetch(`${API_BASE_URL}/api/visits/patient/${patientId}`, { headers }),
       ]);
 
       const patientPayload = await patientResponse.json().catch(() => ({}));
@@ -1000,7 +1001,7 @@
       };
 
       try {
-        const response = await fetch('/api/visits', {
+        const response = await fetch(`${API_BASE_URL}/api/visits`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

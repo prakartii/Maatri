@@ -497,6 +497,7 @@
     }
   }
 </style>
+<script src="js/config.js"></script>
 </head>
 <body>
 
@@ -674,7 +675,7 @@
       btn.style.opacity = '0.75';
       btn.disabled = true;
 
-      fetch("http://localhost:5000/api/auth/login", {
+      fetch(`${API_BASE_URL}/api/auth/login`, {
          method: 'POST',
   headers: {
     'Content-Type': 'application/json'

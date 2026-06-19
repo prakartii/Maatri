@@ -251,6 +251,7 @@
     .form-card { padding: 32px 24px; }
   }
 </style>
+<script src="js/config.js"></script>
 </head>
 <body>
 
@@ -372,7 +373,7 @@
 
       try {
         const token = localStorage.getItem('maatri_token');
-        const response = await fetch('http://localhost:5000/api/patients', {
+        const response = await fetch(`${API_BASE_URL}/api/patients`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

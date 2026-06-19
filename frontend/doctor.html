@@ -196,6 +196,7 @@
     .reg-empty-title { font-size: 17px; font-weight: 700; color: #374151; margin-bottom: 6px; }
     .reg-empty-sub { font-size: 13px; color: #9CA3AF; max-width: 280px; margin: 0 auto 20px; line-height: 1.6; }
   </style>
+<script src="js/config.js"></script>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -1329,7 +1330,7 @@
       }
     }
 
-   const API_BASE = "http://localhost:5000/api";
+   const API_BASE = `${API_BASE_URL}/api`;
     function getAuthHeaders() {
       const headers = { "Content-Type": "application/json" };
       const token = localStorage.getItem("maatri_token");
