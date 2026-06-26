@@ -1,7 +1,13 @@
-const getAIServiceUrl = () =>
-  process.env.MATRISCAN_AI_URL ||
-  process.env.FASTAPI_URL ||
-  "http://127.0.0.1:8001";
+const getAIServiceUrl = () => {
+  const raw =
+    process.env.MATRISCAN_AI_URL ??
+    process.env.FASTAPI_URL ??
+    "http://127.0.0.1:8001";
+  // Strip trailing slashes so callers can safely append /ai/ocr etc.
+  // If someone sets the env var to "https://host/docs" or "https://host/health"
+  // those path suffixes are NOT stripped here — fix the env var on Render instead.
+  return raw.replace(/\/+$/, "");
+};
 
 const BCP47 = { en: "en-IN", ta: "ta-IN", hi: "hi-IN" };
 const LANG_PAIR = { ta: "en|ta", hi: "en|hi" };
@@ -110,11 +116,19 @@ const buildLocalCarePlan = (payload) => {
  * Matriscan-AI expects: POST /ai/ocr with field "image: UploadFile"
  */
 export const extractLabReportFile = async (file) => {
-  const aiUrl = `${getAIServiceUrl()}/ai/ocr`;
-  console.log(`[OCR] → ${aiUrl} | file: ${file.originalname} | size: ${file.size} bytes | mimetype: ${file.mimetype}`);
+  const aiBase = getAIServiceUrl();
+  const aiUrl = `${aiBase}/ai/ocr`;
+
+  // Diagnostic logs — verify URL and payload before the fetch hits the wire
+  console.log("[OCR] AI BASE =", aiBase);
+  console.log("[OCR] OCR URL =", aiUrl);
+  console.log("[OCR] FETCH METHOD = POST");
+  console.log(`[OCR] file: ${file.originalname} | size: ${file.size} bytes | mimetype: ${file.mimetype}`);
 
   const form = new FormData();
   form.append("image", new Blob([file.buffer], { type: file.mimetype }), file.originalname);
+
+  console.log("[OCR] FORMDATA KEYS =", [...form.keys()]);
 
   const response = await fetch(aiUrl, {
     method: "POST",

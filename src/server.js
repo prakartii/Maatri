@@ -14,5 +14,13 @@ if (missing.length > 0) {
 }
 
 app.listen(PORT, () => {
+  const aiBase = (
+    process.env.MATRISCAN_AI_URL ??
+    process.env.FASTAPI_URL ??
+    "http://127.0.0.1:8001"
+  ).replace(/\/+$/, "");
   console.log(`Maatri server running on port ${PORT}`);
+  console.log(`[STARTUP] MATRISCAN_AI_URL = ${process.env.MATRISCAN_AI_URL ?? "(not set)"}`);
+  console.log(`[STARTUP] Effective AI base = ${aiBase}`);
+  console.log(`[STARTUP] OCR endpoint will be = ${aiBase}/ai/ocr`);
 });
